@@ -1,0 +1,21 @@
+.MuiStepLabel-label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.table .css-1ygcj2i-MuiTableCell-root {
+  text-align: center;
+}
+
+.textfield {
+  background-color: white;
+}
+
+.inputlabel {
+  font-size: 14px;
+}
+
+.inputlabel span {
+  color: red;
+  font-weight: 700;
+}

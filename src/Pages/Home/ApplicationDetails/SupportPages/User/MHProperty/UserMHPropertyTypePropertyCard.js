@@ -1,0 +1,594 @@
+import React, { useState, useEffect } from "react";
+import {
+  FormHelperText,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from "@mui/material";
+import { useForm, Controller } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import SelectVillage from "../../../../../../ui/SelectVillage/SelectVillage";
+import {
+  firstNameEnglishValidationSchema,
+  firstNameMarathiValidationSchema,
+  lastNameEnglishValidationSchema,
+  lastNameMarathiValidationSchema,
+  middleNameEnglishValidationSchema,
+  middleNameMarathiValidationSchema,
+  nabhuValidationSchema,
+  suffixMarathiValidationSchema,
+} from "../../../../../../Validations/yupValidations";
+import URLS from "../../../../../../URLs/url";
+import AxiosInstance from "../../../../../../Instance/AxiosInstance";
+import { errorToast } from "../../../../../../ui/Toast";
+
+const UserMHPropertyTypePropertyCard = ({
+  isEdit,
+  editFields,
+  userMhPropTypePropertyCard,
+  setUserMhPropTypePropertyCard,
+  setIsValid,
+}) => {
+  const [villageData, setVillageData] = useState({
+    district: {},
+    taluka: {},
+    village: {},
+  });
+
+  const { sendRequest } = AxiosInstance();
+  const [suffixArr, setSuffixArr] = useState([]);
+
+  const {
+    control,
+    trigger,
+    setValue,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(
+      yup.object().shape({
+        nabhu: nabhuValidationSchema,
+        userName: yup.string().required("User Name is required"),
+        suffixMar: suffixMarathiValidationSchema,
+        firstName: firstNameMarathiValidationSchema,
+        middleName: middleNameMarathiValidationSchema,
+        lastName: lastNameMarathiValidationSchema,
+        firstNameEng: firstNameEnglishValidationSchema,
+        middleNameEng: middleNameEnglishValidationSchema,
+        lastNameEng: lastNameEnglishValidationSchema,
+      })
+    ),
+  });
+
+  const handleBlur = async (name) => {
+    await trigger(name);
+  };
+
+  const handleNaBhu = (e) => {
+    setUserMhPropTypePropertyCard({
+      ...userMhPropTypePropertyCard,
+      naBhu: e?.target?.value,
+      ...villageData,
+    });
+  };
+  const handleUserName = (e) => {
+    setUserMhPropTypePropertyCard({
+      ...userMhPropTypePropertyCard,
+      userName: e?.target?.value,
+    });
+  };
+  const handleSuffix = (e) => {
+    const value = e?.target?.value;
+    const obj = suffixArr.find((o) => o.name_title == value);
+    setUserMhPropTypePropertyCard({
+      ...userMhPropTypePropertyCard,
+      suffix: value,
+      suffixEng: obj?.name_title_english,
+      suffixcode: obj?.name_title_code,
+      suffixCodeEng: obj?.name_title_code,
+    });
+  };
+  const handleUserDetails = (e) => {
+    const { name, value } = e?.target;
+    setUserMhPropTypePropertyCard({
+      ...userMhPropTypePropertyCard,
+      [name]: value,
+    });
+  };
+
+  // useEffect(() => {
+  //   setValue("nabhu", userMhPropTypePropertyCard?.naBhu);
+  //   setValue("userName", userMhPropTypePropertyCard?.userName);
+  //   setValue("suffixMar", userMhPropTypePropertyCard?.suffix);
+  //   setValue("firstName", userMhPropTypePropertyCard?.firstName);
+  //   setValue("middleName", userMhPropTypePropertyCard?.middleName);
+  //   setValue("lastName", userMhPropTypePropertyCard?.lastName);
+  //   setValue("firstNameEng", userMhPropTypePropertyCard?.firstNameEng);
+  //   setValue("middleNameEng", userMhPropTypePropertyCard?.middleNameEng);
+  //   setValue("lastNameEng", userMhPropTypePropertyCard?.lastNameEng);
+  // }, [isEdit]);
+
+  const getSuffix = () => {
+    sendRequest(
+      `${URLS?.BaseURL}/EPCISAPIS/nameTitleList`,
+      "POST",
+      null,
+      (res) => {
+        setSuffixArr(JSON.parse(res?.ResponseData));
+      },
+      (err) => {
+        errorToast(err?.Message);
+      }
+    );
+  };
+
+  useEffect(() => {
+    getSuffix();
+  }, []);
+
+  useEffect(() => {
+    setIsValid((prev) => ({
+      ...prev,
+      triggerUserPropertyCard: trigger,
+    }));
+  }, [trigger, setIsValid]);
+
+  return (
+    <>
+      {editFields ? (
+        <>
+          <Grid item md={12} mt={1}>
+            <Grid container spacing={2}>
+              <Grid item md={9}>
+                <SelectVillage setVillageData={setVillageData} />
+              </Grid>
+              <Grid item md={3}>
+                <Controller
+                  name="nabhu"
+                  control={control}
+                  render={({ field }) => (
+                    <>
+                      <InputLabel className="inputlabel">
+                        <b> न.भू.क्र. क्रमांक निवडा </b>
+                        <span>*</span>
+                      </InputLabel>
+                      <Select
+                        fullWidth
+                        className="textfield"
+                        size="small"
+                        error={errors.nabhu}
+                        {...field}
+                        value={userMhPropTypePropertyCard?.naBhu}
+                        onBlur={() => handleBlur("nabhu")}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          handleNaBhu(e);
+                        }}
+                      >
+                        <MenuItem value="1">480/20/121/52</MenuItem>
+                        <MenuItem value="2">480/20/121/53</MenuItem>
+                      </Select>
+                      <FormHelperText sx={{ color: "red" }}>
+                        {errors.nabhu && errors.nabhu.message}
+                      </FormHelperText>
+                    </>
+                  )}
+                />
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item md={4} mb={2} mt={1}>
+            <Controller
+              name="userName"
+              control={control}
+              render={({ field }) => (
+                <>
+                  <InputLabel className="inputlabel">
+                    <b>अर्जदारचे नाव </b> <span>*</span>
+                  </InputLabel>
+                  <Select
+                    fullWidth
+                    className="textfield"
+                    size="small"
+                    error={errors.userName}
+                    {...field}
+                    value={userMhPropTypePropertyCard?.userName}
+                    onBlur={() => handleBlur("userName")}
+                    onChange={(e) => {
+                      field.onChange(e);
+                      handleUserName(e);
+                    }}
+                  >
+                    <MenuItem value="tushar">तुषार नानासाहेब शिंदे</MenuItem>
+                    <MenuItem value="yogesh">योगेश नानासाहेब शिंदे</MenuItem>
+                  </Select>
+                  <FormHelperText sx={{ color: "red" }}>
+                    {errors.userName && errors.userName.message}
+                  </FormHelperText>
+                </>
+              )}
+            />
+          </Grid>
+          <Grid item md={12}>
+            <Grid container justifyContent="space-between" alignItems="end">
+              <Grid item md={2}>
+                <Controller
+                  name="suffixMar"
+                  control={control}
+                  render={({ field }) => (
+                    <>
+                      <Select
+                        className="textfield"
+                        value={userMhPropTypePropertyCard?.suffix}
+                        error={errors.suffixMar}
+                        {...field}
+                        onBlur={() => handleBlur("suffixMar")}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          handleSuffix(e);
+                        }}
+                        fullWidth
+                        size="small"
+                      >
+                        {Array.isArray(suffixArr) &&
+                          suffixArr.slice(0, -1).map((val, i) => {
+                            return (
+                              <MenuItem
+                                value={val?.name_title}
+                                key={val?.name_title + i}
+                              >
+                                {val?.name_title}
+                              </MenuItem>
+                            );
+                          })}
+                      </Select>
+                      <FormHelperText sx={{ color: "red" }}>
+                        {errors.suffixMar && errors.suffixMar.message}
+                      </FormHelperText>
+                    </>
+                  )}
+                />
+              </Grid>
+              <Grid item md={3}>
+                <Controller
+                  name="firstName"
+                  control={control}
+                  render={({ field }) => (
+                    <>
+                      <TextField
+                        fullWidth
+                        className="textfield"
+                        value={userMhPropTypePropertyCard?.firstName}
+                        name="firstName"
+                        placeholder="पहिले नाव"
+                        error={errors.firstName}
+                        {...field}
+                        onBlur={() => handleBlur("firstName")}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          handleUserDetails(e);
+                        }}
+                        size="small"
+                      />
+                      <FormHelperText sx={{ color: "red" }}>
+                        {errors.firstName && errors.firstName.message}
+                      </FormHelperText>
+                    </>
+                  )}
+                />
+              </Grid>
+              <Grid item md={3}>
+                <Controller
+                  name="middleName"
+                  control={control}
+                  render={({ field }) => (
+                    <>
+                      <TextField
+                        fullWidth
+                        className="textfield"
+                        value={userMhPropTypePropertyCard?.middleName}
+                        name="middleName"
+                        placeholder="मधले नाव"
+                        error={errors.middleName}
+                        {...field}
+                        onBlur={() => handleBlur("middleName")}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          handleUserDetails(e);
+                        }}
+                        size="small"
+                      />
+                      <FormHelperText sx={{ color: "red" }}>
+                        {errors.middleName && errors.middleName.message}
+                      </FormHelperText>
+                    </>
+                  )}
+                />
+              </Grid>
+              <Grid item md={3}>
+                <Controller
+                  name="lastName"
+                  control={control}
+                  render={({ field }) => (
+                    <>
+                      <TextField
+                        fullWidth
+                        className="textfield"
+                        value={userMhPropTypePropertyCard?.lastName}
+                        name="lastName"
+                        placeholder="आडनाव"
+                        error={errors.lastName}
+                        {...field}
+                        onBlur={() => handleBlur("lastName")}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          handleUserDetails(e);
+                        }}
+                        size="small"
+                      />
+                      <FormHelperText sx={{ color: "red" }}>
+                        {errors.lastName && errors.lastName.message}
+                      </FormHelperText>
+                    </>
+                  )}
+                />
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item md={12}>
+            <Grid item md={12} mt={1}>
+              <Grid container justifyContent="space-between">
+                <Grid item md={2}>
+                  <TextField
+                    fullWidth
+                    value={userMhPropTypePropertyCard?.suffixEng}
+                    className="textfieldDisabled"
+                    disabled
+                    size="small"
+                  />
+                </Grid>
+                <Grid item md={3}>
+                  <Controller
+                    name="firstNameEng"
+                    control={control}
+                    render={({ field }) => (
+                      <>
+                        <TextField
+                          fullWidth
+                          className="textfield"
+                          value={userMhPropTypePropertyCard?.firstNameEng}
+                          name="firstNameEng"
+                          placeholder="First name"
+                          error={errors.firstNameEng}
+                          {...field}
+                          onBlur={() => handleBlur("firstNameEng")}
+                          onChange={(e) => {
+                            field.onChange(e);
+                            handleUserDetails(e);
+                          }}
+                          size="small"
+                        />
+                        <FormHelperText sx={{ color: "red" }}>
+                          {errors.firstNameEng && errors.firstNameEng.message}
+                        </FormHelperText>
+                      </>
+                    )}
+                  />
+                </Grid>
+                <Grid item md={3}>
+                  <Controller
+                    name="middleNameEng"
+                    control={control}
+                    render={({ field }) => (
+                      <>
+                        <TextField
+                          fullWidth
+                          className="textfield"
+                          value={userMhPropTypePropertyCard?.middleNameEng}
+                          name="middleNameEng"
+                          placeholder="Middle Name"
+                          error={errors.middleNameEng}
+                          {...field}
+                          onBlur={() => handleBlur("middleNameEng")}
+                          onChange={(e) => {
+                            field.onChange(e);
+                            handleUserDetails(e);
+                          }}
+                          size="small"
+                        />
+                        <FormHelperText sx={{ color: "red" }}>
+                          {errors.middleNameEng && errors.middleNameEng.message}
+                        </FormHelperText>
+                      </>
+                    )}
+                  />
+                </Grid>
+                <Grid item md={3}>
+                  <Controller
+                    name="lastNameEng"
+                    control={control}
+                    render={({ field }) => (
+                      <>
+                        <TextField
+                          fullWidth
+                          className="textfield"
+                          value={userMhPropTypePropertyCard?.lastNameEng}
+                          name="lastNameEng"
+                          placeholder="Surname"
+                          error={errors.lastNameEng}
+                          {...field}
+                          onBlur={() => handleBlur("lastNameEng")}
+                          onChange={(e) => {
+                            field.onChange(e);
+                            handleUserDetails(e);
+                          }}
+                          size="small"
+                        />
+                        <FormHelperText sx={{ color: "red" }}>
+                          {errors.lastNameEng && errors.lastNameEng.message}
+                        </FormHelperText>
+                      </>
+                    )}
+                  />
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+        </>
+      ) : (
+        <>
+          <Grid item md={12} mt={1}>
+            <Grid container spacing={2}>
+              <Grid item md={3}>
+                <InputLabel className="inputlabel">
+                  <b>जिल्हा </b>
+                </InputLabel>
+                <TextField
+                  fullWidth
+                  size="small"
+                  className="textfieldDisabled"
+                  value={userMhPropTypePropertyCard?.district}
+                  disabled
+                />
+              </Grid>
+              <Grid item md={3}>
+                <InputLabel className="inputlabel">
+                  <b>तालुका </b>
+                </InputLabel>
+                <TextField
+                  fullWidth
+                  size="small"
+                  className="textfieldDisabled"
+                  value={userMhPropTypePropertyCard?.taluka}
+                  disabled
+                />
+              </Grid>
+              <Grid item md={3}>
+                <InputLabel className="inputlabel">
+                  <b>गाव/पेठ </b>
+                </InputLabel>
+                <TextField
+                  fullWidth
+                  size="small"
+                  className="textfieldDisabled"
+                  value={userMhPropTypePropertyCard?.village}
+                  disabled
+                />
+              </Grid>
+              <Grid item md={3}>
+                <InputLabel className="inputlabel">
+                  <b>न.भू.क्र. क्रमांक</b>
+                </InputLabel>
+                <TextField
+                  fullWidth
+                  value={userMhPropTypePropertyCard?.naBhu}
+                  className="textfieldDisabled"
+                  disabled
+                  size="small"
+                />
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item md={4} mb={2} mt={1}>
+            <InputLabel className="inputlabel">
+              <b>अर्जदारचे नाव </b>
+            </InputLabel>
+            <TextField
+              fullWidth
+              className="textfieldDisabled"
+              value={userMhPropTypePropertyCard?.userName}
+              disabled
+              size="small"
+            />
+          </Grid>
+          <Grid item md={12}>
+            <Grid container justifyContent="space-between" alignItems="end">
+              <Grid item md={2}>
+                <TextField
+                  fullWidth
+                  value={userMhPropTypePropertyCard?.suffix}
+                  className="textfieldDisabled"
+                  disabled
+                  size="small"
+                />
+              </Grid>
+              <Grid item md={3}>
+                <TextField
+                  fullWidth
+                  className="textfieldDisabled"
+                  disabled
+                  value={userMhPropTypePropertyCard?.firstName}
+                  size="small"
+                />
+              </Grid>
+              <Grid item md={3}>
+                <TextField
+                  fullWidth
+                  className="textfieldDisabled"
+                  disabled
+                  value={userMhPropTypePropertyCard?.middleName}
+                  size="small"
+                />
+              </Grid>
+              <Grid item md={3}>
+                <TextField
+                  fullWidth
+                  className="textfieldDisabled"
+                  disabled
+                  value={userMhPropTypePropertyCard?.lastName}
+                  size="small"
+                />
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item md={12}>
+            <Grid item md={12} mt={1}>
+              <Grid container justifyContent="space-between">
+                <Grid item md={2}>
+                  <TextField
+                    fullWidth
+                    value={userMhPropTypePropertyCard?.suffixEng}
+                    className="textfieldDisabled"
+                    disabled
+                    size="small"
+                  />
+                </Grid>
+                <Grid item md={3}>
+                  <TextField
+                    fullWidth
+                    className="textfieldDisabled"
+                    disabled
+                    value={userMhPropTypePropertyCard?.firstNameEng}
+                    size="small"
+                  />
+                </Grid>
+                <Grid item md={3}>
+                  <TextField
+                    fullWidth
+                    className="textfieldDisabled"
+                    disabled
+                    value={userMhPropTypePropertyCard?.middleNameEng}
+                    size="small"
+                  />
+                </Grid>
+                <Grid item md={3}>
+                  <TextField
+                    fullWidth
+                    className="textfieldDisabled"
+                    disabled
+                    value={userMhPropTypePropertyCard?.lastNameEng}
+                    size="small"
+                  />
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+        </>
+      )}
+    </>
+  );
+};
+
+export default UserMHPropertyTypePropertyCard;
