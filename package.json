@@ -39,6 +39,7 @@
     "web-vitals": "^2.1.4",
     "yup": "^1.4.0"
   },
+  
   "scripts": {
     "startss": "react-scripts start",
     "start": "react-scripts start --proxy-setup ./src/setupProxy.js",

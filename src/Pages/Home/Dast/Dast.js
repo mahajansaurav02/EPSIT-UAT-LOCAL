@@ -478,6 +478,7 @@ const Dast = () => {
     const obj = responseData.find((o) => o?.dast_id == id);
     setEditId(obj?.dast_id);
     setIsEdit(true);
+    console.log(obj, "check obj code")
     setEditObj(obj);
 
     setDastType(obj?.dastType);
@@ -752,59 +753,113 @@ const Dast = () => {
                           size="small"
                           disabled
                           value={
-                            editObj?.dastType == "mainDast"
+                            editObj?.dastType === "mainDast"
                               ? "मूळ दस्त"
-                              : "चूक दुरुस्ती"
+                              : applicationData.mutation_type_code === "11"
+                                ? "रद्दलेख दस्त"
+                                : "चूक दुरुस्ती"
                           }
                         />
                       </>
                     ) : (
+                      // <Controller
+                      //   name="dastType"
+                      //   control={control}
+                      //   render={({ field }) => (
+                      //     <>
+                      //       <InputLabel className="inputlabel">
+                      //         <b>दस्त प्रकार </b>
+                      //         <span>*</span>
+                      //       </InputLabel>
+                      //       <Select
+                      //         className="textfield"
+                      //         value={dastType}
+                      //         fullWidth
+                      //         size="small"
+                      //         error={errors.dastType}
+                      //         {...field}
+                      //         onBlur={() => handleBlur("dastType")}
+                      //         onChange={(e) => {
+                      //           field.onChange(e);
+                      //           handleDastType(e);
+                      //         }}
+                      //       >
+                      //         <MenuItem
+                      //           value="mainDast"
+                      //           disabled={responseData.length >= 1}
+                      //         >
+                      //           {/* मूळ दस्त */}
+                      //           {responseData.length >= 1
+                      //             ? "मूळ दस्त (एकावेळी एकच मूळ दस्त भरता येईल)"
+                      //             : "मूळ दस्त"}
+                      //         </MenuItem>
+                      //         <MenuItem
+                      //           value="errorCorrect"
+                      //           disabled={responseData.length == 0}
+                      //         >
+                      //           {responseData.length == 0
+                      //             ? "चूक दुरुस्ती (मूळ दस्त माहिती भरणे अनिवार्य आहे)"
+                      //             : "चूक दुरुस्ती"}
+                      //         </MenuItem>
+                      //       </Select>
+                      //       <FormHelperText sx={{ color: "red" }}>
+                      //         {errors.dastType && errors.dastType.message}
+                      //       </FormHelperText>
+                      //     </>
+                      //   )}
+                      // />
+
                       <Controller
-                        name="dastType"
-                        control={control}
-                        render={({ field }) => (
-                          <>
-                            <InputLabel className="inputlabel">
-                              <b>दस्त प्रकार </b>
-                              <span>*</span>
-                            </InputLabel>
-                            <Select
-                              className="textfield"
-                              value={dastType}
-                              fullWidth
-                              size="small"
-                              error={errors.dastType}
-                              {...field}
-                              onBlur={() => handleBlur("dastType")}
-                              onChange={(e) => {
-                                field.onChange(e);
-                                handleDastType(e);
-                              }}
-                            >
-                              <MenuItem
-                                value="mainDast"
-                                disabled={responseData.length >= 1}
-                              >
-                                {/* मूळ दस्त */}
-                                {responseData.length >= 1
-                                  ? "मूळ दस्त (एकावेळी एकच मूळ दस्त भरता येईल)"
-                                  : "मूळ दस्त"}
-                              </MenuItem>
-                              <MenuItem
-                                value="errorCorrect"
-                                disabled={responseData.length == 0}
-                              >
-                                {responseData.length == 0
-                                  ? "चूक दुरुस्ती (मूळ दस्त माहिती भरणे अनिवार्य आहे)"
-                                  : "चूक दुरुस्ती"}
-                              </MenuItem>
-                            </Select>
-                            <FormHelperText sx={{ color: "red" }}>
-                              {errors.dastType && errors.dastType.message}
-                            </FormHelperText>
-                          </>
-                        )}
-                      />
+  name="dastType"
+  control={control}
+  render={({ field }) => (
+    <>
+      <InputLabel className="inputlabel">
+        <b>दस्त प्रकार </b>
+        <span>*</span>
+      </InputLabel>
+
+      <Select
+        className="textfield"
+        fullWidth
+        size="small"
+        error={!!errors.dastType}
+        {...field}
+        onBlur={() => handleBlur("dastType")}
+        onChange={(e) => {
+          field.onChange(e);
+          handleDastType(e);
+        }}
+      >
+        <MenuItem
+          value="mainDast"
+          disabled={responseData.length >= 1}
+        >
+          {responseData.length >= 1
+            ? "मूळ दस्त (एकावेळी एकच मूळ दस्त भरता येईल)"
+            : "मूळ दस्त"}
+        </MenuItem>
+
+        <MenuItem
+          value="errorCorrect"
+          disabled={responseData.length === 0}
+        >
+          {responseData.length === 0
+            ? applicationData?.mutation_type_code === "11"
+              ? "रद्दलेख दस्त (मूळ दस्त माहिती भरणे अनिवार्य आहे)"
+              : "चूक दुरुस्ती (मूळ दस्त माहिती भरणे अनिवार्य आहे)"
+            : applicationData?.mutation_type_code === "11"
+            ? "रद्दलेख दस्त"
+            : "चूक दुरुस्ती"}
+        </MenuItem>
+      </Select>
+
+      <FormHelperText sx={{ color: "red" }}>
+        {errors.dastType?.message}
+      </FormHelperText>
+    </>
+  )}
+/>
                     )}
                   </Grid>
                 </Grid>
@@ -1638,11 +1693,13 @@ const Dast = () => {
                       <TableRow key={val?.dast_id + i}>
                         <TableCell>{i + 1}</TableCell>
                         <TableCell>{val?.applicationid}</TableCell>
-                        <TableCell>
-                          {val?.dastType == "mainDast"
-                            ? "मूळ दस्त"
-                            : "चूक दुरुस्ती"}
-                        </TableCell>
+                          <TableCell>
+                        {val?.dastType === "mainDast"
+                          ? "मूळ दस्त"
+                          : applicationData?.mutation_type_code === "11"
+                          ? "रद्दलेख दुरुस्ती"
+                          : "चूक दुरुस्ती"}
+                      </TableCell>
                         <TableCell>{val?.divisionName}</TableCell>
                         <TableCell>{val?.districtName}</TableCell>
                         <TableCell>{val?.registrarName}</TableCell>

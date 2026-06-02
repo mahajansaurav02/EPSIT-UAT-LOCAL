@@ -281,9 +281,11 @@ const FinalPreview = ({
                             <Grid container spacing={1}>
                               <Grid item md={3}>
                                 <b>दस्त प्रकार :</b>{" "}
-                                {val?.dastType == "mainDast"
+                                {val?.dastType === "mainDast"
                                   ? "मूळ दस्त"
-                                  : "चूक दुरुस्ती"}
+                                  : applicationData?.mutation_type_code === "11"
+                                    ? "रद्दलेख दुरुस्ती"
+                                    : "चूक दुरुस्ती"}
                               </Grid>
                               <Grid item md={3}>
                                 <b>दुय्यम निबंधक कार्यालय :</b>{" "}
@@ -414,52 +416,52 @@ const FinalPreview = ({
         {/* ------------------------गहाणखत / तारण / बोजा दाखल नोंद---------------------------*/}
         {(applicationData?.mutation_type_code === "06" ||
           applicationData?.mutation_type_code === "07") && (
-          <Grid item md={12}>
-            <Grid item md={12} textAlign="left">
-              <h4 className="heading_final">
-                फेरफार तपशील :- {applicationData?.mutation_type}
-              </h4>
-            </Grid>
-            {Array.isArray(previewData?.Mutation) &&
-              previewData?.Mutation.map((mut, i) => {
-                return (
-                  <Grid container key={i}>
-                    <Grid item md={12} textAlign="center" mt={1}>
-                      <b>{mut?.type}</b>
-                    </Grid>
-                    {Array.isArray(mut?.value) &&
-                      mut?.value.map((val, i) => {
-                        return (
-                          <Grid item md={12} key={i}>
-                            <Grid
-                              container
-                              justifyContent="space-evenly"
-                              alignItems="center"
-                            >
-                              <Grid item md={1}>
-                                <b>{i + 1}</b>
-                              </Grid>
-                              <Grid item md={5}>
-                                <b> {mut?.type} नाव :</b>{" "}
-                                {val?.fullNameInMarathi
-                                  ? val?.fullNameInMarathi
-                                  : val?.userDetails?.bankNameMar}
-                              </Grid>
-                              <Grid item md={6}>
-                                <b>पत्ता :</b>{" "}
-                                {val?.address?.addressType == "INDIA"
-                                  ? `${val?.address?.indiaAddress?.plotNo}, ${val?.address?.indiaAddress?.building}, ${val?.address?.indiaAddress?.impSymbol}, ${val?.address?.indiaAddress?.postOfficeName}, ${val?.address?.indiaAddress?.pincode}`
-                                  : `${val?.address?.foreignAddress?.address}`}
+            <Grid item md={12}>
+              <Grid item md={12} textAlign="left">
+                <h4 className="heading_final">
+                  फेरफार तपशील :- {applicationData?.mutation_type}
+                </h4>
+              </Grid>
+              {Array.isArray(previewData?.Mutation) &&
+                previewData?.Mutation.map((mut, i) => {
+                  return (
+                    <Grid container key={i}>
+                      <Grid item md={12} textAlign="center" mt={1}>
+                        <b>{mut?.type}</b>
+                      </Grid>
+                      {Array.isArray(mut?.value) &&
+                        mut?.value.map((val, i) => {
+                          return (
+                            <Grid item md={12} key={i}>
+                              <Grid
+                                container
+                                justifyContent="space-evenly"
+                                alignItems="center"
+                              >
+                                <Grid item md={1}>
+                                  <b>{i + 1}</b>
+                                </Grid>
+                                <Grid item md={5}>
+                                  <b> {mut?.type} नाव :</b>{" "}
+                                  {val?.fullNameInMarathi
+                                    ? val?.fullNameInMarathi
+                                    : val?.userDetails?.bankNameMar}
+                                </Grid>
+                                <Grid item md={6}>
+                                  <b>पत्ता :</b>{" "}
+                                  {val?.address?.addressType == "INDIA"
+                                    ? `${val?.address?.indiaAddress?.plotNo}, ${val?.address?.indiaAddress?.building}, ${val?.address?.indiaAddress?.impSymbol}, ${val?.address?.indiaAddress?.postOfficeName}, ${val?.address?.indiaAddress?.pincode}`
+                                    : `${val?.address?.foreignAddress?.address}`}
+                                </Grid>
                               </Grid>
                             </Grid>
-                          </Grid>
-                        );
-                      })}
-                  </Grid>
-                );
-              })}
-          </Grid>
-        )}
+                          );
+                        })}
+                    </Grid>
+                  );
+                })}
+            </Grid>
+          )}
         {/* -------------------------हक्कसोड पत्र /रिलीज डिड नोंद---------------------------*/}
         {applicationData?.mutation_type_code == "09" && (
           <Grid item md={12}>
@@ -776,7 +778,7 @@ const FinalPreview = ({
                   <Grid item md={5}>
                     <b>पत्ता :</b>{" "}
                     {previewData?.Mutation[0]?.value[0]?.address?.addressType ==
-                    "INDIA"
+                      "INDIA"
                       ? `${previewData?.Mutation[0]?.value[0]?.address?.indiaAddress?.plotNo}, ${previewData?.Mutation[0]?.value[0]?.address?.indiaAddress?.building}, ${previewData?.Mutation[0]?.value[0]?.address?.indiaAddress?.impSymbol}, ${previewData?.Mutation[0]?.value[0]?.address?.indiaAddress?.postOfficeName}, ${previewData?.Mutation[0]?.value[0]?.address?.indiaAddress?.pincode}`
                       : `${previewData?.Mutation[0]?.value[0]?.address?.foreignAddress?.address}`}
                   </Grid>

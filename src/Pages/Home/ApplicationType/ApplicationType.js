@@ -546,6 +546,7 @@ const ApplicationTYpe = () => {
                                 "30",
                                 "08",
                                 "21",
+                                "11"
                               ].includes(val?.mutation_code),
                             )
                             .map((val, i) => (

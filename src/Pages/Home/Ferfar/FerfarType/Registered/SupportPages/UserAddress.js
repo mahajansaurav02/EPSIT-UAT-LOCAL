@@ -73,8 +73,13 @@ const UserAddress = ({
           <Grid container spacing={2} alignItems="center">
             <Grid item md={12}>
               <h4 className="heading">
-                {type == "kherediDenar" && "खरेदी देणाऱ्याचा पत्ता"}
+                 {type == "cancellationDenar" && "रद्दलेख देणाऱ्याचा पत्ता"}
+                 {type == "kherediDenar" && "खरेदी देणाऱ्याचा पत्ता"}
                 {type == "kherediGhenar" && "खरेदी घेणाऱ्याचा पत्ता"}
+                {type == "assignmentDeedDenar" && "असाइनमेंट डीड देणाऱ्याचा पत्ता"}
+                {type == "assignmentDeedGhenar" && "असाइनमेंट डीड घेणाऱ्याचा पत्ता"}
+                {type == "surrenderDeedDenar" && "सरेंडर डीड देणाऱ्याचा पत्ता"}
+                {type == "surrenderDeedGhenar" && "सरेंडर डीड घेणाऱ्याचा पत्ता"}
                 {type == "bakshishPatraDenar" && "बक्षीसपत्र देणाऱ्याचा पत्ता"}
                 {type == "bakshishPatraGhenar" && "बक्षीसपत्र घेणाऱ्याचा पत्ता"}
                 {type == "mryutuPatraDenar" &&

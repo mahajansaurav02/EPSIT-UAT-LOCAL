@@ -172,7 +172,7 @@ const ChukDurustiNond = ({ applicationData }) => {
       const isUserIndAdd = await isValid.triggerUserIndAdd();
 
       if (result && isUserIndAdd) {
-        if (selectedRow) {
+        // if (selectedRow) {
           successToast("Data is in console !");
           console.info("payload->>", {
             applicationid: applicationId,
@@ -183,7 +183,7 @@ const ChukDurustiNond = ({ applicationData }) => {
               lrPropertyUID: lrPropertyUID,
               milkat: milkat,
               namud: namud,
-              selectedMutation: selectedRow,
+              // selectedMutation: selectedRow,
               reason: reason,
             },
             address: {
@@ -191,57 +191,44 @@ const ChukDurustiNond = ({ applicationData }) => {
               indiaAddress: indiaAddress,
             },
           });
-        } else {
-          errorToast(" कृपया चूकदुरुस्ती नोंद करीता फेरफार निवडा");
-        }
+        // } else {
+        //   errorToast(" कृपया चूकदुरुस्ती नोंद करीता फेरफार निवडा");
+        // }
 
-        // sendRequest(
-        //   `${URLS?.BaseURL}/MutationAPIS/CreateBhadepattaNondGiver`,
-        //   "POST",
-        //   {
-        //     applicationid: applicationId,
-        //     village_code: applicationData?.village_code,
-        //     ctsNo: selectedUserArr[0]?.cts_number,
-        //     mutationSroNo: selectedUserArr[0]?.mutation_srno,
-        //     ownerNo: selectedUserArr[0]?.owner_number,
-        //     userDetails: {
-        //       ...userDetails,
-        //       userName: userName,
-        //       suffix: suffix,
-        //       suffixEng: suffixEng,
-        //       suffixcode: suffixcode,
-        //       suffixCodeEng: suffixCodeEng,
-        //       subPropNo: subPropNo,
-        //       nabhu: naBhu,
-        //       lrPropertyUID: lrPropertyUID,
-        //       milkat: milkat,
-        //       namud: namud,
-        //     },
-        //     areaOfMutation: {
-        //       isFullAreaGiven: radio,
-        //       actualArea: actualArea,
-        //       mutationArea: mutationArea,
-        //       availableArea: availableArea,
-        //     },
-        //     address: {
-        //       addressType: isIndian,
-        //       indiaAddress: indiaAddress,
-        //     },
-        //   },
-        //   (res) => {
-        //     if (res?.Code == "1") {
-        //       successToast(res?.Message);
-        //       handleReset();
-        //       getBhadepattaDenarTableData();
-        //     } else {
-        //       console.error(res?.Message);
-        //       errorToast(res?.Message);
-        //     }
-        //   },
-        //   (err) => {
-        //     errorToast(err?.Message);
-        //   },
-        // );
+        sendRequest(
+          `${URLS?.BaseURL}/MutationAPIS/SaveErrorCorrectionInfo`,
+          "POST",
+          {
+            applicationid: applicationId,
+            village_code: applicationData?.village_code,
+            userDetails: {
+              subPropNo: subPropNo,
+              nabhu: naBhu,
+              lrPropertyUID: lrPropertyUID,
+              milkat: milkat,
+              namud: namud,
+              // selectedMutation: selectedRow,
+              reason: reason,
+            },
+            address: {
+              addressType: isIndian,
+              indiaAddress: indiaAddress,
+            },
+          },
+          (res) => {
+            if (res?.Code == "1") {
+              successToast(res?.Message);
+              handleReset();
+              // getBhadepattaDenarTableData();
+            } else {
+              console.error(res?.Message);
+              errorToast(res?.Message);
+            }
+          },
+          (err) => {
+            errorToast(err?.Message);
+          },
+        );
       } else {
         errorToast("Please Check All Fields");
       }
@@ -332,7 +319,7 @@ const ChukDurustiNond = ({ applicationData }) => {
     setNamud(obj?.namud);
     setSubPropNo(obj?.sub_property_no);
     // getUserDetails(obj?.actual_cts_no, obj?.sub_property_no);
-    getUserDetails(obj?.actual_cts_no);
+    // getUserDetails(obj?.actual_cts_no);
   };
   // const getUserDetails = (nabhuNo, subPropNo) => {
   //   sendRequest(
@@ -563,7 +550,7 @@ const ChukDurustiNond = ({ applicationData }) => {
               </Grid>
             </Grid>
 
-            {!userLoading && userDataArr.length > 0 && (
+            {/* {!userLoading && userDataArr.length > 0 && (
               <Grid item md={12}>
                 <h4 className="heading">चूकदुरुस्ती नोंद करीता फेरफार निवडा</h4>
                 <Paper elevation={5} sx={{ backgroundColor: "#f4e7daff" }}>
@@ -618,7 +605,7 @@ const ChukDurustiNond = ({ applicationData }) => {
                   </TableContainer>
                 </Paper>
               </Grid>
-            )}
+            )} */}
 
             {userLoading && (
               <Grid item md={12} textAlign="center">
