@@ -1,0 +1,363 @@
+import React, { useEffect, useState } from "react";
+import {
+  FormHelperText,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from "@mui/material";
+import { useForm, Controller } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import {
+  firstNameEnglishValidationSchema,
+  firstNameMarathiValidationSchema,
+  lastNameEnglishValidationSchema,
+  lastNameMarathiValidationSchema,
+  middleNameEnglishValidationSchema,
+  middleNameMarathiValidationSchema,
+} from "../../../../Validations/yupValidations";
+import URLS from "../../../../URLs/url";
+import TransliterationTextField from "../../../../ui/TranslationTextfield/EngToMarTextfield";
+import { errorToast } from "../../../../ui/Toast";
+import AxiosInstance from "../../../../Instance/AxiosInstance";
+import RegistrationInstance from "../../../../Instance/RegisterInstance";
+import {
+  filterOnlyLettersAndSpaces,
+  filterOnlyMarathiAndEnglishLettersWithSpaces,
+} from "../../../../Validations/utils";
+
+const UserNoMHProperty = ({ userNoMhProp, setUserNoMhProp, setIsValid }) => {
+  // const { sendRequest } = AxiosInstance();
+  const { sendRequest } = RegistrationInstance();
+  const [suffixArr, setSuffixArr] = useState([]);
+  const [userDetails, setUserDetails] = useState({
+    firstName: "",
+    middleName: "",
+    lastName: "",
+    firstNameEng: "",
+    middleNameEng: "",
+    lastNameEng: "",
+  });
+
+  const {
+    control,
+    trigger,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(
+      yup.object().shape({
+        firstName: firstNameMarathiValidationSchema,
+        middleName: middleNameMarathiValidationSchema,
+        lastName: lastNameMarathiValidationSchema,
+        firstNameEng: firstNameEnglishValidationSchema,
+        middleNameEng: middleNameEnglishValidationSchema,
+        lastNameEng: lastNameEnglishValidationSchema,
+      })
+    ),
+  });
+
+  const handleBlur = async (name) => {
+    await trigger(name);
+  };
+
+  const handleSuffix = (e) => {
+    const value = e?.target?.value;
+    const obj = suffixArr.find((o) => o.name_title == value);
+    setUserNoMhProp({
+      ...userNoMhProp,
+      suffix: value,
+      suffixEng: obj?.name_title_english,
+      suffixcode: obj?.name_title_code,
+      suffixCodeEng: obj?.name_title_code,
+    });
+  };
+
+  const handleUserDetails = (e) => {
+    const { name, value } = e?.target;
+    setUserDetails({ ...userDetails, [name]: value });
+    setUserNoMhProp({ ...userNoMhProp, [name]: value });
+  };
+
+  const getSuffix = () => {
+    sendRequest(
+      `${URLS?.BaseURL}/EPCISAPIS/nameTitleList`,
+      "POST",
+      null,
+      (res) => {
+        setSuffixArr(JSON.parse(res?.ResponseData));
+      },
+      (err) => {
+        errorToast(err?.Message);
+      }
+    );
+  };
+
+  useEffect(() => {
+    getSuffix();
+  }, []);
+
+  useEffect(() => {
+    setIsValid((prev) => ({
+      ...prev,
+      triggerUserNoMhProperty: trigger,
+    }));
+  }, [trigger, setIsValid]);
+
+  return (
+    <>
+      <Grid item md={12}>
+        <h4 className="heading">वैयक्तिक माहिती</h4>
+      </Grid>
+      <Grid item md={12}>
+        <InputLabel className="inputlabel">
+          <b>
+            वापरकर्त्याचे नाव <span> *</span> (नाव टाइप केल्यावर स्पेस बार दाबा.
+            उ.दा.:- mahesh &gt;&gt; महेश)
+          </b>
+        </InputLabel>
+        <Grid container justifyContent="space-between" alignItems="end">
+          <Grid item md={2}>
+            <Select
+              className="textfield"
+              fullWidth
+              size="small"
+              value={userNoMhProp?.suffix}
+              onChange={handleSuffix}
+            >
+              {Array.isArray(suffixArr) &&
+                suffixArr.slice(0, -1).map((val, i) => {
+                  return (
+                    <MenuItem value={val?.name_title} key={val?.name_title + i}>
+                      {val?.name_title}
+                    </MenuItem>
+                  );
+                })}
+            </Select>
+          </Grid>
+          <Grid item md={3}>
+            <Controller
+              name="firstName"
+              control={control}
+              render={({ field }) => (
+                <>
+                  <TransliterationTextField
+                    value={userNoMhProp?.firstName}
+                    name="firstName"
+                    placeholder="पहिले नाव"
+                    error={errors.firstName}
+                    {...field}
+                    onBlur={() => handleBlur("firstName")}
+                    // onChange={(e) => {
+                    //   field.onChange(e);
+                    //   handleUserDetails(e);
+                    // }}
+                    onChange={(e) => {
+                      const { name, value } = e.target;
+                      const filteredValue =
+                        filterOnlyMarathiAndEnglishLettersWithSpaces(value);
+                      field.onChange(filteredValue);
+                      handleUserDetails({
+                        target: { name, value: filteredValue },
+                      });
+                    }}
+                  />
+                  <FormHelperText sx={{ color: "red" }}>
+                    {errors.firstName && errors.firstName.message}
+                  </FormHelperText>
+                </>
+              )}
+            />
+          </Grid>
+          <Grid item md={3}>
+            <Controller
+              name="middleName"
+              control={control}
+              render={({ field }) => (
+                <>
+                  <TransliterationTextField
+                    value={userNoMhProp?.middleName}
+                    name="firstName"
+                    placeholder="मधले नाव"
+                    error={errors.middleName}
+                    {...field}
+                    onBlur={() => handleBlur("middleName")}
+                    // onChange={(e) => {
+                    //   field.onChange(e);
+                    //   handleUserDetails(e);
+                    // }}
+                    onChange={(e) => {
+                      const { name, value } = e.target;
+                      const filteredValue =
+                        filterOnlyMarathiAndEnglishLettersWithSpaces(value);
+                      field.onChange(filteredValue);
+                      handleUserDetails({
+                        target: { name, value: filteredValue },
+                      });
+                    }}
+                  />
+                  <FormHelperText sx={{ color: "red" }}>
+                    {errors.middleName && errors.middleName.message}
+                  </FormHelperText>
+                </>
+              )}
+            />
+          </Grid>
+          <Grid item md={3}>
+            <Controller
+              name="lastName"
+              control={control}
+              render={({ field }) => (
+                <>
+                  <TransliterationTextField
+                    value={userNoMhProp?.lastName}
+                    name="firstName"
+                    placeholder="आडनाव"
+                    error={errors.lastName}
+                    {...field}
+                    onBlur={() => handleBlur("lastName")}
+                    // onChange={(e) => {
+                    //   field.onChange(e);
+                    //   handleUserDetails(e);
+                    // }}
+                    onChange={(e) => {
+                      const { name, value } = e.target;
+                      const filteredValue =
+                        filterOnlyMarathiAndEnglishLettersWithSpaces(value);
+                      field.onChange(filteredValue);
+                      handleUserDetails({
+                        target: { name, value: filteredValue },
+                      });
+                    }}
+                  />
+                  <FormHelperText sx={{ color: "red" }}>
+                    {errors.lastName && errors.lastName.message}
+                  </FormHelperText>
+                </>
+              )}
+            />
+          </Grid>
+        </Grid>
+      </Grid>
+      <Grid item md={12}>
+        <Grid item md={12} mt={1}>
+          <InputLabel className="inputlabel">
+            <b>
+              वापरकर्त्याचे नाव <span> *</span> (इंग्रजी मध्ये)
+            </b>
+          </InputLabel>
+          <Grid container justifyContent="space-between">
+            <Grid item md={2}>
+              <TextField
+                fullWidth
+                value={userNoMhProp?.suffixEng}
+                className="textfieldDisabled"
+                disabled
+                size="small"
+              />
+            </Grid>
+            <Grid item md={3}>
+              <Controller
+                name="firstNameEng"
+                control={control}
+                render={({ field }) => (
+                  <>
+                    <TextField
+                      fullWidth
+                      className="textfield"
+                      value={userNoMhProp?.firstNameEng}
+                      name="firstNameEng"
+                      placeholder="First name"
+                      error={errors.firstNameEng}
+                      {...field}
+                      onBlur={() => handleBlur("firstNameEng")}
+                      onChange={(e) => {
+                        const { name, value } = e.target;
+                        const filteredValue = filterOnlyLettersAndSpaces(value);
+                        field.onChange(filteredValue);
+                        handleUserDetails({
+                          target: { name, value: filteredValue },
+                        });
+                      }}
+                      size="small"
+                    />
+                    <FormHelperText sx={{ color: "red" }}>
+                      {errors.firstNameEng && errors.firstNameEng.message}
+                    </FormHelperText>
+                  </>
+                )}
+              />
+            </Grid>
+            <Grid item md={3}>
+              <Controller
+                name="middleNameEng"
+                control={control}
+                render={({ field }) => (
+                  <>
+                    <TextField
+                      fullWidth
+                      className="textfield"
+                      value={userNoMhProp?.middleNameEng}
+                      name="middleNameEng"
+                      placeholder="Middle Name"
+                      error={errors.middleNameEng}
+                      {...field}
+                      onBlur={() => handleBlur("middleNameEng")}
+                      onChange={(e) => {
+                        const { name, value } = e.target;
+                        const filteredValue = filterOnlyLettersAndSpaces(value);
+                        field.onChange(filteredValue);
+                        handleUserDetails({
+                          target: { name, value: filteredValue },
+                        });
+                      }}
+                      size="small"
+                    />
+                    <FormHelperText sx={{ color: "red" }}>
+                      {errors.middleNameEng && errors.middleNameEng.message}
+                    </FormHelperText>
+                  </>
+                )}
+              />
+            </Grid>
+            <Grid item md={3}>
+              <Controller
+                name="lastNameEng"
+                control={control}
+                render={({ field }) => (
+                  <>
+                    <TextField
+                      fullWidth
+                      className="textfield"
+                      value={userNoMhProp?.lastNameEng}
+                      name="lastNameEng"
+                      placeholder="Surname"
+                      error={errors.lastNameEng}
+                      {...field}
+                      onBlur={() => handleBlur("lastNameEng")}
+                      onChange={(e) => {
+                        const { name, value } = e.target;
+                        const filteredValue = filterOnlyLettersAndSpaces(value);
+                        field.onChange(filteredValue);
+                        handleUserDetails({
+                          target: { name, value: filteredValue },
+                        });
+                      }}
+                      size="small"
+                    />
+                    <FormHelperText sx={{ color: "red" }}>
+                      {errors.lastNameEng && errors.lastNameEng.message}
+                    </FormHelperText>
+                  </>
+                )}
+              />
+            </Grid>
+          </Grid>
+        </Grid>
+      </Grid>
+    </>
+  );
+};
+
+export default UserNoMHProperty;

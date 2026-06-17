@@ -1,0 +1,37 @@
+.req-documents {
+  padding-top: 10px;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.heading-span {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111111;
+}
+
+.MuiDrawer-paper {
+  top: 20;
+}
+
+.css-1160xiw-MuiPaper-root-MuiDrawer-paper {
+  top: 20;
+}
+
+.textfield {
+  background-color: white;
+}
+
+.inputlabel {
+  font-size: 14px;
+}
+
+.inputlabel span {
+  color: red;
+  font-weight: 700;
+}
+
+.papermain {
+  background-color: #f9f9f9;
+  border-radius: 10px;
+}

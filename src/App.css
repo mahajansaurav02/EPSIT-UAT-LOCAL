@@ -1,0 +1,68 @@
+.App {
+  text-align: center;
+}
+.inputlabel {
+  font-size: 14px !important;
+}
+.inputlabel span {
+  color: red;
+  font-weight: 700;
+}
+.textfield {
+  background-color: #ffffff;
+}
+
+.textfield input[type="number"]::-webkit-outer-spin-button,
+.textfield input[type="number"]::-webkit-inner-spin-button {
+  display: none;
+}
+
+.textfield input[type="number"] {
+  -moz-appearance: textfield; /* For Firefox */
+  appearance: textfield;
+}
+
+.textfieldDisabled {
+  background-color: #d9d9d9;
+}
+.paper-back {
+  border-radius: 10px !important;
+  background-color: #c28b54 !important;
+}
+.paper-span {
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 400;
+}
+.paperm {
+  background-color: #f9f9f9 !important;
+  border-radius: 10px !important;
+}
+.papermain {
+  border-radius: 10px !important;
+  /* background: url("/public/images/Pattern_Page.svg") no-repeat bottom left,
+    #f9f9f9 !important; */
+}
+
+.heading {
+  /* background: linear-gradient(to right, #157f80, #f9f9f9 90%) !important; */
+  /* background: linear-gradient(to right, #c1ab97, #f9f9f9 90%) !important; */
+  background: linear-gradient(to right, #865534, #d7b38e 60%) !important;
+  color: #ffffff !important;
+  border-radius: 7px !important;
+  padding: 8px 0px 8px 10px !important;
+  margin: 16px 0px 8px 0px !important;
+}
+
+.heading_final {
+  /* background: linear-gradient(to right, #0184b2, #f9f9f9 90%) !important; */
+  /* background: linear-gradient(to right, #157f80, #f9f9f9 90%) !important; */
+  background: linear-gradient(to right, #865534, #d7b38e 60%) !important;
+  color: #ffffff !important;
+  border-radius: 7px !important;
+  padding: 8px 0px 8px 10px !important;
+}
+
+.final_preview_logo div img {
+  width: 4em;
+}
