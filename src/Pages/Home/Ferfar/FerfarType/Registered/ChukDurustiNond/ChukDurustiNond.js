@@ -55,6 +55,7 @@ const ChukDurustiNond = ({ applicationData }) => {
   const [isEdit, setIsEdit] = useState(false);
   const [userLoading, setUserLoading] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
+  const [chukDurustiKaranData, setChukDurustiKaranData] = useState([]);
 
   //---------------------------state up data of Address---------------------
   const [isIndian, setIsIndian] = useState("india");
@@ -174,140 +175,73 @@ const ChukDurustiNond = ({ applicationData }) => {
 
   //Object reference not set to an instance of an object.
   const handleSave = async () => {
-    if (isIndian == "india") {
-      const result = await trigger();
-      const isUserIndAdd = await isValid.triggerUserIndAdd();
+    const result = await trigger();
 
-      if (result && isUserIndAdd) {
-        if (applicationData?.mutation_type_code) {
-          successToast("Data is in console !");
-          console.info("payload->>", {
-            applicationid: applicationId,
-            village_code: applicationData?.village_code,
-            userDetails: {
-              subPropNo: subPropNo,
-              nabhu: naBhu,
-              lrPropertyUID: lrPropertyUID,
-              milkat: milkat,
-              namud: namud,
-              selectedMutation: applicationData?.mutation_type_code,
-              reason: reason,
-            },
-            address: {
-              addressType: isIndian,
-              indiaAddress: indiaAddress,
-            },
-          });
-        } else {
-          errorToast(" कृपया चूकदुरुस्ती नोंद करीता फेरफार निवडा");
-        }
+    const isAddressValid =
+      isIndian === "india"
+        ? await isValid.triggerUserIndAdd()
+        : await isValid.triggerUserForeignAdd();
 
-        sendRequest(
-          `${URLS?.BaseURL}/MutationAPIS/SaveErrorCorrectionInfo`,
-          "POST",
-          {
-            applicationid: applicationId,
-            village_code: applicationData?.village_code,
-            userDetails: {
-              subPropNo: subPropNo,
-              nabhu: naBhu,
-              lrPropertyUID: lrPropertyUID,
-              milkat: milkat,
-              namud: namud,
-              selectedMutation: applicationData?.mutation_type_code,
-              reason: reason,
-            },
-            address: {
-              addressType: isIndian,
-              indiaAddress: indiaAddress,
-            },
-          },
-          (res) => {
-            if (res?.Code == "1") {
-              successToast(res?.Message);
-              handleReset();
-              // getBhadepattaDenarTableData();
-            } else {
-              console.error(res?.Message);
-              errorToast(res?.Message);
-            }
-          },
-          (err) => {
-            errorToast(err?.Message);
-          },
-        );
-      } else {
-        errorToast("Please Check All Fields");
-      }
-    } else {
-      const result = await trigger();
-      const isUserForeignAdd = await isValid.triggerUserForeignAdd();
-      if (result && isUserForeignAdd) {
-        if (applicationData?.mutation_type_code) {
-          successToast("Data is in console !");
-          console.info("payload->>", {
-            applicationid: applicationId,
-            village_code: applicationData?.village_code,
-            userDetails: {
-              nabhu: naBhu,
-              lrPropertyUID: lrPropertyUID,
-              milkat: milkat,
-              namud: namud,
-              subPropNo: subPropNo,
-              // selectedMutation: applicationData?.mutation_type_code,
-              reason: reason,
-            },
-            address: {
-              addressType: isIndian,
-              foreignAddress: foraighnAddress,
-            },
-          });
-        } else {
-          errorToast(" कृपया चूकदुरुस्ती नोंद करीता फेरफार निवडा");
-        }
-        sendRequest(
-          `${URLS?.BaseURL}/MutationAPIS/SaveErrorCorrectionInfo`,
-          "POST",
-          {
-            applicationid: applicationId,
-            village_code: applicationData?.village_code,
-            userDetails: {
-              subPropNo: subPropNo,
-              nabhu: naBhu,
-              lrPropertyUID: lrPropertyUID,
-              milkat: milkat,
-              namud: namud,
-              // selectedMutation: applicationData?.mutation_type_code,
-              reason: reason,
-            },
-            address: {
-              addressType: isIndian,
-              indiaAddress: indiaAddress,
-            },
-          },
-          (res) => {
-            if (res?.Code == "1") {
-              successToast(res?.Message);
-              handleReset();
-              // getBhadepattaDenarTableData();
-            } else {
-              console.error(res?.Message);
-              errorToast(res?.Message);
-            }
-          },
-          (err) => {
-            errorToast(err?.Message);
-          },
-        );
-      } else {
-        errorToast("Please Check All Fields");
-      }
+    if (!result || !isAddressValid) {
+      errorToast("Please Check All Fields");
+      return;
     }
+
+    if (!applicationData?.mutation_type_code) {
+      errorToast("कृपया चूकदुरुस्ती नोंद करीता फेरफार निवडा");
+      return;
+    }
+
+    const payload = {
+      applicationid: applicationId,
+      // userid: 0,
+      village_code: applicationData?.village_code,
+      userDetails: {
+        subPropNo: subPropNo,
+        nabhu: naBhu,
+        lrPropertyUID: lrPropertyUID,
+        milkat: milkat,
+        namud: namud,
+        selectedMutation: applicationData?.mutation_type_code,
+        reason: reason,
+      },
+      address: {
+        addressType: isIndian,
+        ...(isIndian === "india"
+          ? {
+            indiaAddress: indiaAddress,
+          }
+          : {
+            foreignAddress: foraighnAddress,
+          }),
+      },
+    };
+
+    console.info("payload->>", payload);
+
+    sendRequest(
+      `${URLS?.BaseURL}/MutationAPIS/SaveErrorCorrectionInfo`,
+      "POST",
+      payload,
+      (res) => {
+        if (res?.Code === "1") {
+          successToast(res?.Message);
+          getChukDurustiData();
+          handleReset();
+        } else {
+          errorToast(res?.Message);
+        }
+      },
+      (err) => {
+        console.error(err);
+        errorToast(err?.Message || "Something went wrong");
+      }
+    );
   };
 
   const handleDelete = (id) => {
     sendRequest(
-      `${URLS?.BaseURL}/ApplicationAPIS/DeleteErrorCorrectionInfo`,
+      `${URLS?.BaseURL}/MutationAPIS/DeleteErrorCorrectionInfo`,
       "POST",
       {
         applicationid: applicationId,
@@ -317,6 +251,7 @@ const ChukDurustiNond = ({ applicationData }) => {
         if (res?.Code == "1") {
           successToast(res?.Message);
           getChukDurustiData();
+          getChukDurustiKaran();
         } else {
           errorToast(res?.Message);
         }
@@ -329,7 +264,7 @@ const ChukDurustiNond = ({ applicationData }) => {
 
   const getChukDurustiData = () => {
     sendRequest(
-      `${URLS?.BaseURL}/MutationAPIS/getErrorCorrectionInfo`,
+      `${URLS?.BaseURL}/MutationAPIS/GetErrorCorrectionInfo`,
       "POST",
       applicationId,
       (res) => {
@@ -344,6 +279,28 @@ const ChukDurustiNond = ({ applicationData }) => {
           } else {
             errorToast(res?.Message);
           }
+        }
+      },
+      (err) => {
+        console.log(err, "errorrrr");
+        errorToast(err?.Message);
+      },
+    );
+  };
+
+  const getChukDurustiKaran = () => {
+    sendRequest(
+      `${URLS?.BaseURL}/EPCISAPIS/getCorrectionMaster`,
+      "POST",
+      applicationId,
+      (res) => {
+        if (res?.Code === "1") {
+          const parsedData = JSON.parse(res?.ResponseData || "[]");
+          setChukDurustiKaranData(parsedData);
+          successToast(res?.Message);
+        } else {
+          setChukDurustiKaranData([]);
+          errorToast(res?.Message);
         }
       },
       (err) => {
@@ -414,7 +371,15 @@ const ChukDurustiNond = ({ applicationData }) => {
   };
   useEffect(() => {
     getChukDurustiData();
+    getChukDurustiKaran();
   }, []);
+
+  useEffect(() => {
+    if (responseData.length > 0) {
+      sessionStorage.setItem("allowPoa", "yes");
+      window.dispatchEvent(new Event("storage"));
+    }
+  }, [responseData]);
 
   const handleRadioChange = (row) => {
     setSelectedRow(row);
@@ -446,7 +411,7 @@ const ChukDurustiNond = ({ applicationData }) => {
       <Grid item md={12}>
         <NotesPaper
           heading="चूक दुरुस्ती माहिती भरण्यासाठी आवश्यक सूचना"
-          // arr={mryutupatraDenarNotesArrUnRegistered}
+        // arr={mryutupatraDenarNotesArrUnRegistered}
         />
       </Grid>
 
@@ -569,7 +534,7 @@ const ChukDurustiNond = ({ applicationData }) => {
                       fullWidth
                       className="textfield"
                       size="small"
-                      value={reason}
+                      // value={reason}
                       error={errors.reason}
                       {...field}
                       onBlur={() => handleBlur("reason")}
@@ -578,17 +543,18 @@ const ChukDurustiNond = ({ applicationData }) => {
                         handleReasonData(e);
                       }}
                     >
-                      {/* {Array.isArray(applicationData?.nabhDTL) &&
-                        applicationData?.nabhDTL.map((val, i) => {
+                      {Array.isArray(chukDurustiKaranData) &&
+                        chukDurustiKaranData.map((item) => {
                           return (
-                            <MenuItem value={val?.naBhu} key={val?.naBhu + i}>
-                              {val?.naBhu}
+                            <MenuItem key={item.sr_no_180}
+                              value={item.name_180}>
+                              {item?.name_180}
                             </MenuItem>
                           );
-                        })} */}
+                        })}
                     </Select>
                     <FormHelperText sx={{ color: "red" }}>
-                      {errors.nabhu && errors.nabhu.message}
+                      {errors.reason && errors.reason.message}
                     </FormHelperText>
                   </>
                 )}

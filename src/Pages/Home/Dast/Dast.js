@@ -403,7 +403,7 @@ const Dast = () => {
               dastNabhu: dastNabhu,
               isDastVarified: isDastVarified,
               verifiedDastData: JSON.stringify(verifiedDastData),
-              remarks: remarks,
+              remarks: "Na",
             },
             (res) => {
               if (res?.Code == "1") {

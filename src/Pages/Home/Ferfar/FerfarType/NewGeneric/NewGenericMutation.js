@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   FormControlLabel,
@@ -36,6 +36,8 @@ const NewGenericMutation = ({ applicationData }) => {
   const [subPropNo, setSubPropNo] = useState("");
   const [actualArea, setActualArea] = useState("");
   const [activeStep, setActiveStep] = useState(0);
+  const [denarCompleted, setDenarCompleted] = useState(false);
+  const [ghenarCompleted, setGhenarCompleted] = useState(false);
   const [obj, setObj] = useState({});
 
   const handleStep = (step) => () => {
@@ -72,6 +74,16 @@ const NewGenericMutation = ({ applicationData }) => {
     setSubPropNo(obj?.sub_property_no);
     setActualArea(obj?.cityServeyAreaInSqm);
   };
+
+  useEffect(() => {
+    if (denarCompleted && ghenarCompleted) {
+      sessionStorage.setItem("allowPoa", "yes");
+      window.dispatchEvent(new Event("storage"));
+    } else {
+      sessionStorage.setItem("allowPoa", "no");
+      window.dispatchEvent(new Event("storage"));
+    }
+  }, [denarCompleted, ghenarCompleted]);
 
   const steps = ["देणार", "घेणार"];
   return (
@@ -214,12 +226,14 @@ const NewGenericMutation = ({ applicationData }) => {
                             setActiveStep={setActiveStep}
                             applicationData={applicationData}
                             obj={obj}
+                            setDenarCompleted={setDenarCompleted}
                           />
                         )}
                         {activeStep == 1 && (
                           <Ghenar
                             applicationData={applicationData}
                             setActiveStep={setActiveStep}
+                            setGhenarCompleted={setGhenarCompleted}
                           />
                         )}
                       </React.Fragment>

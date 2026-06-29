@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import KharediDenar from "./SupportPages/CancellationDeedDenar";
 import { Box, Grid, Step, StepButton, Stepper } from "@mui/material";
 
-const steps = ["रद्दलेख देणार", ];
+const steps = ["रद्दलेख देणार",];
 const CancellationDeed = ({ applicationData }) => {
-  // const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState(0);
 
-  // const handleStep = (step) => () => {
-  //   setActiveStep(step);
-  // };
+  const handleStep = (step) => () => {
+    setActiveStep(step);
+  };
   return (
     <>
       <Grid item md={12}>
@@ -16,7 +16,7 @@ const CancellationDeed = ({ applicationData }) => {
           <Stepper sx={{ px: "400px" }}>
             {steps.map((label, index) => (
               <Step key={label}>
-                <StepButton color="inherit" >
+                <StepButton color="inherit" onClick={handleStep(index)}>
                   {label}
                 </StepButton>
               </Step>
@@ -24,12 +24,12 @@ const CancellationDeed = ({ applicationData }) => {
           </Stepper>
           <div style={{ marginTop: 10 }}>
             <React.Fragment>
-             
-                <KharediDenar
-                  // setActiveStep={setActiveStep}
-                  nabhuDataArr={applicationData?.nabhDTL}
-                  applicationData={applicationData}
-                />
+
+              <KharediDenar
+                setActiveStep={setActiveStep}
+                nabhuDataArr={applicationData?.nabhDTL}
+                applicationData={applicationData}
+              />
               {/* {activeStep == 1 && (
                 <KharediGhenar applicationData={applicationData} />
               )} */}

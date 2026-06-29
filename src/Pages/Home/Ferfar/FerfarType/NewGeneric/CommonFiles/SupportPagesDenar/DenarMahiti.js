@@ -34,7 +34,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import AddAdditionalDenarDetails from "./AddAdditionalDenarDetails";
 import ShowFilledDenarDetails from "./ShowFilledDenarDetails";
 
-const DenarMahiti = ({ applicationData, obj }) => {
+const DenarMahiti = ({ applicationData, obj, setDenarCompleted }) => {
   const { sendRequest } = AxiosInstance();
   const applicationId = sessionStorage.getItem("applicationId");
 
@@ -193,6 +193,12 @@ const DenarMahiti = ({ applicationData, obj }) => {
     if (!obj?.naBhu) return;
     getUserDetails(obj?.naBhu, obj?.sub_property_no);
   }, [obj]);
+
+  useEffect(() => {
+    if (denarData?.length > 0) {
+      setDenarCompleted(true);
+    }
+  }, [denarData]);
 
   useEffect(() => {
     getGenericDenarTableData();

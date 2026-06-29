@@ -500,7 +500,7 @@ const NavatBadalNond = ({ applicationData }) => {
       window.dispatchEvent(new Event("storage"));
     }
   }, [responseData]);
-  
+
   return (
     <>
       <Toast />
@@ -527,7 +527,7 @@ const NavatBadalNond = ({ applicationData }) => {
       <Grid item md={12}>
         <NotesPaper
           heading="नावात बदल माहिती भरण्यासाठी आवश्यक सूचना"
-          // arr={mryutupatraDenarNotesArrUnRegistered}
+        // arr={mryutupatraDenarNotesArrUnRegistered}
         />
       </Grid>
       <Grid item md={12}>
@@ -867,9 +867,9 @@ const NavatBadalNond = ({ applicationData }) => {
                   variant="outlined"
                   startIcon={<RotateRightRoundedIcon />}
                   sx={{ mr: 2 }}
-                  // onClick={() => {
-                  //   handleReset();
-                  // }}
+                // onClick={() => {
+                //   handleReset();
+                // }}
                 >
                   रीसेट करा
                 </Button>
