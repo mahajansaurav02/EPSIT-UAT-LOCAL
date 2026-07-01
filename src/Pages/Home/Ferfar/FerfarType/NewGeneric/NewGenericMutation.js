@@ -77,16 +77,6 @@ const NewGenericMutation = ({ applicationData }) => {
     setActualArea(obj?.cityServeyAreaInSqm);
   };
 
-  const handleDenarCompleted = () => {
-    setDenarCompleted(true);
-    setActiveStep(1);
-  };
-
-  const handleGhenarCompleted = () => {
-    setGhenarCompleted(true);
-    setActiveStep(2);
-  };
-
   useEffect(() => {
     if (denarCompleted && ghenarCompleted) {
       sessionStorage.setItem("allowPoa", "yes");
@@ -239,7 +229,8 @@ const NewGenericMutation = ({ applicationData }) => {
                             <Denar
                               applicationData={applicationData}
                               obj={obj}
-                              onCompleted={handleDenarCompleted}
+                              setActiveStep={setActiveStep}
+                              setDenarCompleted={setDenarCompleted}
                             />
                           </>
                         )}
@@ -248,7 +239,7 @@ const NewGenericMutation = ({ applicationData }) => {
                             <Ghenar
                               applicationData={applicationData}
                               setActiveStep={setActiveStep}
-                              onCompleted={handleGhenarCompleted}
+                              setGhenarCompleted={setGhenarCompleted}
                             />
                           </>
                         )}

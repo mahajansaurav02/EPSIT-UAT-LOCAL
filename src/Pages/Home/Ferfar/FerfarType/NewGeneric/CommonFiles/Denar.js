@@ -6,10 +6,10 @@ import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
 import { Toast } from "../../../../../../ui/Toast";
 import BojaKamiKarne from "../DiffFilesAccToMutation/BojaKamiKarne";
 
-const Denar = ({ applicationData, setActiveStep, obj, onCompleted }) => {
+const Denar = ({ applicationData, setActiveStep, obj, setDenarCompleted }) => {
   return (
     <>
-      <DenarMahiti applicationData={applicationData} obj={obj} onCompleted={onCompleted} />
+      <DenarMahiti applicationData={applicationData} obj={obj} setDenarCompleted={setDenarCompleted} />
 
       <Grid item textAlign="center" marginRight={2} marginTop={1}>
         <Button
