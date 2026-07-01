@@ -38,8 +38,6 @@ const NewGenericMutation = ({ applicationData }) => {
   const [subPropNo, setSubPropNo] = useState("");
   const [actualArea, setActualArea] = useState("");
   const [activeStep, setActiveStep] = useState(0);
-  const [denarCompleted, setDenarCompleted] = useState(false);
-  const [ghenarCompleted, setGhenarCompleted] = useState(false);
   const [obj, setObj] = useState({});
 
   const handleStep = (step) => () => {
@@ -76,16 +74,6 @@ const NewGenericMutation = ({ applicationData }) => {
     setSubPropNo(obj?.sub_property_no);
     setActualArea(obj?.cityServeyAreaInSqm);
   };
-
-  useEffect(() => {
-    if (denarCompleted && ghenarCompleted) {
-      sessionStorage.setItem("allowPoa", "yes");
-    } else {
-      sessionStorage.setItem("allowPoa", "no");
-    }
-
-    window.dispatchEvent(new Event("storage"));
-  }, [denarCompleted, ghenarCompleted]);
 
   const steps = ["देणार", "घेणार"];
   return (
@@ -230,7 +218,6 @@ const NewGenericMutation = ({ applicationData }) => {
                               applicationData={applicationData}
                               obj={obj}
                               setActiveStep={setActiveStep}
-                              setDenarCompleted={setDenarCompleted}
                             />
                           </>
                         )}
@@ -239,13 +226,15 @@ const NewGenericMutation = ({ applicationData }) => {
                             <Ghenar
                               applicationData={applicationData}
                               setActiveStep={setActiveStep}
-                              setGhenarCompleted={setGhenarCompleted}
                             />
                           </>
                         )}
                         {activeStep === 2 && (
                           <>
-                            <DenarGhenarTables />
+                            <DenarGhenarTables
+                              applicationData={applicationData}
+                              obj={obj}
+                            />
                           </>
                         )}
                       </React.Fragment>

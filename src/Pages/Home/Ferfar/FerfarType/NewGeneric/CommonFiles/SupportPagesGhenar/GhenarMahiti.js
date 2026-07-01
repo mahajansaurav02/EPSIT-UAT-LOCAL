@@ -48,7 +48,7 @@ import { genericGhenarNotesArr } from "../../../../../../../NotesArray/NotesArra
 import ShowAddress from "./ShowAddress";
 import AxiosInstance from "../../../../../../../Instance/AxiosInstance";
 
-const GhenarMahiti = ({ applicationData, setGhenarCompleted }) => {
+const GhenarMahiti = ({ applicationData }) => {
   const applicationId = sessionStorage.getItem("applicationId");
   const { sendRequest } = AxiosInstance();
   // const [giver, setGiverData] = useState([]);
@@ -470,7 +470,7 @@ const GhenarMahiti = ({ applicationData, setGhenarCompleted }) => {
           (res) => {
             if (res?.Code == "1") {
               successToast(res?.Message);
-              // handleReset();
+              handleReset();
               getGenericGhenarTableData();
             } else {
               console.error(res?.Message);
@@ -1508,7 +1508,6 @@ const GhenarMahiti = ({ applicationData, setGhenarCompleted }) => {
         if (res?.Code == "1") {
           successToast(res?.Message);
           setResponseData(res?.ResponseData);
-          setGhenarCompleted(true);
         } else {
           if (res?.ResponseData.length == 0) {
             setResponseData([]);
