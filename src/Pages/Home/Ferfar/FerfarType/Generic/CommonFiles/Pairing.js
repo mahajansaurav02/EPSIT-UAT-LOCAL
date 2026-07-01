@@ -121,8 +121,6 @@ const Pairing = ({ applicationData, setActiveStep }) => {
   }, []);
   return (
     <>
-      <Toast />
-
       <Paper elevation={5} sx={{ p: 2, mt: 2 }} className="papermain">
         <Grid container spacing={1}>
           <Grid item md={6}>

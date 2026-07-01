@@ -12,6 +12,7 @@ import { Provider } from "react-redux";
 import store from "./Redux/store";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import OfflineAlert from "./ui/OfflineAlert";
+import { Toast } from "./ui/Toast";
 
 const AdminLogin = lazy(() => import("./Pages/Admin/AdminLogin"));
 const GrievanceCompliance = lazy(
@@ -91,6 +92,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <Provider store={store}>
+        <Toast />
         <OfflineAlert />
         <Suspense fallback={<Loader />}>
           <HashRouter>
@@ -113,7 +115,7 @@ function App() {
                 path="/admin_login/grievance-compliance"
                 element={
                   // <ProtectedRouteAdmin>
-                    <GrievanceCompliance />
+                  <GrievanceCompliance />
                   // </ProtectedRouteAdmin>
                 }
               />
@@ -137,7 +139,7 @@ function App() {
                 path="/admin_login/grievance-compliance/inward-no-error"
                 element={
                   // <ProtectedRouteAdmin>
-                    <InwardNoError />
+                  <InwardNoError />
                   // </ProtectedRouteAdmin>
                 }
               />

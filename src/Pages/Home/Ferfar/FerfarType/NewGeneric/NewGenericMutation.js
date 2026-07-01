@@ -26,6 +26,7 @@ import { nabhuValidationSchema } from "../../../../../Validations/yupValidations
 import Hibanama from "./DiffFilesAccToMutation/Hibanama";
 import TabaPavti from "./DiffFilesAccToMutation/TabaPavti";
 import DeedmedConveyence from "./DiffFilesAccToMutation/DeedmedConveyence";
+import HibaNama from "../UnRegistered/HibaNama/HibaNama";
 
 const NewGenericMutation = ({ applicationData }) => {
   const applicationId = sessionStorage.getItem("applicationId");
@@ -77,20 +78,34 @@ const NewGenericMutation = ({ applicationData }) => {
 
   useEffect(() => {
     if (denarCompleted && ghenarCompleted) {
+      setActiveStep(2);
       sessionStorage.setItem("allowPoa", "yes");
-      window.dispatchEvent(new Event("storage"));
-    } else {
+    } else if (denarCompleted) {
+      setActiveStep(1);
       sessionStorage.setItem("allowPoa", "no");
-      window.dispatchEvent(new Event("storage"));
+    } else {
+      setActiveStep(0);
+      sessionStorage.setItem("allowPoa", "no");
     }
+
+    window.dispatchEvent(new Event("storage"));
   }, [denarCompleted, ghenarCompleted]);
 
   const steps = ["देणार", "घेणार"];
+  console.log("Current activeStep:", activeStep);
+  useEffect(() => {
+    console.log("NewGenericMutation Mounted");
+
+    return () => {
+      console.log("NewGenericMutation Unmounted");
+    };
+  }, []);
   return (
     <>
       <Grid item md={12}>
         {applicationData?.mutation_type_code == "07" && <BojaKamiKarne />}
         {applicationData?.mutation_type_code == "23" && <Hibanama />}
+        {/* {applicationData?.mutation_type_code == "23" && <HibaNama />} */}
         {applicationData?.mutation_type_code == "18" && <TabaPavti />}
         {applicationData?.mutation_type_code == "24" && <DeedmedConveyence />}
       </Grid>
@@ -221,20 +236,32 @@ const NewGenericMutation = ({ applicationData }) => {
                     </Stepper>
                     <div style={{ marginTop: 10 }}>
                       <React.Fragment>
-                        {activeStep == 0 && (
-                          <Denar
-                            setActiveStep={setActiveStep}
-                            applicationData={applicationData}
-                            obj={obj}
-                            setDenarCompleted={setDenarCompleted}
-                          />
+                        {activeStep === 0 && (
+                          <>
+                            {console.log("Rendering Denar")}
+                            <Denar
+                              applicationData={applicationData}
+                              obj={obj}
+                              setActiveStep={setActiveStep}
+                              setDenCompleted={setDenarCompleted}
+                            />
+                          </>
                         )}
-                        {activeStep == 1 && (
-                          <Ghenar
-                            applicationData={applicationData}
-                            setActiveStep={setActiveStep}
-                            setGhenarCompleted={setGhenarCompleted}
-                          />
+                        {activeStep === 1 && (
+                          <>
+                            {console.log("Rendering Ghenar")}
+                            <Ghenar
+                              applicationData={applicationData}
+                              setActiveStep={setActiveStep}
+                              setGhenarCompleted={setGhenarCompleted}
+                            />
+                          </>
+                        )}
+                        {activeStep === 2 && (
+                          <>
+                            {console.log("Rendering completed")}
+                            Completed
+                          </>
                         )}
                       </React.Fragment>
                     </div>

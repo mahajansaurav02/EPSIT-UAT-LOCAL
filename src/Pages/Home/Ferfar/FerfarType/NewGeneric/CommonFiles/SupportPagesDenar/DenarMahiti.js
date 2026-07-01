@@ -34,7 +34,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import AddAdditionalDenarDetails from "./AddAdditionalDenarDetails";
 import ShowFilledDenarDetails from "./ShowFilledDenarDetails";
 
-const DenarMahiti = ({ applicationData, obj, setDenarCompleted }) => {
+const DenarMahiti = ({ applicationData, obj, setDenCompleted }) => {
   const { sendRequest } = AxiosInstance();
   const applicationId = sessionStorage.getItem("applicationId");
 
@@ -106,6 +106,7 @@ const DenarMahiti = ({ applicationData, obj, setDenarCompleted }) => {
     const selectedData = userDataArr.filter((row) =>
       selectedRows.includes(`${row.mutation_srno}-${row.owner_number}`)
     );
+    console.log("selectedData", selectedData);
     const nabhuData = {
       naBhu: obj?.naBhu,
       lrPropertyUID: obj?.lrPropertyUID,
@@ -120,6 +121,7 @@ const DenarMahiti = ({ applicationData, obj, setDenarCompleted }) => {
       ...nabhuData,
       applicationId,
     }));
+    console.log("payload", JSON.stringify(mergedData, null, 2));
 
     if (selectedData.length === 0) {
       errorToast("कृपया निवडलेल्या न.भू.क्र. पैकी नाव/नावे निवडा");
@@ -196,7 +198,7 @@ const DenarMahiti = ({ applicationData, obj, setDenarCompleted }) => {
 
   useEffect(() => {
     if (denarData?.length > 0) {
-      setDenarCompleted(true);
+      setDenCompleted(true);
     }
   }, [denarData]);
 
@@ -245,7 +247,7 @@ const DenarMahiti = ({ applicationData, obj, setDenarCompleted }) => {
         <DialogTitle sx={{ m: 0, p: 3 }}>
           <IconButton
             aria-label="close"
-            onClick={() => setOpenEditAdditionalDataDialog(false)}
+            onClick={() => setOpenShowFilledDetailsDialog(false)}
             sx={{
               position: "absolute",
               right: 4,
@@ -256,7 +258,7 @@ const DenarMahiti = ({ applicationData, obj, setDenarCompleted }) => {
           </IconButton>
         </DialogTitle>
         <DialogContent>
-          <ShowFilledDenarDetails />
+          <ShowFilledDenarDetails data={denarData} />
         </DialogContent>
       </Dialog>
 

@@ -326,7 +326,6 @@ const ApplicationTYpe = () => {
 
   return (
     <>
-      <Toast />
       <Grid item md={12} mt={2}>
         <NotesPaper
           heading="अर्ज भरण्यासाठी आवश्यक सूचना"

@@ -12,7 +12,7 @@ import {
 import { useState } from "react";
 import SecuredHeader from "../../../ui/SecuredHeader";
 import AxiosInstance from "../../../Instance/AxiosInstance";
-import { errorToast, successToast, Toast } from "../../../ui/Toast";
+import { errorToast, successToast } from "../../../ui/Toast";
 import URLS from "../../../URLs/url";
 import ClearIcon from "@mui/icons-material/Clear";
 import { searchByApplicationIdNotes } from "../../../NotesArray/NotesArray";
@@ -49,7 +49,6 @@ const SearchByApplicationId = () => {
   };
   return (
     <>
-      <Toast />
       <AppBar position="fixed" color="default">
         <SecuredHeader />
       </AppBar>

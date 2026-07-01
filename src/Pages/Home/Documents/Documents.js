@@ -303,7 +303,6 @@ const Documents = () => {
 
   return (
     <>
-      <Toast />
       {/*------------------------------------------self declearation download dialog */}
       <Dialog
         open={openSelfDecleration}

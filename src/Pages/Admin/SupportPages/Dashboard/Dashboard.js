@@ -20,7 +20,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import AxiosInstance from "../../../../Instance/AxiosInstance";
 import URLS from "../../../../URLs/url";
-import { errorToast, Toast } from "../../../../ui/Toast";
+import { errorToast } from "../../../../ui/Toast";
 import ContentPasteGoRoundedIcon from "@mui/icons-material/ContentPasteGoRounded";
 import ReactApexChart from "react-apexcharts";
 import ApplicationTable from "./ApplicationTable";
@@ -466,13 +466,11 @@ const Dashboard = () => {
       },
     },
     title: {
-      text: `विभाग:- ${selectedValues?.division}, जिल्हा:- ${
-        selectedValues?.district
-      }, तालुका:- ${
-        selectedValues?.taluka
-      } फेरफार प्रकरणांचा अहवाल. (${formatDate(
-        dates?.fromDate
-      )} पासून ${formatDate(dates?.toDate)} पर्यंत)`,
+      text: `विभाग:- ${selectedValues?.division}, जिल्हा:- ${selectedValues?.district
+        }, तालुका:- ${selectedValues?.taluka
+        } फेरफार प्रकरणांचा अहवाल. (${formatDate(
+          dates?.fromDate
+        )} पासून ${formatDate(dates?.toDate)} पर्यंत)`,
     },
     plotOptions: {
       bar: {
@@ -527,7 +525,6 @@ const Dashboard = () => {
 
   return (
     <>
-      <Toast />
       <AppBar position="fixed" color="default">
         <SecuredHeader />
       </AppBar>

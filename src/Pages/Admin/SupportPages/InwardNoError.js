@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { errorToast, Toast } from "../../../ui/Toast";
+import { errorToast, } from "../../../ui/Toast";
 import {
   AppBar,
   Button,
@@ -158,7 +158,6 @@ const InwardNoError = () => {
   }, []);
   return (
     <>
-      <Toast />
       {/*------------------------------------Preview Dialog for submitted data--------------------- */}
       <Dialog onClose={handleDialogClose} open={open} maxWidth="lg">
         <DialogTitle sx={{ m: 0, p: 3 }}>

@@ -323,7 +323,6 @@ const CourtDawa = () => {
   }, []);
   return (
     <>
-      <Toast />
       <Grid container spacing={2}>
         <Grid item md={12} mt={2}>
           <Paper elevation={5} sx={{ px: 2, p: 3 }} className="paper-back">

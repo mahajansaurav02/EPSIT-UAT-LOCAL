@@ -239,12 +239,6 @@ const GhenarMahiti = ({ applicationData, setGhenarCompleted }) => {
     setAddVal(val?.address);
   };
 
-  useEffect(() => {
-    if (responseData?.length > 0) {
-      setGhenarCompleted(true);
-    }
-  }, [responseData]);
-
   const handleChangeUserType = (e) => {
     setUserType(e?.target?.value);
     const obj = userTypeArr.find(
@@ -303,6 +297,36 @@ const GhenarMahiti = ({ applicationData, setGhenarCompleted }) => {
     }
   };
   const handleSave = async () => {
+    const mergedData = {
+      usertype: userTypeLabel,
+      usertype_code: userType,
+      applicationid: applicationId,
+      photo: {
+        ...photo,
+      },
+      isMHProperty: {
+        hasProperty: isMHProperty,
+        propType: "0",
+        userDetails: { ...userNoMhProp },
+      },
+      dharak: {
+        userdharak: {
+          ...userDharak,
+        },
+      },
+      address: {
+        addressType: isIndian,
+        indiaAddress: {
+          ...indiaAddress,
+        },
+
+        foreignAddress: {
+          ...foraighnAddress,
+        },
+      },
+    };
+    console.log("payload", JSON.stringify(mergedData, null, 2));
+
     if (userType == 1 && isMHProperty == "no" && isIndian == "india") {
       const isUserNoMhProperty = await isValid.triggerUserNoMhProperty();
       const isUserIndAdd = await isValid.triggerUserIndAdd();
@@ -388,7 +412,7 @@ const GhenarMahiti = ({ applicationData, setGhenarCompleted }) => {
       const isUserDharak = await isValid.triggerUserDharak();
 
       if (isUserNoMhProperty && isUserForeignAdd && isUserDharak) {
-        // console.info("payload-generic-ghenar", {
+        // const mergedData = {
         //   usertype: userTypeLabel,
         //   usertype_code: userType,
         //   applicationid: applicationId,
@@ -412,7 +436,8 @@ const GhenarMahiti = ({ applicationData, setGhenarCompleted }) => {
         //       ...foraighnAddress,
         //     },
         //   },
-        // });
+        // };
+        // console.log("payload", JSON.stringify(mergedData, null, 2));
 
         sendRequest(
           `${URLS?.BaseURL}/MutationAPIS/CreateGenericeNondForTaker`,
@@ -445,7 +470,7 @@ const GhenarMahiti = ({ applicationData, setGhenarCompleted }) => {
           (res) => {
             if (res?.Code == "1") {
               successToast(res?.Message);
-              handleReset();
+              // handleReset();
               getGenericGhenarTableData();
             } else {
               console.error(res?.Message);
@@ -1483,6 +1508,7 @@ const GhenarMahiti = ({ applicationData, setGhenarCompleted }) => {
         if (res?.Code == "1") {
           successToast(res?.Message);
           setResponseData(res?.ResponseData);
+          // setGhenarCompleted(res?.ResponseData?.length > 0);
         } else {
           if (res?.ResponseData.length == 0) {
             setResponseData([]);
