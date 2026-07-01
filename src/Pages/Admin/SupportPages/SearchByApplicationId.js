@@ -12,16 +12,29 @@ import {
 import { useState } from "react";
 import SecuredHeader from "../../../ui/SecuredHeader";
 import AxiosInstance from "../../../Instance/AxiosInstance";
+<<<<<<< HEAD
 import { errorToast, successToast, Toast } from "../../../ui/Toast";
 import URLS from "../../../URLs/url";
 import ClearIcon from "@mui/icons-material/Clear";
 import { searchByApplicationIdNotes } from "../../../NotesArray/NotesArray";
+=======
+import { errorToast, successToast } from "../../../ui/Toast";
+import URLS from "../../../URLs/url";
+import ClearIcon from "@mui/icons-material/Clear";
+import { searchByApplicationIdNotes } from "../../../NotesArray/NotesArray";
+import { useNavigate } from "react-router-dom";
+import { ArrowBack } from "@mui/icons-material";
+>>>>>>> origin/main
 
 const SearchByApplicationId = () => {
   const { sendRequest } = AxiosInstance();
   const [applicationId, setApplicationId] = useState("");
   const [applicationData, setApplicationData] = useState({});
   const [showData, setShowData] = useState(false);
+<<<<<<< HEAD
+=======
+  const navigate = useNavigate();
+>>>>>>> origin/main
 
   const search = () => {
     sendRequest(
@@ -46,11 +59,22 @@ const SearchByApplicationId = () => {
   };
   return (
     <>
+<<<<<<< HEAD
       <Toast />
+=======
+>>>>>>> origin/main
       <AppBar position="fixed" color="default">
         <SecuredHeader />
       </AppBar>
       <Container sx={{ mt: 16 }}>
+<<<<<<< HEAD
+=======
+        <Grid item xs={10}>
+          <IconButton onClick={() => navigate(-1)}>
+            <ArrowBack />
+          </IconButton>
+        </Grid>
+>>>>>>> origin/main
         <Paper
           elevation={5}
           sx={{ backgroundColor: "#EFEFEF", p: 1, borderRadius: 2 }}

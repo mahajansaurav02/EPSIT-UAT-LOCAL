@@ -106,6 +106,10 @@ const DenarMahiti = ({ applicationData, obj }) => {
     const selectedData = userDataArr.filter((row) =>
       selectedRows.includes(`${row.mutation_srno}-${row.owner_number}`)
     );
+<<<<<<< HEAD
+=======
+    console.log("selectedData", selectedData);
+>>>>>>> origin/main
     const nabhuData = {
       naBhu: obj?.naBhu,
       lrPropertyUID: obj?.lrPropertyUID,
@@ -120,6 +124,10 @@ const DenarMahiti = ({ applicationData, obj }) => {
       ...nabhuData,
       applicationId,
     }));
+<<<<<<< HEAD
+=======
+    console.log("payload", JSON.stringify(mergedData, null, 2));
+>>>>>>> origin/main
 
     if (selectedData.length === 0) {
       errorToast("कृपया निवडलेल्या न.भू.क्र. पैकी नाव/नावे निवडा");
@@ -239,7 +247,11 @@ const DenarMahiti = ({ applicationData, obj }) => {
         <DialogTitle sx={{ m: 0, p: 3 }}>
           <IconButton
             aria-label="close"
+<<<<<<< HEAD
             onClick={() => setOpenEditAdditionalDataDialog(false)}
+=======
+            onClick={() => setOpenShowFilledDetailsDialog(false)}
+>>>>>>> origin/main
             sx={{
               position: "absolute",
               right: 4,
@@ -250,7 +262,11 @@ const DenarMahiti = ({ applicationData, obj }) => {
           </IconButton>
         </DialogTitle>
         <DialogContent>
+<<<<<<< HEAD
           <ShowFilledDenarDetails />
+=======
+          <ShowFilledDenarDetails data={denarData} />
+>>>>>>> origin/main
         </DialogContent>
       </Dialog>
 

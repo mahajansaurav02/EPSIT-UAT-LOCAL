@@ -12,7 +12,11 @@ import React, { useEffect, useState } from "react";
 import AxiosInstance from "../../../Instance/AxiosInstance";
 import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
 import URLS from "../../../URLs/url";
+<<<<<<< HEAD
 import { errorToast, successToast, Toast } from "../../../ui/Toast";
+=======
+import { errorToast, successToast } from "../../../ui/Toast";
+>>>>>>> origin/main
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -103,7 +107,10 @@ const UserDialogContent = ({ val, handleDialogClose }) => {
   }, [val]);
   return (
     <>
+<<<<<<< HEAD
       <Toast />
+=======
+>>>>>>> origin/main
       {/*---------------------------------------------------------तक्रार---------------------*/}
       <Grid container spacing={1} mb={2}>
         <Grid item md={12}>

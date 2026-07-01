@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from "react";
+<<<<<<< HEAD
 import { errorToast, Toast } from "../../../ui/Toast";
 import {
   AppBar,
+=======
+import { errorToast, } from "../../../ui/Toast";
+import {
+  AppBar,
+  Button,
+>>>>>>> origin/main
   CircularProgress,
   createTheme,
   CssBaseline,
@@ -25,6 +32,11 @@ import URLS from "../../../URLs/url";
 import AxiosInstance from "../../../Instance/AxiosInstance";
 import MUIDataTable from "mui-datatables";
 import InwardNoErrorDialogContent from "./InwardNoErrorDialogContent";
+<<<<<<< HEAD
+=======
+import { ArrowBack } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+>>>>>>> origin/main
 
 const InwardNoError = () => {
   const { sendRequest } = AxiosInstance();
@@ -35,6 +47,10 @@ const InwardNoError = () => {
 
   //----------------------------------Mui Datatables---------------------------
   const theme = createTheme();
+<<<<<<< HEAD
+=======
+  const navigate = useNavigate();
+>>>>>>> origin/main
   const columns = [
     {
       name: "serial",
@@ -154,7 +170,10 @@ const InwardNoError = () => {
   }, []);
   return (
     <>
+<<<<<<< HEAD
       <Toast />
+=======
+>>>>>>> origin/main
       {/*------------------------------------Preview Dialog for submitted data--------------------- */}
       <Dialog onClose={handleDialogClose} open={open} maxWidth="lg">
         <DialogTitle sx={{ m: 0, p: 3 }}>
@@ -183,6 +202,14 @@ const InwardNoError = () => {
       </AppBar>
 
       <Paper elevation={5} sx={{ p: 5, m: 3, mt: 16 }}>
+<<<<<<< HEAD
+=======
+        <Grid item xs={10}>
+          <IconButton onClick={() => navigate(-1)}>
+            <ArrowBack />
+          </IconButton>
+        </Grid>
+>>>>>>> origin/main
         <Grid container>
           <Grid item md={12}>
             <h4 className="heading">Error In Inward No.</h4>

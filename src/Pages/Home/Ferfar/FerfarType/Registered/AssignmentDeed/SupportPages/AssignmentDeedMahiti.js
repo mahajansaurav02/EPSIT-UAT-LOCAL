@@ -183,7 +183,11 @@ const AssignmentDeedMahiti = () => {
           bhadepattaTenureMonth: assignmenDeedDetails?.tenureMonth,
           bhadepattaFromDate: assignmenDeedDetails?.fromDate,
           bhadepattaToDate: assignmenDeedDetails?.toDate,
+<<<<<<< HEAD
         //   bhadepattaAmount: assignmenDeedDetails?.amount,
+=======
+          //   bhadepattaAmount: assignmenDeedDetails?.amount,
+>>>>>>> origin/main
         },
         (res) => {
           if (res?.Code == "1") {
@@ -262,8 +266,11 @@ const AssignmentDeedMahiti = () => {
 
   return (
     <>
+<<<<<<< HEAD
       <Toast />
 
+=======
+>>>>>>> origin/main
       <Grid item md={12}>
         <NotesPaper
           heading="असाइनमेंट डीड माहिती भरण्यासाठी आवश्यक सूचना"

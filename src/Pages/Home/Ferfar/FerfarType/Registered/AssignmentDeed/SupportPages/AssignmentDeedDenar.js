@@ -168,16 +168,26 @@ const AssignmentDeedDenar = ({ setActiveStep, nabhuDataArr, applicationData }) =
           const selectedDate = new Date(date);
           return selectedDate > thresholdDateOfDOB
             ? schema.required(
+<<<<<<< HEAD
                 "जन्म तारीख १ मे २०२४ नंतरची असेल तर आईचे नाव टाकणे गरजेचे आहे",
               )
+=======
+              "जन्म तारीख १ मे २०२४ नंतरची असेल तर आईचे नाव टाकणे गरजेचे आहे",
+            )
+>>>>>>> origin/main
             : schema.notRequired();
         }),
         motherNameEng: yup.string().when("dob", (date, schema) => {
           const selectedDate = new Date(date);
           return selectedDate > thresholdDateOfDOB
             ? schema.required(
+<<<<<<< HEAD
                 "जन्म तारीख १ मे २०२४ नंतरची असेल तर आईचे नाव इंग्रजीत टाकणे गरजेचे आहे",
               )
+=======
+              "जन्म तारीख १ मे २०२४ नंतरची असेल तर आईचे नाव इंग्रजीत टाकणे गरजेचे आहे",
+            )
+>>>>>>> origin/main
             : schema.notRequired();
         }),
       }),
@@ -764,7 +774,10 @@ const AssignmentDeedDenar = ({ setActiveStep, nabhuDataArr, applicationData }) =
   }, []);
   return (
     <>
+<<<<<<< HEAD
       <Toast />
+=======
+>>>>>>> origin/main
       {/*------------------------------------address preview dialog--------------------- */}
       <Dialog onClose={handleDialogClose} open={open} maxWidth="md">
         <DialogTitle sx={{ m: 0, p: 3 }}>
@@ -955,7 +968,11 @@ const AssignmentDeedDenar = ({ setActiveStep, nabhuDataArr, applicationData }) =
                             <MenuItem
                               key={val?.owner_number + i}
                               value={val?.owner_name}
+<<<<<<< HEAD
                               // value={`${val?.mutation_srno}${val?.owner_number}`}
+=======
+                            // value={`${val?.mutation_srno}${val?.owner_number}`}
+>>>>>>> origin/main
                             >
                               {val?.owner_name}
                             </MenuItem>
@@ -1769,21 +1786,35 @@ const AssignmentDeedDenar = ({ setActiveStep, nabhuDataArr, applicationData }) =
                         <TableCell>
                           {val?.userType == "व्यक्ती"
                             ? val?.dharak?.userdharak?.holderType
+<<<<<<< HEAD
                                 ?.owner_status_description
                             : val?.dharak?.companydharak?.holderType
                                 ?.owner_status_description}
+=======
+                              ?.owner_status_description
+                            : val?.dharak?.companydharak?.holderType
+                              ?.owner_status_description}
+>>>>>>> origin/main
                         </TableCell>
 
                         <TableCell>
                           {val?.userType == "व्यक्ती"
                             ? val?.dharak?.userdharak?.gender
+<<<<<<< HEAD
                                 ?.gender_description
+=======
+                              ?.gender_description
+>>>>>>> origin/main
                             : "-"}
                         </TableCell>
                         <TableCell>
                           {val?.userType == "व्यक्ती"
                             ? val?.dharak?.userdharak?.aapakDropdown
+<<<<<<< HEAD
                                 ?.apk_description
+=======
+                              ?.apk_description
+>>>>>>> origin/main
                             : "-"}
                         </TableCell>
                         <TableCell>

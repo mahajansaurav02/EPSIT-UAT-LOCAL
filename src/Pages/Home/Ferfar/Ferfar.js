@@ -259,6 +259,7 @@ const Ferfar = () => {
             {applicationData?.mutation_type_code == "24" && (
               <NewGenericMutation applicationData={applicationData} />
             )}
+<<<<<<< HEAD
               {applicationData.mutation_type_code == "23" && (
               <NewGenericMutation applicationData={applicationData} />
             )}
@@ -266,6 +267,15 @@ const Ferfar = () => {
               <AssignmentDeed applicationData={applicationData} />
             )} */}
              {applicationData?.mutation_type_code == "11" && (
+=======
+            {applicationData.mutation_type_code == "23" && (
+              <NewGenericMutation applicationData={applicationData} />
+            )}
+            {/* {applicationData?.mutation_type_code == "11" && (
+              <AssignmentDeed applicationData={applicationData} />
+            )} */}
+            {applicationData?.mutation_type_code == "11" && (
+>>>>>>> origin/main
               <CancellationDeed applicationData={applicationData} />
             )}
           </>
@@ -279,9 +289,15 @@ const Ferfar = () => {
                 applicationData={applicationData}
               />
             )}
+<<<<<<< HEAD
               {applicationData.mutation_type_code == "20" && (
                 <EeKuMyaNondkamiKarne applicationData={applicationData} />
               )}
+=======
+            {applicationData.mutation_type_code == "20" && (
+              <EeKuMyaNondkamiKarne applicationData={applicationData} />
+            )}
+>>>>>>> origin/main
             {applicationData.mutation_type_code == "18" && (
               // <GenericMutation applicationData={applicationData} />
               <NewGenericMutation applicationData={applicationData} />

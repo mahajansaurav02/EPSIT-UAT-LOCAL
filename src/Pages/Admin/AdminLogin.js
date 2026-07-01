@@ -15,7 +15,11 @@ import {
 } from "@mui/material";
 import RegistrationInstance from "../../Instance/RegisterInstance";
 import URLS from "../../URLs/url";
+<<<<<<< HEAD
 import { errorToast, Toast } from "../../ui/Toast";
+=======
+import { errorToast } from "../../ui/Toast";
+>>>>>>> origin/main
 import { useNavigate } from "react-router-dom";
 
 const AdminLogin = () => {
@@ -106,10 +110,17 @@ const AdminLogin = () => {
       district:
         value === 0
           ? {
+<<<<<<< HEAD
               district_code: 0,
               district_name: "all",
               district_english_name: "all",
             }
+=======
+            district_code: 0,
+            district_name: "all",
+            district_english_name: "all",
+          }
+>>>>>>> origin/main
           : obj,
     });
   };
@@ -180,7 +191,10 @@ const AdminLogin = () => {
   }, [loginUserType]);
   return (
     <>
+<<<<<<< HEAD
       <Toast />
+=======
+>>>>>>> origin/main
       <Header showSignInBtn={true} />
       <Grid
         container

@@ -25,7 +25,14 @@ export const useLogout = () => {
       },
       (err) => {
         console.error(err);
+<<<<<<< HEAD
       }
+=======
+        // API failed, but still logout locally
+        sessionStorage.clear();
+        role === null ? navigate("/login") : navigate("/admin_login");
+      },
+>>>>>>> origin/main
     );
   }, []);
 

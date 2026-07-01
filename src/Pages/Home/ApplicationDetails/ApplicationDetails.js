@@ -2265,8 +2265,11 @@ const ApplicationDetails = () => {
   }, []);
   return (
     <>
+<<<<<<< HEAD
       <Toast />
 
+=======
+>>>>>>> origin/main
       {/*------------------------------------address preview dialog--------------------- */}
       <Dialog onClose={handleDialogClose} open={open} maxWidth="md">
         <DialogTitle sx={{ m: 0, p: 3 }}>

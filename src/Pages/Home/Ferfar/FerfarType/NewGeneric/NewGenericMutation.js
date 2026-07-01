@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import React, { useState } from "react";
+=======
+import React, { useEffect, useState } from "react";
+>>>>>>> origin/main
 import {
   Box,
   FormControlLabel,
@@ -26,6 +30,11 @@ import { nabhuValidationSchema } from "../../../../../Validations/yupValidations
 import Hibanama from "./DiffFilesAccToMutation/Hibanama";
 import TabaPavti from "./DiffFilesAccToMutation/TabaPavti";
 import DeedmedConveyence from "./DiffFilesAccToMutation/DeedmedConveyence";
+<<<<<<< HEAD
+=======
+import HibaNama from "../UnRegistered/HibaNama/HibaNama";
+import DenarGhenarTables from "../Generic/CommonFiles/DenarGhenarTables";
+>>>>>>> origin/main
 
 const NewGenericMutation = ({ applicationData }) => {
   const applicationId = sessionStorage.getItem("applicationId");
@@ -79,6 +88,10 @@ const NewGenericMutation = ({ applicationData }) => {
       <Grid item md={12}>
         {applicationData?.mutation_type_code == "07" && <BojaKamiKarne />}
         {applicationData?.mutation_type_code == "23" && <Hibanama />}
+<<<<<<< HEAD
+=======
+        {/* {applicationData?.mutation_type_code == "23" && <HibaNama />} */}
+>>>>>>> origin/main
         {applicationData?.mutation_type_code == "18" && <TabaPavti />}
         {applicationData?.mutation_type_code == "24" && <DeedmedConveyence />}
       </Grid>
@@ -209,6 +222,7 @@ const NewGenericMutation = ({ applicationData }) => {
                     </Stepper>
                     <div style={{ marginTop: 10 }}>
                       <React.Fragment>
+<<<<<<< HEAD
                         {activeStep == 0 && (
                           <Denar
                             setActiveStep={setActiveStep}
@@ -221,6 +235,32 @@ const NewGenericMutation = ({ applicationData }) => {
                             applicationData={applicationData}
                             setActiveStep={setActiveStep}
                           />
+=======
+                        {activeStep === 0 && (
+                          <>
+                            <Denar
+                              applicationData={applicationData}
+                              obj={obj}
+                              setActiveStep={setActiveStep}
+                            />
+                          </>
+                        )}
+                        {activeStep === 1 && (
+                          <>
+                            <Ghenar
+                              applicationData={applicationData}
+                              setActiveStep={setActiveStep}
+                            />
+                          </>
+                        )}
+                        {activeStep === 2 && (
+                          <>
+                            <DenarGhenarTables
+                              applicationData={applicationData}
+                              obj={obj}
+                            />
+                          </>
+>>>>>>> origin/main
                         )}
                       </React.Fragment>
                     </div>

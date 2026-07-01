@@ -28,7 +28,11 @@ import AddIcon from "@mui/icons-material/Add";
 import SecuredHeader from "../../ui/SecuredHeader";
 import AxiosInstance from "../../Instance/AxiosInstance";
 import URLS from "../../URLs/url";
+<<<<<<< HEAD
 import { errorToast, successToast, Toast } from "../../ui/Toast";
+=======
+import { errorToast, successToast } from "../../ui/Toast";
+>>>>>>> origin/main
 import Swal from "sweetalert2";
 import TrutiPatra from "../../ui/NicDoc/TrutiPatra";
 import NoticeNine from "../../ui/NicDoc/NoticeNine";
@@ -186,8 +190,11 @@ const HomeApplication = () => {
   }, []);
   return (
     <>
+<<<<<<< HEAD
       <Toast />
 
+=======
+>>>>>>> origin/main
       {/*------------------------------------truti patra dialog--------------------- */}
       <Dialog
         onClose={handleTrutiPatraDialogClose}
@@ -377,7 +384,11 @@ const HomeApplication = () => {
                               {val?.nabhunos == null ? "-" : val?.nabhunos}
                             </TableCell>
                             <TableCell>
+<<<<<<< HEAD
                               {val?.uploaded_docName == null
+=======
+                              {val?.uploaded_docName == ""
+>>>>>>> origin/main
                                 ? "-"
                                 : val?.uploaded_docName}
                             </TableCell>
@@ -464,8 +475,13 @@ const HomeApplication = () => {
                                   val?.status?.code == 1
                                     ? "success"
                                     : val?.status?.code == 5
+<<<<<<< HEAD
                                     ? "error"
                                     : "warning"
+=======
+                                      ? "error"
+                                      : "warning"
+>>>>>>> origin/main
                                 }
                                 label={val?.status?.label}
                               />

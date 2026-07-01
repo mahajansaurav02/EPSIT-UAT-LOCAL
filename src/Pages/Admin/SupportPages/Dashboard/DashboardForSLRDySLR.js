@@ -20,7 +20,11 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import AxiosInstance from "../../../../Instance/AxiosInstance";
 import URLS from "../../../../URLs/url";
+<<<<<<< HEAD
 import { errorToast, Toast } from "../../../../ui/Toast";
+=======
+import { errorToast, } from "../../../../ui/Toast";
+>>>>>>> origin/main
 import ContentPasteGoRoundedIcon from "@mui/icons-material/ContentPasteGoRounded";
 import ReactApexChart from "react-apexcharts";
 import ApplicationTable from "./ApplicationTable";
@@ -385,7 +389,10 @@ const DashboardForSLRDySLR = () => {
 
   return (
     <>
+<<<<<<< HEAD
       <Toast />
+=======
+>>>>>>> origin/main
       <AppBar position="fixed" color="default">
         <SecuredHeader />
       </AppBar>

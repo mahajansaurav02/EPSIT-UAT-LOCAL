@@ -17,11 +17,22 @@ import {
   TableHead,
   TableRow,
   CircularProgress,
+<<<<<<< HEAD
+=======
+  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+>>>>>>> origin/main
 } from "@mui/material";
 import { errorToast, successToast, Toast } from "../../../../../../ui/Toast";
 import NotesPaper from "../../../../../../ui/NotesPaper/NotesPaper";
 import AxiosInstance from "../../../../../../Instance/AxiosInstance";
+<<<<<<< HEAD
 import { useState } from "react";
+=======
+import { useEffect, useState } from "react";
+>>>>>>> origin/main
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -33,8 +44,15 @@ import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined
 import SaveRoundedIcon from "@mui/icons-material/SaveRounded";
 import RotateRightRoundedIcon from "@mui/icons-material/RotateRightRounded";
 import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
+<<<<<<< HEAD
 
 const ChukDurustiNond = ({ applicationData }) => {
+=======
+import ShowAddress from "../SupportPages/ShowAddress";
+
+const ChukDurustiNond = ({ applicationData }) => {
+  // console.log(applicationData, "applicationData");
+>>>>>>> origin/main
   const { sendRequest } = AxiosInstance();
   const applicationId = sessionStorage.getItem("applicationId");
   const today = new Date().toISOString().split("T")[0];
@@ -49,6 +67,10 @@ const ChukDurustiNond = ({ applicationData }) => {
   const [isEdit, setIsEdit] = useState(false);
   const [userLoading, setUserLoading] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
+<<<<<<< HEAD
+=======
+  const [chukDurustiKaranData, setChukDurustiKaranData] = useState([]);
+>>>>>>> origin/main
 
   //---------------------------state up data of Address---------------------
   const [isIndian, setIsIndian] = useState("india");
@@ -85,7 +107,10 @@ const ChukDurustiNond = ({ applicationData }) => {
 
   //------------------------------Combined States----------------------------
   const [responseData, setResponseData] = useState([]);
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/main
   //--------------------------------Show Address-----------------------------
   const [open, setOpen] = useState(false);
   const [addVal, setAddVal] = useState({});
@@ -166,6 +191,7 @@ const ChukDurustiNond = ({ applicationData }) => {
     reset();
     setIsReset(!isReset);
   };
+<<<<<<< HEAD
   const handleSave = async () => {
     if (isIndian == "india") {
       const result = await trigger();
@@ -309,6 +335,144 @@ const ChukDurustiNond = ({ applicationData }) => {
         errorToast("Please Check All Fields");
       }
     }
+=======
+
+  //Object reference not set to an instance of an object.
+  const handleSave = async () => {
+    const result = await trigger();
+
+    const isAddressValid =
+      isIndian === "india"
+        ? await isValid.triggerUserIndAdd()
+        : await isValid.triggerUserForeignAdd();
+
+    if (!result || !isAddressValid) {
+      errorToast("Please Check All Fields");
+      return;
+    }
+
+    if (!applicationData?.mutation_type_code) {
+      errorToast("कृपया चूकदुरुस्ती नोंद करीता फेरफार निवडा");
+      return;
+    }
+
+    const payload = {
+      applicationid: applicationId,
+      // userid: 0,
+      village_code: applicationData?.village_code,
+      userDetails: {
+        subPropNo: subPropNo,
+        nabhu: naBhu,
+        lrPropertyUID: lrPropertyUID,
+        milkat: milkat,
+        namud: namud,
+        selectedMutation: applicationData?.mutation_type_code,
+        reason: reason,
+      },
+      address: {
+        addressType: isIndian,
+        ...(isIndian === "india"
+          ? {
+            indiaAddress: indiaAddress,
+          }
+          : {
+            foreignAddress: foraighnAddress,
+          }),
+      },
+    };
+
+    console.info("payload->>", payload);
+
+    sendRequest(
+      `${URLS?.BaseURL}/MutationAPIS/SaveErrorCorrectionInfo`,
+      "POST",
+      payload,
+      (res) => {
+        if (res?.Code === "1") {
+          successToast(res?.Message);
+          getChukDurustiData();
+          handleReset();
+        } else {
+          errorToast(res?.Message);
+        }
+      },
+      (err) => {
+        console.error(err);
+        errorToast(err?.Message || "Something went wrong");
+      }
+    );
+  };
+
+  const handleDelete = (id) => {
+    sendRequest(
+      `${URLS?.BaseURL}/MutationAPIS/DeleteErrorCorrectionInfo`,
+      "POST",
+      {
+        applicationid: applicationId,
+        error_correction_id: id,
+      },
+      (res) => {
+        if (res?.Code == "1") {
+          successToast(res?.Message);
+          getChukDurustiData();
+          getChukDurustiKaran();
+        } else {
+          errorToast(res?.Message);
+        }
+      },
+      (err) => {
+        errorToast(err?.Message);
+      },
+    );
+  };
+
+  const getChukDurustiData = () => {
+    sendRequest(
+      `${URLS?.BaseURL}/MutationAPIS/GetErrorCorrectionInfo`,
+      "POST",
+      applicationId,
+      (res) => {
+        if (res?.Code == "1") {
+          console.log(res, "response of chuk durusti info--->>");
+          successToast(res?.Message);
+          setResponseData(res?.ResponseData);
+        } else {
+          if (res?.ResponseData.length == 0) {
+            console.log(res, "checkkkkk response is empty");
+            setResponseData([]);
+          } else {
+            errorToast(res?.Message);
+          }
+        }
+      },
+      (err) => {
+        console.log(err, "errorrrr");
+        errorToast(err?.Message);
+      },
+    );
+  };
+
+  const getChukDurustiKaran = () => {
+    sendRequest(
+      `${URLS?.BaseURL}/EPCISAPIS/getCorrectionMaster`,
+      "POST",
+      applicationId,
+      (res) => {
+        if (res?.Code === "1") {
+          const parsedData = JSON.parse(res?.ResponseData || "[]");
+          setChukDurustiKaranData(parsedData);
+          successToast(res?.Message);
+        } else {
+          setChukDurustiKaranData([]);
+          errorToast(res?.Message);
+        }
+      },
+      (err) => {
+        console.log(err, "errorrrr");
+        errorToast(err?.Message);
+      },
+    );
+>>>>>>> origin/main
   };
   const handleNaBhuNo = (e) => {
     const code = e?.target?.value;
@@ -321,6 +485,10 @@ const ChukDurustiNond = ({ applicationData }) => {
     // getUserDetails(obj?.actual_cts_no, obj?.sub_property_no);
     // getUserDetails(obj?.actual_cts_no);
   };
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/main
   // const getUserDetails = (nabhuNo, subPropNo) => {
   //   sendRequest(
   //     `${URLS?.BaseURL}/EPCISAPIS/getOwnerNameInfo`,
@@ -343,6 +511,10 @@ const ChukDurustiNond = ({ applicationData }) => {
   //     }
   //   );
   // };
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/main
   const getUserDetails = (nabhuNo) => {
     setUserLoading(true);
     sendRequest(
@@ -368,6 +540,7 @@ const ChukDurustiNond = ({ applicationData }) => {
       },
     );
   };
+<<<<<<< HEAD
   // const handleUserName = (e) => {
   //   const code = e?.target?.value;
   //   const obj = userDataArr.find((o) => o?.owner_name == code);
@@ -416,15 +589,36 @@ const ChukDurustiNond = ({ applicationData }) => {
   //     },
   //   );
   // };
+=======
+  useEffect(() => {
+    getChukDurustiData();
+    getChukDurustiKaran();
+  }, []);
+
+  useEffect(() => {
+    if (responseData.length > 0) {
+      sessionStorage.setItem("allowPoa", "yes");
+      window.dispatchEvent(new Event("storage"));
+    }
+  }, [responseData]);
+>>>>>>> origin/main
 
   const handleRadioChange = (row) => {
     setSelectedRow(row);
   };
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/main
   return (
     <>
       <Toast />
       {/*------------------------------------address preview dialog--------------------- */}
+<<<<<<< HEAD
       {/* <Dialog onClose={handleDialogClose} open={open} maxWidth="md">
+=======
+      <Dialog onClose={handleDialogClose} open={open} maxWidth="md">
+>>>>>>> origin/main
         <DialogTitle sx={{ m: 0, p: 3 }}>
           <IconButton
             aria-label="close"
@@ -441,12 +635,20 @@ const ChukDurustiNond = ({ applicationData }) => {
         <DialogContent>
           <ShowAddress address={addVal} />
         </DialogContent>
+<<<<<<< HEAD
       </Dialog> */}
+=======
+      </Dialog>
+>>>>>>> origin/main
 
       <Grid item md={12}>
         <NotesPaper
           heading="चूक दुरुस्ती माहिती भरण्यासाठी आवश्यक सूचना"
+<<<<<<< HEAD
           // arr={mryutupatraDenarNotesArrUnRegistered}
+=======
+        // arr={mryutupatraDenarNotesArrUnRegistered}
+>>>>>>> origin/main
         />
       </Grid>
 
@@ -549,6 +751,7 @@ const ChukDurustiNond = ({ applicationData }) => {
                 </Grid>
               </Grid>
             </Grid>
+<<<<<<< HEAD
 
             {/* {!userLoading && userDataArr.length > 0 && (
               <Grid item md={12}>
@@ -607,13 +810,60 @@ const ChukDurustiNond = ({ applicationData }) => {
               </Grid>
             )} */}
 
+=======
+>>>>>>> origin/main
             {userLoading && (
               <Grid item md={12} textAlign="center">
                 <CircularProgress />
               </Grid>
             )}
 
+<<<<<<< HEAD
             <Grid item md={12}>
+=======
+            <Grid item md={3}>
+              <Controller
+                name="reason"
+                control={control}
+                render={({ field }) => (
+                  <>
+                    <InputLabel className="inputlabel">
+                      <b>चूक दुरुस्ती दस्त करण्याचे कारण </b>
+                      <span>*</span>
+                    </InputLabel>
+                    <Select
+                      fullWidth
+                      className="textfield"
+                      size="small"
+                      // value={reason}
+                      error={errors.reason}
+                      {...field}
+                      onBlur={() => handleBlur("reason")}
+                      onChange={(e) => {
+                        field.onChange(e);
+                        handleReasonData(e);
+                      }}
+                    >
+                      {Array.isArray(chukDurustiKaranData) &&
+                        chukDurustiKaranData.map((item) => {
+                          return (
+                            <MenuItem key={item.sr_no_180}
+                              value={item.name_180}>
+                              {item?.name_180}
+                            </MenuItem>
+                          );
+                        })}
+                    </Select>
+                    <FormHelperText sx={{ color: "red" }}>
+                      {errors.reason && errors.reason.message}
+                    </FormHelperText>
+                  </>
+                )}
+              />
+            </Grid>
+
+            {/* <Grid item md={12}>
+>>>>>>> origin/main
               <Controller
                 name="reason"
                 control={control}
@@ -645,7 +895,11 @@ const ChukDurustiNond = ({ applicationData }) => {
                   </>
                 )}
               />
+<<<<<<< HEAD
             </Grid>
+=======
+            </Grid> */}
+>>>>>>> origin/main
 
             <Grid item md={12}>
               <UserAddress
@@ -689,6 +943,85 @@ const ChukDurustiNond = ({ applicationData }) => {
             </Grid>
           </Grid>
         </Paper>
+<<<<<<< HEAD
+=======
+        <Grid item md={12} mt={2}>
+          <TableContainer component={Paper} elevation={5}>
+            <h3 style={{ marginLeft: 20 }}>चूक दुरुस्ती माहिती तक्ता</h3>
+            <Table>
+              <TableHead style={{ backgroundColor: "#F4F4F4" }}>
+                <TableRow>
+                  <TableCell>अ. क्र.</TableCell>
+                  <TableCell>
+                    जिल्हा / तालुका / न. भू. कार्यालय / गांव
+                  </TableCell>
+                  <TableCell>LR-Property UID</TableCell>
+                  <TableCell>अर्जमधील न.भू.क्र.</TableCell>
+                  <TableCell>Sub Property No.</TableCell>
+                  <TableCell>फेरफरसाठी मिळकत</TableCell>
+                  <TableCell>अर्जामध्ये नमूद मिळकत</TableCell>
+                  <TableCell>चूक दुरुस्ती दस्त करण्याचे कारण</TableCell>
+                  {/* <TableCell>नावात बदल कारण </TableCell>
+                  <TableCell>नावात बदल देणाऱ्याचे प्रकार </TableCell>
+                  <TableCell>नावात बदल झालेले नाव</TableCell>
+                  <TableCell>नावात बदल देणाऱ्याचा पत्ता</TableCell> */}
+                  {/* <TableCell>उर्फ नाव</TableCell> */}
+                  <TableCell>कृती करा</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {Array.isArray(responseData) &&
+                  responseData.map((val, i) => {
+                    return (
+                      <TableRow key={val?.mutation_dtl_id + i}>
+                        <TableCell>{i + 1}</TableCell>
+                        <TableCell>
+                          {applicationData?.district_name_in_marathi} /{" "}
+                          {applicationData?.taluka_name} /{" "}
+                          {applicationData?.village_name}
+                        </TableCell>
+                        <TableCell>{val?.userDetails?.lrPropertyUID}</TableCell>
+                        <TableCell>{val?.userDetails?.nabhu}</TableCell>
+                        <TableCell>{val?.userDetails?.subPropNo}</TableCell>
+                        <TableCell>
+                          {val?.userDetails?.milkat == "land"
+                            ? "भूखंड / जमीन (प्लॉट)"
+                            : "अपार्टमेंट"}
+                        </TableCell>
+                        <TableCell>{val?.userDetails?.namud}</TableCell>
+                        {/* <TableCell>
+                          {val?.selectedUserDetails[0]?.first_name}{" "}
+                          {val?.selectedUserDetails[0]?.middle_name}{" "}
+                          {val?.selectedUserDetails[0]?.last_name}
+                        </TableCell> */}
+                        <TableCell>{val?.userDetails?.reason}</TableCell>
+
+                        <TableCell>
+                          <Button
+                            variant="outlined"
+                            onClick={() => showAddress(val)}
+                          >
+                            पत्ता पहा
+                          </Button>
+                        </TableCell>
+                        <TableCell>
+                          <IconButton
+                            color="error"
+                            onClick={() =>
+                              handleDelete(val?.error_correction_id)
+                            }
+                          >
+                            <DeleteForeverOutlinedIcon />
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Grid>
+>>>>>>> origin/main
       </Grid>
     </>
   );

@@ -9,8 +9,11 @@ import BojaKamiKarne from "../DiffFilesAccToMutation/BojaKamiKarne";
 const Denar = ({ applicationData, setActiveStep, obj }) => {
   return (
     <>
+<<<<<<< HEAD
       {/* <Toast /> */}
 
+=======
+>>>>>>> origin/main
       <DenarMahiti applicationData={applicationData} obj={obj} />
 
       <Grid item textAlign="center" marginRight={2} marginTop={1}>

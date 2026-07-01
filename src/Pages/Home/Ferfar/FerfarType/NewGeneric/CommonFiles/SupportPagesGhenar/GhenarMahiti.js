@@ -297,6 +297,39 @@ const GhenarMahiti = ({ applicationData }) => {
     }
   };
   const handleSave = async () => {
+<<<<<<< HEAD
+=======
+    const mergedData = {
+      usertype: userTypeLabel,
+      usertype_code: userType,
+      applicationid: applicationId,
+      photo: {
+        ...photo,
+      },
+      isMHProperty: {
+        hasProperty: isMHProperty,
+        propType: "0",
+        userDetails: { ...userNoMhProp },
+      },
+      dharak: {
+        userdharak: {
+          ...userDharak,
+        },
+      },
+      address: {
+        addressType: isIndian,
+        indiaAddress: {
+          ...indiaAddress,
+        },
+
+        foreignAddress: {
+          ...foraighnAddress,
+        },
+      },
+    };
+    console.log("payload", JSON.stringify(mergedData, null, 2));
+
+>>>>>>> origin/main
     if (userType == 1 && isMHProperty == "no" && isIndian == "india") {
       const isUserNoMhProperty = await isValid.triggerUserNoMhProperty();
       const isUserIndAdd = await isValid.triggerUserIndAdd();
@@ -382,7 +415,11 @@ const GhenarMahiti = ({ applicationData }) => {
       const isUserDharak = await isValid.triggerUserDharak();
 
       if (isUserNoMhProperty && isUserForeignAdd && isUserDharak) {
+<<<<<<< HEAD
         // console.info("payload-generic-ghenar", {
+=======
+        // const mergedData = {
+>>>>>>> origin/main
         //   usertype: userTypeLabel,
         //   usertype_code: userType,
         //   applicationid: applicationId,
@@ -406,7 +443,12 @@ const GhenarMahiti = ({ applicationData }) => {
         //       ...foraighnAddress,
         //     },
         //   },
+<<<<<<< HEAD
         // });
+=======
+        // };
+        // console.log("payload", JSON.stringify(mergedData, null, 2));
+>>>>>>> origin/main
 
         sendRequest(
           `${URLS?.BaseURL}/MutationAPIS/CreateGenericeNondForTaker`,
@@ -1838,9 +1880,15 @@ const GhenarMahiti = ({ applicationData }) => {
                       <TableCell>
                         {val?.userType == "व्यक्ती"
                           ? val?.dharak?.userdharak?.holderType
+<<<<<<< HEAD
                               ?.owner_status_description
                           : val?.dharak?.companydharak?.holderType
                               ?.owner_status_description}
+=======
+                            ?.owner_status_description
+                          : val?.dharak?.companydharak?.holderType
+                            ?.owner_status_description}
+>>>>>>> origin/main
                       </TableCell>
 
                       <TableCell>
@@ -1851,7 +1899,11 @@ const GhenarMahiti = ({ applicationData }) => {
                       <TableCell>
                         {val?.userType == "व्यक्ती"
                           ? val?.dharak?.userdharak?.aapakDropdown
+<<<<<<< HEAD
                               ?.apk_description
+=======
+                            ?.apk_description
+>>>>>>> origin/main
                           : "-"}
                       </TableCell>
                       <TableCell>

@@ -73,7 +73,11 @@ const Dast = () => {
   const [isDastVarified, setIsDastVarified] = useState(false);
   const [verifiedDastData, setVerifiedDastData] = useState([]);
   const [showVerifyButton, setShowVerifyButton] = useState(false);
+<<<<<<< HEAD
   const [remarks, setRemarks] = useState("");
+=======
+  const [remarks, setRemarks] = useState("Na");
+>>>>>>> origin/main
   const [applicationData, setApplicationData] = useState({});
   const [responseData, setResponseData] = useState([]);
   const [disableNextBtn, setDisableShowNextBtn] = useState(true);
@@ -90,6 +94,10 @@ const Dast = () => {
     setValue,
     reset,
     formState: { errors },
+<<<<<<< HEAD
+=======
+    watch,
+>>>>>>> origin/main
   } = useForm({
     resolver: yupResolver(
       yup.object().shape({
@@ -110,14 +118,24 @@ const Dast = () => {
             (value) => {
               const year = parseInt(value, 10);
               return year >= 1908 && year <= currentYear;
+<<<<<<< HEAD
             }
+=======
+            },
+>>>>>>> origin/main
           ),
         dastNoDate: yup.string().required("Date is required"),
         // dastNabhu: yup
         //   .string()
         //   .required("दस्तामध्ये नमूद केलेले न.भू.क्र. टाका"),
+<<<<<<< HEAD
         remarks: yup.string().required("चुकदुरुस्ती करण्याचे कारण लिहा"),
       })
+=======
+        // remarks: yup.string().required("चुकदुरुस्ती करण्याचे कारण लिहा"),
+        remarks: yup.string(),
+      }),
+>>>>>>> origin/main
     ),
     defaultValues: {
       dastType: "",
@@ -128,10 +146,48 @@ const Dast = () => {
       dastNoYear: "",
       dastNoDate: "",
       // dastNabhu: "",
+<<<<<<< HEAD
       remarks: "",
     },
   });
 
+=======
+      remarks: "Na",
+    },
+  });
+
+  const hasMainDast = responseData.some((item) => item.dastType === "mainDast");
+
+  const hasErrorCorrect = responseData.some(
+    (item) => item.dastType === "errorCorrect",
+  );
+  const currentDastType = watch("dastType");
+
+  useEffect(() => {
+    if (applicationData?.mutation_type_code === "11") {
+      setDisableShowNextBtn(!(hasMainDast && hasErrorCorrect));
+    } else {
+      setDisableShowNextBtn(responseData.length === 0);
+    }
+  }, [
+    responseData,
+    applicationData?.mutation_type_code,
+    hasMainDast,
+    hasErrorCorrect,
+  ]);
+
+  const handleSaveClick = () => {
+    if (applicationData?.mutation_type_code === "11") {
+      if (responseData.length === 1 && currentDastType !== "errorCorrect") {
+        errorToast("कृपया रद्दलेख दस्त माहिती भरा!");
+        return;
+      }
+    }
+
+    isHardEdit ? handleEditSave() : handleSubmit();
+  };
+
+>>>>>>> origin/main
   const handleBlur = async (name) => {
     await trigger(name);
   };
@@ -174,7 +230,11 @@ const Dast = () => {
       },
       (err) => {
         console.error(err);
+<<<<<<< HEAD
       }
+=======
+      },
+>>>>>>> origin/main
     );
   };
   const handleDistrict = (e) => {
@@ -192,7 +252,11 @@ const Dast = () => {
       },
       (err) => {
         console.error(err);
+<<<<<<< HEAD
       }
+=======
+      },
+>>>>>>> origin/main
     );
   };
   const handleRegistrar = (e) => {
@@ -253,14 +317,22 @@ const Dast = () => {
               successToast(res?.Message);
               setVerifiedDastData(JSON.parse(res.ResponseData).Table);
               formatDate(
+<<<<<<< HEAD
                 JSON.parse(res?.ResponseData).Table[0].registration_date
+=======
+                JSON.parse(res?.ResponseData).Table[0].registration_date,
+>>>>>>> origin/main
               );
               formatNabhuNo(JSON.parse(res.ResponseData).Table);
               setIsDastVarified(true);
             } else {
               setIsDastVarified(false);
               warningToast(
+<<<<<<< HEAD
                 "कृपया नोंदणीकृत दस्त क्रमांक / वर्ष तपासा, अन्यथा दस्त दिनांक व दस्तामध्ये नमूद केलेले न.भू.क्र. टाका"
+=======
+                "कृपया नोंदणीकृत दस्त क्रमांक / वर्ष तपासा, अन्यथा दस्त दिनांक व दस्तामध्ये नमूद केलेले न.भू.क्र. टाका",
+>>>>>>> origin/main
               );
             }
           } else {
@@ -269,7 +341,11 @@ const Dast = () => {
         },
         (err) => {
           console.error(err);
+<<<<<<< HEAD
         }
+=======
+        },
+>>>>>>> origin/main
       );
     } else {
       errorToast("कृपया पूर्ण माहिती भरा.");
@@ -303,7 +379,11 @@ const Dast = () => {
             dastNabhu: dastNabhu,
             isDastVarified: isDastVarified,
             verifiedDastData: JSON.stringify(verifiedDastData),
+<<<<<<< HEAD
             remarks: "",
+=======
+            remarks: "Na",
+>>>>>>> origin/main
           },
           (res) => {
             if (res?.Code == "1") {
@@ -316,12 +396,20 @@ const Dast = () => {
           },
           (err) => {
             errorToast(err?.Message);
+<<<<<<< HEAD
           }
+=======
+          },
+>>>>>>> origin/main
         );
       } else {
         errorToast("Please Check All Fields !");
       }
     } else {
+<<<<<<< HEAD
+=======
+      const result = await trigger();
+>>>>>>> origin/main
       const newData = {
         applicationid: applicationId,
         dastType: dastType,
@@ -336,13 +424,25 @@ const Dast = () => {
         verifiedDastData: JSON.stringify(verifiedDastData),
         remarks: remarks,
       };
+<<<<<<< HEAD
+=======
+
+      if (!result) {
+        errorToast("Please Check All Fields !");
+        return;
+      }
+>>>>>>> origin/main
       const isDuplicate = responseData.some(
         (item) =>
           Number(item.divisionCode) === newData.division.digcode &&
           Number(item.districtCode) === newData.district.jdrcode &&
           Number(item.registrarCode) === newData.registrar.srocode &&
           item.dastNo === newData.dastNo &&
+<<<<<<< HEAD
           item.dastNoYear === newData.dastNoYear
+=======
+          item.dastNoYear === newData.dastNoYear,
+>>>>>>> origin/main
       );
       if (isDuplicate) {
         errorToast("Duplicate entry found. Cannot proceed.");
@@ -364,7 +464,11 @@ const Dast = () => {
               dastNabhu: dastNabhu,
               isDastVarified: isDastVarified,
               verifiedDastData: JSON.stringify(verifiedDastData),
+<<<<<<< HEAD
               remarks: remarks,
+=======
+              remarks: "Na",
+>>>>>>> origin/main
             },
             (res) => {
               if (res?.Code == "1") {
@@ -377,7 +481,11 @@ const Dast = () => {
             },
             (err) => {
               errorToast(err?.Message);
+<<<<<<< HEAD
             }
+=======
+            },
+>>>>>>> origin/main
           );
         } else {
           errorToast("Please Check All Fields !");
@@ -414,7 +522,11 @@ const Dast = () => {
             dastNabhu: dastNabhu,
             isDastVarified: isDastVarified,
             verifiedDastData: JSON.stringify(verifiedDastData),
+<<<<<<< HEAD
             remarks: "",
+=======
+            remarks: "Na",
+>>>>>>> origin/main
           },
           (res) => {
             if (res?.Code == "1") {
@@ -428,7 +540,11 @@ const Dast = () => {
           },
           (err) => {
             errorToast(err?.Message);
+<<<<<<< HEAD
           }
+=======
+          },
+>>>>>>> origin/main
         );
       } else {
         errorToast("Please Check All Fields !");
@@ -466,7 +582,11 @@ const Dast = () => {
           },
           (err) => {
             errorToast(err?.Message);
+<<<<<<< HEAD
           }
+=======
+          },
+>>>>>>> origin/main
         );
       } else {
         errorToast("Please Check All Fields !");
@@ -478,7 +598,11 @@ const Dast = () => {
     const obj = responseData.find((o) => o?.dast_id == id);
     setEditId(obj?.dast_id);
     setIsEdit(true);
+<<<<<<< HEAD
     console.log(obj, "check obj code")
+=======
+    console.log(obj, "check obj code");
+>>>>>>> origin/main
     setEditObj(obj);
 
     setDastType(obj?.dastType);
@@ -543,7 +667,11 @@ const Dast = () => {
       },
       (err) => {
         errorToast(err?.Message);
+<<<<<<< HEAD
       }
+=======
+      },
+>>>>>>> origin/main
     );
   };
   const goToHomePage = () => {
@@ -568,9 +696,16 @@ const Dast = () => {
       },
       (err) => {
         errorToast(err?.Message);
+<<<<<<< HEAD
       }
     );
   };
+=======
+      },
+    );
+  };
+
+>>>>>>> origin/main
   const getDastTable = () => {
     sendRequest(
       `${URLS?.BaseURL}/ApplicationAPIS/GetDastInfo`,
@@ -580,6 +715,7 @@ const Dast = () => {
         if (res?.Code == "1") {
           successToast(res?.Message);
           setResponseData(res?.ResponseData);
+<<<<<<< HEAD
           if (res?.ResponseData.length > 0) {
             setDisableShowNextBtn(false);
           } else {
@@ -589,6 +725,17 @@ const Dast = () => {
           if (res?.ResponseData.length == 0) {
             setResponseData([]);
             setDisableShowNextBtn(true);
+=======
+          // if (res?.ResponseData.length > 0) {
+          //   setDisableShowNextBtn(false);
+          // } else {
+          //   setDisableShowNextBtn(true);
+          // }
+        } else {
+          if (res?.ResponseData.length == 0) {
+            setResponseData([]);
+            // setDisableShowNextBtn(true);
+>>>>>>> origin/main
           } else {
             errorToast(res?.Message);
           }
@@ -596,7 +743,11 @@ const Dast = () => {
       },
       (err) => {
         errorToast(err?.Message);
+<<<<<<< HEAD
       }
+=======
+      },
+>>>>>>> origin/main
     );
   };
   const setInitialDivision = () => {
@@ -609,7 +760,11 @@ const Dast = () => {
       },
       (err) => {
         console.error(err);
+<<<<<<< HEAD
       }
+=======
+      },
+>>>>>>> origin/main
     );
   };
   useEffect(() => {
@@ -624,7 +779,10 @@ const Dast = () => {
 
   return (
     <>
+<<<<<<< HEAD
       <Toast />
+=======
+>>>>>>> origin/main
       <Grid container spacing={2}>
         <Grid item md={12} mt={2}>
           <Paper elevation={5} sx={{ px: 2, p: 3 }} className="paper-back">
@@ -810,6 +968,7 @@ const Dast = () => {
                       // />
 
                       <Controller
+<<<<<<< HEAD
   name="dastType"
   control={control}
   render={({ field }) => (
@@ -860,6 +1019,58 @@ const Dast = () => {
     </>
   )}
 />
+=======
+                        name="dastType"
+                        control={control}
+                        render={({ field }) => (
+                          <>
+                            <InputLabel className="inputlabel">
+                              <b>दस्त प्रकार </b>
+                              <span>*</span>
+                            </InputLabel>
+
+                            <Select
+                              className="textfield"
+                              fullWidth
+                              size="small"
+                              error={!!errors.dastType}
+                              {...field}
+                              onBlur={() => handleBlur("dastType")}
+                              onChange={(e) => {
+                                field.onChange(e);
+                                handleDastType(e);
+                              }}
+                            >
+                              <MenuItem
+                                value="mainDast"
+                                disabled={responseData.length >= 1}
+                              >
+                                {responseData.length >= 1
+                                  ? "मूळ दस्त (एकावेळी एकच मूळ दस्त भरता येईल)"
+                                  : "मूळ दस्त"}
+                              </MenuItem>
+
+                              <MenuItem
+                                value="errorCorrect"
+                                disabled={responseData.length === 0}
+                              >
+                                {responseData.length === 0
+                                  ? applicationData?.mutation_type_code === "11"
+                                    ? "रद्दलेख दस्त (मूळ दस्त माहिती भरणे अनिवार्य आहे)"
+                                    : "चूक दुरुस्ती (मूळ दस्त माहिती भरणे अनिवार्य आहे)"
+                                  : applicationData?.mutation_type_code === "11"
+                                    ? "रद्दलेख दस्त"
+                                    : "चूक दुरुस्ती"}
+                              </MenuItem>
+                            </Select>
+
+                            <FormHelperText sx={{ color: "red" }}>
+                              {errors.dastType?.message}
+                            </FormHelperText>
+                          </>
+                        )}
+                      />
+>>>>>>> origin/main
                     )}
                   </Grid>
                 </Grid>
@@ -1340,7 +1551,11 @@ const Dast = () => {
                                 field.onChange(
                                   e.target.value
                                     .replace(/[^0-9]/g, "")
+<<<<<<< HEAD
                                     .slice(0, 4)
+=======
+                                    .slice(0, 4),
+>>>>>>> origin/main
                                 );
                               }}
                             />
@@ -1550,7 +1765,11 @@ const Dast = () => {
                         )}
                       /> */}
 
+<<<<<<< HEAD
                       {isEdit ? (
+=======
+                      {/* {isEdit ? (
+>>>>>>> origin/main
                         <>
                           <InputLabel className="inputlabel">
                             <b>चुकदुरुस्ती करण्याचे कारण </b>
@@ -1592,7 +1811,11 @@ const Dast = () => {
                                   const { name, value } = e.target;
                                   const filteredValue =
                                     filterOnlyLettersNumbersCommaDotAndSpaces(
+<<<<<<< HEAD
                                       value
+=======
+                                      value,
+>>>>>>> origin/main
                                     );
                                   field.onChange(filteredValue);
                                   handleRemarks({
@@ -1606,7 +1829,11 @@ const Dast = () => {
                             </>
                           )}
                         />
+<<<<<<< HEAD
                       )}
+=======
+                      )} */}
+>>>>>>> origin/main
                     </Grid>
                   </Grid>
                 </Grid>
@@ -1657,7 +1884,11 @@ const Dast = () => {
                 <Button
                   variant="contained"
                   endIcon={<SaveRoundedIcon />}
+<<<<<<< HEAD
                   onClick={isHardEdit ? handleEditSave : handleSubmit}
+=======
+                  onClick={handleSaveClick}
+>>>>>>> origin/main
                 >
                   {isHardEdit ? "बदल जतन करा" : "जतन करा"}
                 </Button>
@@ -1693,6 +1924,7 @@ const Dast = () => {
                       <TableRow key={val?.dast_id + i}>
                         <TableCell>{i + 1}</TableCell>
                         <TableCell>{val?.applicationid}</TableCell>
+<<<<<<< HEAD
                           <TableCell>
                         {val?.dastType === "mainDast"
                           ? "मूळ दस्त"
@@ -1700,6 +1932,15 @@ const Dast = () => {
                           ? "रद्दलेख दुरुस्ती"
                           : "चूक दुरुस्ती"}
                       </TableCell>
+=======
+                        <TableCell>
+                          {val?.dastType === "mainDast"
+                            ? "मूळ दस्त"
+                            : applicationData?.mutation_type_code === "11"
+                              ? "रद्दलेख दुरुस्ती"
+                              : "चूक दुरुस्ती"}
+                        </TableCell>
+>>>>>>> origin/main
                         <TableCell>{val?.divisionName}</TableCell>
                         <TableCell>{val?.districtName}</TableCell>
                         <TableCell>{val?.registrarName}</TableCell>
@@ -1782,7 +2023,19 @@ const Dast = () => {
                 disableFocusListener
                 disableTouchListener
                 placement="top"
+<<<<<<< HEAD
                 title="कृपया दस्त माहिती भरा"
+=======
+                title={
+                  applicationData?.mutation_type_code === "11"
+                    ? !hasMainDast
+                      ? "कृपया मूळ दस्त माहिती भरा"
+                      : !hasErrorCorrect
+                        ? "कृपया रद्दलेख दस्त माहिती भरा"
+                        : ""
+                    : "कृपया दस्त माहिती भरा"
+                }
+>>>>>>> origin/main
               >
                 <span>
                   <Button

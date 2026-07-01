@@ -37,6 +37,10 @@ import TransliterationTextField from "../../../../../../ui/TranslationTextfield/
 
 const Hibanama = () => {
   const { sendRequest } = AxiosInstance();
+<<<<<<< HEAD
+=======
+  const applicationId = sessionStorage.getItem("applicationId");
+>>>>>>> origin/main
   const today = new Date().toISOString().split("T")[0];
   const [hibanamaDetails, setHibanamaDetails] = useState({
     permissionNo: "",
@@ -120,13 +124,119 @@ const Hibanama = () => {
     await trigger(name);
   };
   const handleReset = () => {
+<<<<<<< HEAD
     reset();
+=======
+    setHibanamaDetails({
+      permissionNo: "",
+      permissionDate: "",
+    });
+    setIsIndian("india");
+    setIndiaAdress({
+      plotNo: "",
+      building: "",
+      mainRoad: "",
+      impSymbol: "",
+      area: "",
+      mobile: "",
+      mobileOTP: "",
+      pincode: "",
+      postOfficeName: "",
+      city: "",
+      taluka: "",
+      district: "",
+      state: "",
+      addressProofName: "",
+      addressProofSrc: "",
+      signatureName: "",
+      signatureSrc: "",
+    });
+    setForaighnAddress({
+      address: "",
+      mobile: "",
+      email: "",
+      emailOTP: "",
+      signatureName: "",
+      signatureSrc: "",
+    });
+
+    reset();
+    setIsReset(!isReset);
+>>>>>>> origin/main
   };
   const handleHibanamaDetails = (e) => {
     const { name, value } = e?.target;
     setHibanamaDetails({ ...hibanamaDetails, [name]: value });
   };
 
+<<<<<<< HEAD
+=======
+  const handleSave = async () => {
+    if (isIndian == "india") {
+      const payload = {
+        applicationid: applicationId,
+        permissionNo: hibanamaDetails?.permissionNo,
+        permissionDate: hibanamaDetails?.permissionDate,
+        witnessDetails:
+        {
+          suffix: userNoMhProp?.suffix,
+          suffixEng: userNoMhProp?.suffixEng,
+          suffixcode: userNoMhProp?.suffixcode,
+          suffixCodeEng: userNoMhProp?.suffixCodeEng,
+          firstName: userNoMhProp?.firstName,
+          middleName: userNoMhProp?.middleName,
+          lastName: userNoMhProp?.lastName,
+          firstNameEng: userNoMhProp?.firstNameEng,
+          middleNameEng: userNoMhProp?.middleNameEng,
+          lastNameEng: userNoMhProp?.lastNameEng,
+          aliceName: aliceName,
+        },
+        address: {
+          addressType: isIndian,
+          ...(isIndian === "india"
+            ? {
+              indiaAddress: indiaAddress,
+            }
+            : {
+              foreignAddress: foraighnAddress,
+            }),
+        },
+      }
+      console.log("payload", JSON.stringify(payload, null, 2));
+    } else {
+      const payload = {
+        permissionNo: hibanamaDetails?.permissionNo,
+        permissionDate: hibanamaDetails?.permissionDate,
+        witnessDetails:
+        {
+          suffix: userNoMhProp?.suffix,
+          suffixEng: userNoMhProp?.suffixEng,
+          suffixcode: userNoMhProp?.suffixcode,
+          suffixCodeEng: userNoMhProp?.suffixCodeEng,
+          firstName: userNoMhProp?.firstName,
+          middleName: userNoMhProp?.middleName,
+          lastName: userNoMhProp?.lastName,
+          firstNameEng: userNoMhProp?.firstNameEng,
+          middleNameEng: userNoMhProp?.middleNameEng,
+          lastNameEng: userNoMhProp?.lastNameEng,
+          aliceName: aliceName,
+        },
+        address: {
+          addressType: isIndian,
+          ...(isIndian === "india"
+            ? {
+              indiaAddress: indiaAddress,
+            }
+            : {
+              foreignAddress: foraighnAddress,
+            }),
+        },
+      }
+      console.log("payload", JSON.stringify(payload, null, 2));
+    }
+  };
+
+>>>>>>> origin/main
   const getSuffix = () => {
     sendRequest(
       `${URLS?.BaseURL}/EPCISAPIS/nameTitleList`,
@@ -246,14 +356,22 @@ const Hibanama = () => {
                 variant="outlined"
                 startIcon={<RotateRightRoundedIcon />}
                 sx={{ mr: 2 }}
+<<<<<<< HEAD
                 // onClick={handleReset}
+=======
+                onClick={handleReset}
+>>>>>>> origin/main
               >
                 रीसेट करा
               </Button>
               <Button
                 variant="contained"
                 endIcon={<SaveRoundedIcon />}
+<<<<<<< HEAD
                 // onClick={handleSave}
+=======
+                onClick={handleSave}
+>>>>>>> origin/main
               >
                 जतन करा
               </Button>
@@ -283,7 +401,11 @@ const Hibanama = () => {
                     <TableCell>
                       <IconButton
                         color="error"
+<<<<<<< HEAD
                         // onClick={() => handleDelete(val?.mutation_dtl_id)}
+=======
+                      // onClick={() => handleDelete(val?.mutation_dtl_id)}
+>>>>>>> origin/main
                       >
                         <DeleteForeverOutlinedIcon />
                       </IconButton>

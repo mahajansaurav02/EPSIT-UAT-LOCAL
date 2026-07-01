@@ -119,7 +119,11 @@ const NavatBadalNond = ({ applicationData }) => {
     middleNameEng: "",
     lastNameEng: "",
     companyName: "",
+<<<<<<< HEAD
     companyNameEng: ""
+=======
+    companyNameEng: "",
+>>>>>>> origin/main
   });
   const [companyNoMhProp, setCompanyNoMhProp] = useState({
     companyName: "",
@@ -237,6 +241,7 @@ const NavatBadalNond = ({ applicationData }) => {
       },
     );
   };
+<<<<<<< HEAD
 const handleReset = () => {
   // 🔹 userDetails
   setSubPropNo("");
@@ -365,6 +370,192 @@ const handleReset = () => {
     }
   );
 };
+=======
+  const handleReset = () => {
+    // 🔹 userDetails
+    setSubPropNo("");
+    setNaBhu("");
+    setLrPropertyUID("");
+    setMilkat("land");
+    setNamud("");
+
+    // 🔹 name change
+    setNameChange("");
+
+    // 🔹 selected users
+    setSelectedUserArr([]);
+
+    // 🔹 updatedUserDetails
+    setUserType("");
+    setUserTypeLabel("");
+    setUserNoMhProp([]);
+
+    // 🔹 address type
+    setIsIndian("india");
+
+    // 🔹 India Address
+    setIndiaAdress({
+      plotNo: "",
+      building: "",
+      mainRoad: "",
+      impSymbol: "",
+      area: "",
+      mobile: "",
+      mobileOTP: "",
+      pincode: "",
+      postOfficeName: "",
+      city: "",
+      taluka: "",
+      district: "",
+      state: "",
+      addressProofName: "",
+      addressProofSrc: "",
+      signatureName: "",
+      signatureSrc: "",
+    });
+
+    // 🔹 Foreign Address
+    setForeignAddress({
+      address: "",
+      mobile: "",
+      email: "",
+      emailOTP: "",
+      signatureName: "",
+      signatureSrc: "",
+    });
+
+    // 🔹 react-hook-form reset
+    reset();
+
+    // 🔹 force UI refresh if needed
+    setIsReset((prev) => !prev);
+  };
+
+  const handleSave = async () => {
+    if (isIndian?.toLowerCase() === "india") {
+      const result = await trigger();
+      const isUserIndAdd = await isValid.triggerUserIndAdd();
+      const isUserNoMhProperty = await isValid.triggerUserNoMhProperty();
+
+      if (result && isUserIndAdd && isUserNoMhProperty) {
+        const payload = {
+          applicationid: applicationId,
+          village_code: applicationData?.village_code,
+          userDetails: {
+            subPropNo: subPropNo,
+            nabhu: naBhu,
+            lrPropertyUID: lrPropertyUID,
+            milkat: milkat,
+            namud: namud,
+          },
+          nameChange: nameChange,
+          selectedUserDetails: selectedUserArr,
+          updatedUserDetails: {
+            userType: userType,
+            userTypeLabel: userTypeLabel,
+            details: userNoMhProp,
+          },
+          address: {
+            addressType: isIndian,
+            indiaAddress: indiaAddress,
+          },
+        };
+
+        console.info("payload->>", payload);
+
+        sendRequest(
+          `${URLS?.BaseURL}/MutationAPIS/SaveNavatBadalData`,
+          "POST",
+          payload,
+          (res) => {
+            if (res?.Code === "1") {
+              successToast(res?.Message);
+              getNavatBadalData();
+            } else {
+              errorToast(res?.Message);
+            }
+          },
+          (err) => {
+            errorToast(err?.Message);
+          },
+        );
+      } else {
+        errorToast("Please Check All Fields");
+      }
+    } else {
+      const result = await trigger();
+      const isUserForeignAdd = await isValid.triggerUserForeignAdd();
+
+      if (result && isUserForeignAdd) {
+        const payload = {
+          applicationid: applicationId,
+          village_code: applicationData?.village_code,
+          userDetails: {
+            subPropNo: subPropNo,
+            nabhu: naBhu,
+            lrPropertyUID: lrPropertyUID,
+            milkat: milkat,
+            namud: namud,
+          },
+          nameChange: nameChange,
+          selectedUserDetails: selectedUserArr,
+          updatedUserDetails: {
+            userType: userType,
+            userTypeLabel: userTypeLabel,
+            details: userNoMhProp,
+          },
+          address: {
+            addressType: isIndian,
+            foreignAddress: foreignAddress,
+          },
+        };
+
+        console.info("payload->>", payload);
+
+        sendRequest(
+          `${URLS?.BaseURL}/MutationAPIS/SaveNavatBadalData`,
+          "POST",
+          payload,
+          (res) => {
+            if (res?.Code === "1") {
+              successToast(res?.Message);
+              getNavatBadalData();
+            } else {
+              errorToast(res?.Message);
+            }
+          },
+          (err) => {
+            errorToast(err?.Message);
+          },
+        );
+      } else {
+        errorToast("Please Check All Fields");
+      }
+    }
+  };
+
+  const handleDelete = (id) => {
+    sendRequest(
+      `${URLS?.BaseURL}/ApplicationAPIS/DeleteNavatBadalData`,
+      "POST",
+      {
+        applicationid: applicationId,
+        navatBadalId: id,
+      },
+      (res) => {
+        if (res?.Code == "1") {
+          successToast(res?.Message);
+          getNavatBadalData();
+        } else {
+          errorToast(res?.Message);
+        }
+      },
+      (err) => {
+        errorToast(err?.Message);
+      },
+    );
+  };
+>>>>>>> origin/main
 
   const getNavatBadalData = () => {
     sendRequest(
@@ -373,12 +564,20 @@ const handleReset = () => {
       applicationId,
       (res) => {
         if (res?.Code == "1") {
+<<<<<<< HEAD
           console.log(res,"response of navat badal info--->>")
+=======
+          console.log(res, "response of navat badal info--->>");
+>>>>>>> origin/main
           successToast(res?.Message);
           setResponseData(res?.ResponseData);
         } else {
           if (res?.ResponseData.length == 0) {
+<<<<<<< HEAD
             console.log(res,"checkkkkk response is empty")
+=======
+            console.log(res, "checkkkkk response is empty");
+>>>>>>> origin/main
             setResponseData([]);
           } else {
             errorToast(res?.Message);
@@ -386,11 +585,16 @@ const handleReset = () => {
         }
       },
       (err) => {
+<<<<<<< HEAD
         console.log(err,"errorrrr")
+=======
+        console.log(err, "errorrrr");
+>>>>>>> origin/main
         errorToast(err?.Message);
       },
     );
   };
+<<<<<<< HEAD
     // if (isIndian == "india") {
     //   const result = await trigger();
     //   const isUserIndAdd = await isValid.triggerUserIndAdd();
@@ -536,6 +740,8 @@ const handleReset = () => {
     //   }
     // }
   // };
+=======
+>>>>>>> origin/main
 
   const handleNameChange = (e) => {
     const { name, value } = e?.target;
@@ -581,6 +787,7 @@ const handleReset = () => {
   useEffect(() => {
     getReason();
     setIntialUserType();
+<<<<<<< HEAD
     getNavatBadalData()
   }, []);
     useEffect(() => {
@@ -589,6 +796,17 @@ const handleReset = () => {
         window.dispatchEvent(new Event("storage"));
       }
     }, [responseData]);
+=======
+    getNavatBadalData();
+  }, []);
+  useEffect(() => {
+    if (responseData.length > 0) {
+      sessionStorage.setItem("allowPoa", "yes");
+      window.dispatchEvent(new Event("storage"));
+    }
+  }, [responseData]);
+
+>>>>>>> origin/main
   return (
     <>
       <Toast />
@@ -974,6 +1192,7 @@ const handleReset = () => {
             </Grid>
           </Grid>
         </Paper>
+<<<<<<< HEAD
           <Grid item md={12} mt={2}>
                 <TableContainer component={Paper} elevation={5}>
                   <h3 style={{ marginLeft: 20 }}>नावात बदल माहिती तक्ता</h3>
@@ -1061,6 +1280,91 @@ const handleReset = () => {
                   </Table>
                 </TableContainer>
               </Grid>
+=======
+        <Grid item md={12} mt={2}>
+          <TableContainer component={Paper} elevation={5}>
+            <h3 style={{ marginLeft: 20 }}>नावात बदल माहिती तक्ता</h3>
+            <Table>
+              <TableHead style={{ backgroundColor: "#F4F4F4" }}>
+                <TableRow>
+                  <TableCell>अ. क्र.</TableCell>
+                  <TableCell>
+                    जिल्हा / तालुका / न. भू. कार्यालय / गांव
+                  </TableCell>
+                  <TableCell>LR-Property UID</TableCell>
+                  <TableCell>अर्जमधील न.भू.क्र.</TableCell>
+                  <TableCell>Sub Property No.</TableCell>
+                  <TableCell>फेरफरसाठी मिळकत</TableCell>
+                  <TableCell>अर्जामध्ये नमूद मिळकत</TableCell>
+                  <TableCell>नावात बदल होणारा धारक </TableCell>
+                  <TableCell>नावात बदल कारण </TableCell>
+                  <TableCell>नावात बदल देणाऱ्याचे प्रकार </TableCell>
+                  <TableCell>नावात बदल झालेले नाव</TableCell>
+                  <TableCell>नावात बदल देणाऱ्याचा पत्ता</TableCell>
+                  <TableCell>कृती करा</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {Array.isArray(responseData) &&
+                  responseData.map((val, i) => {
+                    return (
+                      <TableRow key={val?.mutation_dtl_id + i}>
+                        <TableCell>{i + 1}</TableCell>
+                        <TableCell>
+                          {applicationData?.district_name_in_marathi} /{" "}
+                          {applicationData?.taluka_name} /{" "}
+                          {applicationData?.village_name}
+                        </TableCell>
+                        <TableCell>{val?.userDetails?.lrPropertyUID}</TableCell>
+                        <TableCell>{val?.userDetails?.nabhu}</TableCell>
+                        <TableCell>{val?.userDetails?.subPropNo}</TableCell>
+                        <TableCell>
+                          {val?.userDetails?.milkat == "land"
+                            ? "भूखंड / जमीन (प्लॉट)"
+                            : "अपार्टमेंट"}
+                        </TableCell>
+                        <TableCell>{val?.userDetails?.namud}</TableCell>
+                        <TableCell>
+                          {val?.selectedUserDetails[0]?.first_name}{" "}
+                          {val?.selectedUserDetails[0]?.middle_name}{" "}
+                          {val?.selectedUserDetails[0]?.last_name}
+                        </TableCell>
+                        <TableCell>
+                          {val?.nameChange?.reason?.name_change_by_description}
+                        </TableCell>
+                        <TableCell>
+                          {val?.updatedUserDetails?.userTypeLabel}
+                        </TableCell>
+                        <TableCell>
+                          {val?.updatedUserDetails?.details?.firstName}{" "}
+                          {val?.updatedUserDetails?.details?.middleName}{" "}
+                          {val?.updatedUserDetails?.details?.lastName}
+                        </TableCell>
+
+                        <TableCell>
+                          <Button
+                            variant="outlined"
+                            onClick={() => showAddress(val)}
+                          >
+                            पत्ता पहा
+                          </Button>
+                        </TableCell>
+                        <TableCell>
+                          <IconButton
+                            color="error"
+                            onClick={() => handleDelete(val?.navatBadalId)}
+                          >
+                            <DeleteForeverOutlinedIcon />
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Grid>
+>>>>>>> origin/main
       </Grid>
     </>
   );

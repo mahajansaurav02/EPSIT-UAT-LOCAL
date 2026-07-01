@@ -57,7 +57,11 @@ const AxiosInstance = () => {
     return encryptedData;
   };
 
+<<<<<<< HEAD
   const decryptData = (encryptedData, base64Key, base64IV,url) => {
+=======
+  const decryptData = (encryptedData, base64Key, base64IV, url) => {
+>>>>>>> origin/main
     try {
       const key = forge.util.decode64(base64Key);
       const iv = forge.util.decode64(base64IV);
@@ -97,7 +101,11 @@ const AxiosInstance = () => {
             }
           );
         }
+<<<<<<< HEAD
                   console.log(`API=${url}`,data)
+=======
+        console.log(`API=${url}`, data)
+>>>>>>> origin/main
 
         return data;
       } else {
@@ -111,7 +119,11 @@ const AxiosInstance = () => {
 
   const sendRequest = useCallback(
     async (url, type = "GET", reqData, callback, errorCallback) => {
+<<<<<<< HEAD
       console.log(`RequestData for${url}`, reqData);
+=======
+      console.log(`RequestData for${url}`, type, reqData);
+>>>>>>> origin/main
       if (type === "POST") {
         await axios
           .post(
@@ -132,7 +144,11 @@ const AxiosInstance = () => {
               decryptData(
                 response?.data,
                 "6XhX8NxtWrlC/NbK3GXoh3TtH9UUt8KmgcuUG0RFEJM=",
+<<<<<<< HEAD
                 "t0tOwviXTieE5SZoh9/hzw==",url
+=======
+                "t0tOwviXTieE5SZoh9/hzw==", url
+>>>>>>> origin/main
               )
             );
           })
@@ -158,7 +174,11 @@ const AxiosInstance = () => {
             encryptData(
               reqData,
               "6XhX8NxtWrlC/NbK3GXoh3TtH9UUt8KmgcuUG0RFEJM=",
+<<<<<<< HEAD
               "t0tOwviXTieE5SZoh9/hzw==",url
+=======
+              "t0tOwviXTieE5SZoh9/hzw==", url
+>>>>>>> origin/main
             ),
             // reqData,
 
@@ -172,7 +192,11 @@ const AxiosInstance = () => {
               decryptData(
                 response?.data,
                 "6XhX8NxtWrlC/NbK3GXoh3TtH9UUt8KmgcuUG0RFEJM=",
+<<<<<<< HEAD
                 "t0tOwviXTieE5SZoh9/hzw==",url
+=======
+                "t0tOwviXTieE5SZoh9/hzw==", url
+>>>>>>> origin/main
               )
             );
           })
@@ -199,7 +223,11 @@ const AxiosInstance = () => {
               decryptData(
                 response?.data,
                 "6XhX8NxtWrlC/NbK3GXoh3TtH9UUt8KmgcuUG0RFEJM=",
+<<<<<<< HEAD
                 "t0tOwviXTieE5SZoh9/hzw==",url
+=======
+                "t0tOwviXTieE5SZoh9/hzw==", url
+>>>>>>> origin/main
               )
             );
           })
@@ -229,7 +257,11 @@ const AxiosInstance = () => {
               decryptData(
                 response?.data,
                 "6XhX8NxtWrlC/NbK3GXoh3TtH9UUt8KmgcuUG0RFEJM=",
+<<<<<<< HEAD
                 "t0tOwviXTieE5SZoh9/hzw==",url
+=======
+                "t0tOwviXTieE5SZoh9/hzw==", url
+>>>>>>> origin/main
               )
             );
           })
