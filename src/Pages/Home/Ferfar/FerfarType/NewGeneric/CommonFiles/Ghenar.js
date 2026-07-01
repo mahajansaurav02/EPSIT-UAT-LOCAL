@@ -2,18 +2,18 @@ import { Button, Grid } from "@mui/material";
 import GhenarMahiti from "./SupportPagesGhenar/GhenarMahiti";
 import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
 
-const Ghenar = ({ applicationData, setActiveStep, setGhenarCompleted }) => {
+const Ghenar = ({ applicationData, setActiveStep, onCompleted }) => {
   return (
     <>
-      <GhenarMahiti applicationData={applicationData} setGhenarCompleted={setGhenarCompleted} />
+      <GhenarMahiti applicationData={applicationData} onCompleted={onCompleted} />
 
       <Grid item textAlign="center" marginRight={2} marginTop={1}>
-        {/* <Button
+        <Button
           endIcon={<ArrowForwardRoundedIcon />}
           onClick={() => setActiveStep(2)}
         >
           देणार-घेणार
-        </Button> */}
+        </Button>
       </Grid>
     </>
   );

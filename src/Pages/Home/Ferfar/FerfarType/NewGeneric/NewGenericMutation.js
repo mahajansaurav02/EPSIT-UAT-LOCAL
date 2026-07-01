@@ -27,6 +27,7 @@ import Hibanama from "./DiffFilesAccToMutation/Hibanama";
 import TabaPavti from "./DiffFilesAccToMutation/TabaPavti";
 import DeedmedConveyence from "./DiffFilesAccToMutation/DeedmedConveyence";
 import HibaNama from "../UnRegistered/HibaNama/HibaNama";
+import DenarGhenarTables from "../Generic/CommonFiles/DenarGhenarTables";
 
 const NewGenericMutation = ({ applicationData }) => {
   const applicationId = sessionStorage.getItem("applicationId");
@@ -76,15 +77,20 @@ const NewGenericMutation = ({ applicationData }) => {
     setActualArea(obj?.cityServeyAreaInSqm);
   };
 
+  const handleDenarCompleted = () => {
+    setDenarCompleted(true);
+    setActiveStep(1);
+  };
+
+  const handleGhenarCompleted = () => {
+    setGhenarCompleted(true);
+    setActiveStep(2);
+  };
+
   useEffect(() => {
     if (denarCompleted && ghenarCompleted) {
-      setActiveStep(2);
       sessionStorage.setItem("allowPoa", "yes");
-    } else if (denarCompleted) {
-      setActiveStep(1);
-      sessionStorage.setItem("allowPoa", "no");
     } else {
-      setActiveStep(0);
       sessionStorage.setItem("allowPoa", "no");
     }
 
@@ -92,14 +98,6 @@ const NewGenericMutation = ({ applicationData }) => {
   }, [denarCompleted, ghenarCompleted]);
 
   const steps = ["देणार", "घेणार"];
-  console.log("Current activeStep:", activeStep);
-  useEffect(() => {
-    console.log("NewGenericMutation Mounted");
-
-    return () => {
-      console.log("NewGenericMutation Unmounted");
-    };
-  }, []);
   return (
     <>
       <Grid item md={12}>
@@ -238,29 +236,25 @@ const NewGenericMutation = ({ applicationData }) => {
                       <React.Fragment>
                         {activeStep === 0 && (
                           <>
-                            {console.log("Rendering Denar")}
                             <Denar
                               applicationData={applicationData}
                               obj={obj}
-                              setActiveStep={setActiveStep}
-                              setDenCompleted={setDenarCompleted}
+                              onCompleted={handleDenarCompleted}
                             />
                           </>
                         )}
                         {activeStep === 1 && (
                           <>
-                            {console.log("Rendering Ghenar")}
                             <Ghenar
                               applicationData={applicationData}
                               setActiveStep={setActiveStep}
-                              setGhenarCompleted={setGhenarCompleted}
+                              onCompleted={handleGhenarCompleted}
                             />
                           </>
                         )}
                         {activeStep === 2 && (
                           <>
-                            {console.log("Rendering completed")}
-                            Completed
+                            <DenarGhenarTables />
                           </>
                         )}
                       </React.Fragment>

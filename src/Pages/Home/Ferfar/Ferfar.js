@@ -149,14 +149,6 @@ const Ferfar = () => {
   };
 
   useEffect(() => {
-    console.log("Ferfar Mounted");
-
-    return () => {
-      console.log("Ferfar Unmounted");
-    };
-  }, []);
-
-  useEffect(() => {
     setApplicationDataApi();
   }, []);
 
