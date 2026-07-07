@@ -1,100 +1,57 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
-    FormControlLabel,
-    FormHelperText,
     Grid,
-    InputLabel,
-    MenuItem,
     Paper,
-    Radio,
-    RadioGroup,
-    Select,
-    TextField,
     Table,
     TableHead,
     TableBody,
     TableRow,
     TableCell,
-    Checkbox,
     TableContainer,
-    Button,
-    Box,
-    IconButton,
     Dialog,
     DialogTitle,
+    IconButton,
     DialogContent,
-    CircularProgress,
+    Button,
 } from "@mui/material";
-import AxiosInstance from "../../../../../../Instance/AxiosInstance";
-import URLS from "../../../../../../URLs/url";
-import { errorToast } from "../../../../../../ui/Toast";
+import CloseIcon from "@mui/icons-material/Close";
+import ShowAddress from "./SupportPagesGhenar/ShowAddress";
 
-const DenarGhenarTables = ({ applicationData }) => {
-    const { sendRequest } = AxiosInstance();
+const HibanamaTables = ({ applicationData, denarData, ghenarData }) => {
+    const [open, setOpen] = useState(false);
+    const [addVal, setAddVal] = useState({});
 
-    const applicationId = sessionStorage.getItem("applicationId");
-
-    const [denarData, setDenarData] = useState([]);
-    const [ghenarData, setGhenarData] = useState([]);
-    const [denarCompleted, setDenarCompleted] = useState(false);
-    const [ghenarCompleted, setGhenarCompleted] = useState(false);
-
-    useEffect(() => {
-        getDenarTable();
-        getGhenarTable();
-    }, [applicationId]);
-
-    const getDenarTable = () => {
-        sendRequest(
-            `${URLS.BaseURL}/MutationAPIS/GetGenericNondForGiver`,
-            "POST",
-            applicationId,
-            (res) => {
-                if (res?.Code === "1") {
-                    setDenarData(res.ResponseData);
-                    setDenarCompleted(true);
-                } else {
-                    setDenarData([]);
-                }
-            },
-            (err) => errorToast(err?.Message)
-        );
+    const showAddress = (val) => {
+        setOpen(true);
+        setAddVal(val?.address);
     };
 
-    const getGhenarTable = () => {
-        sendRequest(
-            `${URLS.BaseURL}/MutationAPIS/GetGenericNondTakerInfo`,
-            "POST",
-            applicationId,
-            (res) => {
-                if (res?.Code === "1") {
-                    setGhenarData(res.ResponseData);
-                    setGhenarCompleted(true);
-                } else {
-                    setGhenarData([]);
-                }
-            },
-            (err) => errorToast(err?.Message)
-        );
+    const handleDialogClose = () => {
+        setOpen(false);
     };
 
-    useEffect(() => {
-
-        const completed =
-            denarData.length > 0 &&
-            ghenarData.length > 0;
-
-        sessionStorage.setItem(
-            "allowPoa",
-            completed ? "yes" : "no"
-        );
-
-        window.dispatchEvent(new Event("storage"));
-
-    }, [denarData, ghenarData]);
 
     return (
         <>
+
+            <Dialog onClose={handleDialogClose} open={open} maxWidth="md">
+                <DialogTitle sx={{ m: 0, p: 3 }}>
+                    <IconButton
+                        aria-label="close"
+                        onClick={() => setOpen(false)}
+                        sx={{
+                            position: "absolute",
+                            right: 4,
+                            top: 4,
+                        }}
+                    >
+                        <CloseIcon />
+                    </IconButton>
+                </DialogTitle>
+                <DialogContent>
+                    <ShowAddress address={addVal} />
+                </DialogContent>
+            </Dialog>
             <Grid item md={12}>
                 <TableContainer component={Paper} elevation={5}>
                     <h3 style={{ marginLeft: 20 }}>देणार माहिती तक्ता</h3>
@@ -114,8 +71,6 @@ const DenarGhenarTables = ({ applicationData }) => {
                                 <TableCell>मिळकत पत्रिके प्रमाणे क्षेत्र (चौ.मी.)</TableCell>
                                 <TableCell>देणाऱ्याच्या नावे क्षेत्र (चौ.मी.)</TableCell>
                                 <TableCell>फेरफारासाठी दिलेले क्षेत्र (चौ.मी.)</TableCell>
-                                <TableCell>भरलेली माहिती</TableCell>
-                                <TableCell>कृती करा</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -166,14 +121,12 @@ const DenarGhenarTables = ({ applicationData }) => {
                                 <TableCell>जिल्हा / तालुका / न. भू. कार्यालय / गांव</TableCell>
                                 <TableCell>घेणाराचा प्रकार</TableCell>
                                 <TableCell>घेणाऱ्याचे नाव</TableCell>
-                                <TableCell>घेणाऱ्याचा पत्ता</TableCell>
                                 <TableCell>उर्फ नाव</TableCell>
                                 <TableCell>धारक प्रकार</TableCell>
                                 <TableCell>स्त्री /पुरुष</TableCell>
                                 <TableCell>अ.पा.क/ ए.कू.मॅ.</TableCell>
                                 <TableCell>जन्म दिनांक</TableCell>
-                                <TableCell>अ.पा.क</TableCell>
-                                <TableCell>कृती करा</TableCell>
+                                <TableCell>घेणाऱ्याचा पत्ता</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -219,9 +172,12 @@ const DenarGhenarTables = ({ applicationData }) => {
                                                     : "-"}
                                             </TableCell>
                                             <TableCell>
-                                                {val?.userType == "व्यक्ती"
-                                                    ? val?.dharak?.userdharak?.aapak
-                                                    : "-"}
+                                                <Button
+                                                    variant="outlined"
+                                                    onClick={() => showAddress(val)}
+                                                >
+                                                    पत्ता पहा
+                                                </Button>
                                             </TableCell>
                                         </TableRow>
                                     );
@@ -234,4 +190,4 @@ const DenarGhenarTables = ({ applicationData }) => {
     );
 };
 
-export default DenarGhenarTables;
+export default HibanamaTables;

@@ -303,6 +303,7 @@ const Documents = () => {
 
   return (
     <>
+      <Toast />
       {/*------------------------------------------self declearation download dialog */}
       <Dialog
         open={openSelfDecleration}
@@ -653,6 +654,10 @@ const Documents = () => {
               endIcon={<ArrowForwardRoundedIcon />}
               // onClick={() => navigate("/home/self-decleration")}
               onClick={checkMandatoryDocs}
+              disabled={
+                selectedDocs.filter((doc) => doc.document_is_mandatory).length >
+                responseData.length
+              }
             >
               पुढे जा
             </Button>

@@ -24,6 +24,7 @@ import {
   DialogContent,
   CircularProgress,
 } from "@mui/material";
+import SaveRoundedIcon from "@mui/icons-material/SaveRounded";
 import { useEffect, useState } from "react";
 import { errorToast, successToast, Toast } from "../../../../../../../ui/Toast";
 import URLS from "../../../../../../../URLs/url";
@@ -323,6 +324,7 @@ const DenarMahiti = ({ applicationData, obj }) => {
                 <Button
                   variant="contained"
                   color="primary"
+                  endIcon={<SaveRoundedIcon />}
                   onClick={handleSelected}
                 >
                   जतन करा

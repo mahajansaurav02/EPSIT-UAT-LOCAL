@@ -33,13 +33,13 @@ import CompanyMHPropertyTypePropertyCard from "./Company/MHProperty/CompanyMHPro
 import CompanyMHPropertyTypeULPIN from "./Company/MHProperty/CompanyMHPropertyTypeULPIN";
 import SaveRoundedIcon from "@mui/icons-material/SaveRounded";
 import RotateRightRoundedIcon from "@mui/icons-material/RotateRightRounded";
+import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
 import UserAddress from "./UserAddress";
 import UserDharak from "./UserDharak";
 import CompanyDharak from "./CompanyDharak";
 import {
   errorToast,
   successToast,
-  Toast,
   warningToast,
 } from "../../../../../../../ui/Toast";
 import URLS from "../../../../../../../URLs/url";
@@ -48,10 +48,9 @@ import { genericGhenarNotesArr } from "../../../../../../../NotesArray/NotesArra
 import ShowAddress from "./ShowAddress";
 import AxiosInstance from "../../../../../../../Instance/AxiosInstance";
 
-const GhenarMahiti = ({ applicationData }) => {
+const GhenarMahiti = ({ applicationData, setActiveStep }) => {
   const applicationId = sessionStorage.getItem("applicationId");
   const { sendRequest } = AxiosInstance();
-  // const [giver, setGiverData] = useState([]);
   const [isMoreUsers, setIsMoreUsers] = useState("no");
   const [userTypeArr, setUserTypeArr] = useState([]);
   const [userType, setUserType] = useState(1);
@@ -1830,13 +1829,13 @@ const GhenarMahiti = ({ applicationData }) => {
                 <TableCell>जिल्हा / तालुका / न. भू. कार्यालय / गांव</TableCell>
                 <TableCell>घेणाराचा प्रकार</TableCell>
                 <TableCell>घेणाऱ्याचे नाव</TableCell>
-                <TableCell>घेणाऱ्याचा पत्ता</TableCell>
                 <TableCell>उर्फ नाव</TableCell>
                 <TableCell>धारक प्रकार</TableCell>
                 <TableCell>स्त्री /पुरुष</TableCell>
                 <TableCell>अ.पा.क/ ए.कू.मॅ.</TableCell>
                 <TableCell>जन्म दिनांक</TableCell>
                 <TableCell>अ.पा.क</TableCell>
+                <TableCell>घेणाऱ्याचा पत्ता</TableCell>
                 <TableCell>कृती करा</TableCell>
               </TableRow>
             </TableHead>
@@ -1853,14 +1852,6 @@ const GhenarMahiti = ({ applicationData }) => {
                       </TableCell>
                       <TableCell>{val?.userType}</TableCell>
                       <TableCell>{val?.fullNameInMarathi}</TableCell>
-                      <TableCell>
-                        <Button
-                          variant="outlined"
-                          onClick={() => showAddress(val)}
-                        >
-                          पत्ता पहा
-                        </Button>
-                      </TableCell>
                       <TableCell>
                         {val?.userType == "व्यक्ती"
                           ? val?.dharak?.userdharak?.aliceName
@@ -1896,6 +1887,14 @@ const GhenarMahiti = ({ applicationData }) => {
                           : "-"}
                       </TableCell>
                       <TableCell>
+                        <Button
+                          variant="outlined"
+                          onClick={() => showAddress(val)}
+                        >
+                          पत्ता पहा
+                        </Button>
+                      </TableCell>
+                      <TableCell>
                         <IconButton
                           color="error"
                           onClick={() => handleDelete(val?.mutation_dtl_id)}
@@ -1910,6 +1909,17 @@ const GhenarMahiti = ({ applicationData }) => {
           </Table>
         </TableContainer>
       </Grid>
+
+      {responseData.length > 0 && (
+        <Grid item textAlign="center" marginRight={2} marginTop={1}>
+          <Button
+            endIcon={<ArrowForwardRoundedIcon />}
+            onClick={() => setActiveStep(2)}
+          >
+            देणार-घेणार
+          </Button>
+        </Grid>
+      )}
     </>
   );
 };

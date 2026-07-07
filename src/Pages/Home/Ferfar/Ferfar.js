@@ -167,6 +167,7 @@ const Ferfar = () => {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
+
   return (
     <>
       <Grid container spacing={2}>
@@ -257,10 +258,15 @@ const Ferfar = () => {
               <VatniPatraNond applicationData={applicationData} />
             )}
             {applicationData?.mutation_type_code == "24" && (
-              <NewGenericMutation applicationData={applicationData} />
+              <NewGenericMutation applicationData={applicationData}
+                setDisableShowNextBtn={setDisableShowNextBtn}
+              />
             )}
             {applicationData.mutation_type_code == "23" && (
-              <NewGenericMutation applicationData={applicationData} />
+              <NewGenericMutation
+                applicationData={applicationData}
+                setDisableShowNextBtn={setDisableShowNextBtn}
+              />
             )}
             {/* {applicationData?.mutation_type_code == "11" && (
               <AssignmentDeed applicationData={applicationData} />
@@ -284,10 +290,14 @@ const Ferfar = () => {
             )}
             {applicationData.mutation_type_code == "18" && (
               // <GenericMutation applicationData={applicationData} />
-              <NewGenericMutation applicationData={applicationData} />
+              <NewGenericMutation applicationData={applicationData}
+                setDisableShowNextBtn={setDisableShowNextBtn}
+              />
             )}
             {applicationData.mutation_type_code == "23" && (
-              <NewGenericMutation applicationData={applicationData} />
+              <NewGenericMutation applicationData={applicationData}
+                setDisableShowNextBtn={setDisableShowNextBtn}
+              />
             )}
             {applicationData.mutation_type_code == "02" && (
               <MayatacheNavKamiKarne applicationData={applicationData} />

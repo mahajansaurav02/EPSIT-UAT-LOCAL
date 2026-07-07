@@ -4,7 +4,6 @@ import {
   IconButton,
   InputLabel,
   Paper,
-  Select,
   Table,
   TableBody,
   TableCell,
@@ -28,12 +27,13 @@ import {
   middleNameMarathiValidationSchema,
 } from "../../../../../../Validations/yupValidations";
 import UserNoMHProperty from "../CommonFiles/SupportPagesGhenar/User/NoMHProperty/UserNoMHProperty";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import URLS from "../../../../../../URLs/url";
 import { filterOnlyMarathiAndEnglishLettersWithSpaces } from "../../../../../../Validations/utils";
 import TransliterationTextField from "../../../../../../ui/TranslationTextfield/EngToMarTextfield";
+import { errorToast, successToast, Toast } from "../../../../../../ui/Toast";
 
 const Hibanama = () => {
   const { sendRequest } = AxiosInstance();
@@ -43,11 +43,9 @@ const Hibanama = () => {
     permissionNo: "",
     permissionDate: "",
   });
-  const [suffixArr, setSuffixArr] = useState([]);
-
+  const [responseData, setResponseData] = useState([]);
   //-------------------------------check validations------------------------
   const [isValid, setIsValid] = useState({});
-  const [isMobileNoVerified, setIsMobileNoVerified] = useState(false);
   const [isReset, setIsReset] = useState(false);
   const [userNoMhProp, setUserNoMhProp] = useState({
     suffix: "",
@@ -92,10 +90,8 @@ const Hibanama = () => {
   });
 
   const {
-    control,
     trigger,
     reset,
-    setValue,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(
@@ -117,9 +113,7 @@ const Hibanama = () => {
       lastNameEng: "",
     },
   });
-  const handleBlur = async (name) => {
-    await trigger(name);
-  };
+
   const handleReset = () => {
     setHibanamaDetails({
       permissionNo: "",
@@ -193,9 +187,32 @@ const Hibanama = () => {
             }),
         },
       }
+
+      sendRequest(
+        `${URLS?.BaseURL}/MutationAPIS/SaveHibanamaWitnessInfo`,
+        "POST",
+        payload,
+        (res) => {
+          if (res?.Code == "1") {
+            console.log("res", res)
+            successToast(res?.Message);
+            handleReset();
+            getWitnessData();
+          } else {
+            console.error(res?.Message);
+            errorToast(res?.Message);
+          }
+        },
+        (err) => {
+          errorToast(err?.Message);
+          console.error(err?.Message);
+        }
+      );
+
       console.log("payload", JSON.stringify(payload, null, 2));
     } else {
       const payload = {
+        applicationid: applicationId,
         permissionNo: hibanamaDetails?.permissionNo,
         permissionDate: hibanamaDetails?.permissionDate,
         witnessDetails:
@@ -224,27 +241,79 @@ const Hibanama = () => {
         },
       }
       console.log("payload", JSON.stringify(payload, null, 2));
+
+      sendRequest(
+        `${URLS?.BaseURL}/MutationAPIS/SaveHibanamaWitnessInfo`,
+        "POST",
+        payload,
+        (res) => {
+          if (res?.Code == "1") {
+            console.log("res", res)
+            successToast(res?.Message);
+            handleReset();
+            getWitnessData();
+          } else {
+            console.error(res?.Message);
+            errorToast(res?.Message);
+          }
+        },
+        (err) => {
+          errorToast(err?.Message);
+          console.error(err?.Message);
+        }
+      );
+
     }
   };
 
-  const getSuffix = () => {
+  const handleDelete = (id) => {
     sendRequest(
-      `${URLS?.BaseURL}/EPCISAPIS/nameTitleList`,
+      `${URLS?.BaseURL}/MutationAPIS/DeleteHibanamaWitnessInfo`,
       "POST",
-      null,
+      {
+        "witnessInfoId": id,
+        "applicationid": applicationId,
+      },
       (res) => {
-        setSuffixArr(JSON.parse(res?.ResponseData));
+        if (res?.Code == "1") {
+          successToast(res?.Message);
+          getWitnessData();
+        } else {
+          console.error(res?.Message);
+          errorToast(res?.Message);
+        }
       },
       (err) => {
+        errorToast(err?.Message);
         console.error(err?.Message);
       }
     );
+  }
+
+  const getWitnessData = () => {
+    sendRequest(
+      `${URLS?.BaseURL}/MutationAPIS/GetHibanamaWitnessInfo`,
+      "POST",
+      applicationId,
+      (res) => {
+        console.log("res", res)
+        setResponseData(res?.ResponseData);
+        successToast(res?.Message);
+      },
+      (err) => {
+        console.error(err?.Message);
+        errorToast(err?.Message);
+      }
+    );
   };
+
   useEffect(() => {
-    getSuffix();
+    getWitnessData();
   }, []);
+
   return (
     <>
+      <Toast />
       <Paper elevation={5} sx={{ p: 2, mt: 2 }} className="papermain">
         <Grid container spacing={1}>
           <Grid item md={12}>
@@ -337,7 +406,6 @@ const Hibanama = () => {
               setForaighnAddress={setForaighnAddress}
               setIsValid={setIsValid}
               isMobileCompulsary={true}
-              setIsMobileNoVerified={setIsMobileNoVerified}
             />
           </Grid>
           <Grid container justifyContent="end" px={2} mt={2}>
@@ -367,28 +435,38 @@ const Hibanama = () => {
                 <TableHead style={{ backgroundColor: "#F4F4F4" }}>
                   <TableRow>
                     <TableCell>अ. क्र.</TableCell>
-                    <TableCell>नाव</TableCell>
-                    <TableCell>पत्ता</TableCell>
+                    <TableCell>Waqf Board's Permission Number</TableCell>
+                    <TableCell>Waqf Board's Permission Date</TableCell>
+                    <TableCell>साक्षीदाराचे नाव</TableCell>
+                    <TableCell>उर्फ नाव</TableCell>
+                    <TableCell>साक्षीदाराचेजिल्हा / तालुका / न. भू. कार्यालय / गांव</TableCell>
                     <TableCell>कृती करा</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  <TableRow>
-                    <TableCell>1</TableCell>
-                    <TableCell>First Middle last name</TableCell>
-                    <TableCell>
-                      Flat no A712, Tanish Park, Charholi Br. Haveli, Pune
-                      412105
-                    </TableCell>
-                    <TableCell>
-                      <IconButton
-                        color="error"
-                      // onClick={() => handleDelete(val?.mutation_dtl_id)}
-                      >
-                        <DeleteForeverOutlinedIcon />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
+                  {Array.isArray(responseData) &&
+                    responseData.map((val, i) => {
+                      console.log("val", val);
+                      return (
+                        <TableRow key={i}>
+                          <TableCell>{i + 1}</TableCell>
+                          <TableCell>{val?.permissionNo}</TableCell>
+                          <TableCell>{val?.permissionDate}</TableCell>
+                          <TableCell>{val?.witnessDetails?.suffix + " " + val?.witnessDetails?.firstName + " " + val?.witnessDetails?.middleName + " " + val?.witnessDetails?.lastName}</TableCell>
+                          <TableCell>{val?.witnessDetails?.aliceName}</TableCell>
+                          <TableCell>{val?.address?.addressType == "FOREIGN" ? val?.address?.foreignAddress?.address
+                            : val?.address?.indiaAddress}</TableCell>
+                          <TableCell>
+                            <IconButton
+                              color="error"
+                              onClick={() => handleDelete(val?.witness_info_id)}
+                            >
+                              <DeleteForeverOutlinedIcon />
+                            </IconButton>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
                 </TableBody>
               </Table>
             </TableContainer>

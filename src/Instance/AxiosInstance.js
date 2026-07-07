@@ -111,7 +111,7 @@ const AxiosInstance = () => {
 
   const sendRequest = useCallback(
     async (url, type = "GET", reqData, callback, errorCallback) => {
-      console.log(`RequestData for${url}`, type, reqData);
+      console.log(`RequestData for ${url}`, type, reqData);
       if (type === "POST") {
         await axios
           .post(

@@ -245,7 +245,7 @@ const ChukDurustiNond = ({ applicationData }) => {
       "POST",
       {
         applicationid: applicationId,
-        error_correction_id: id,
+        errorCorrectionId: id,
       },
       (res) => {
         if (res?.Code == "1") {

@@ -17,7 +17,6 @@ import {
 } from "@mui/material";
 import Denar from "./CommonFiles/Denar";
 import Ghenar from "./CommonFiles/Ghenar";
-import Pairing from "./CommonFiles/Pairing";
 import BojaKamiKarne from "./DiffFilesAccToMutation/BojaKamiKarne";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -26,19 +25,25 @@ import { nabhuValidationSchema } from "../../../../../Validations/yupValidations
 import Hibanama from "./DiffFilesAccToMutation/Hibanama";
 import TabaPavti from "./DiffFilesAccToMutation/TabaPavti";
 import DeedmedConveyence from "./DiffFilesAccToMutation/DeedmedConveyence";
-import HibaNama from "../UnRegistered/HibaNama/HibaNama";
-import DenarGhenarTables from "../Generic/CommonFiles/DenarGhenarTables";
+import HibanamaTables from "../Generic/CommonFiles/HibanamaTables";
+import AxiosInstance from "../../../../../Instance/AxiosInstance";
+import { errorToast } from "../../../../../ui/Toast";
+import URLS from "../../../../../URLs/url";
 
-const NewGenericMutation = ({ applicationData }) => {
+const NewGenericMutation = ({ applicationData, setDisableShowNextBtn }) => {
   const applicationId = sessionStorage.getItem("applicationId");
+  const { sendRequest } = AxiosInstance();
   const [naBhu, setNaBhu] = useState("");
   const [lrPropertyUID, setLrPropertyUID] = useState("");
   const [milkat, setMilkat] = useState("land");
   const [namud, setNamud] = useState("");
-  const [subPropNo, setSubPropNo] = useState("");
   const [actualArea, setActualArea] = useState("");
   const [activeStep, setActiveStep] = useState(0);
   const [obj, setObj] = useState({});
+
+  const [hibanamaData, setHibanama] = useState([]);
+  const [denarData, setDenarData] = useState([]);
+  const [ghenarData, setGhenarData] = useState([]);
 
   const handleStep = (step) => () => {
     setActiveStep(step);
@@ -47,8 +52,6 @@ const NewGenericMutation = ({ applicationData }) => {
   const {
     control,
     trigger,
-    reset,
-    setValue,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(
@@ -71,17 +74,100 @@ const NewGenericMutation = ({ applicationData }) => {
     setLrPropertyUID(obj?.lrPropertyUID);
     setMilkat(obj?.milkat);
     setNamud(obj?.namud);
-    setSubPropNo(obj?.sub_property_no);
     setActualArea(obj?.cityServeyAreaInSqm);
   };
 
+  const getTables = () => {
+    getDenarTable();
+    getGhenarTable();
+    if (applicationData?.mutation_type_code === "23") {
+      getWitnessData();
+    }
+  };
+
+  const getWitnessData = () => {
+    sendRequest(
+      `${URLS?.BaseURL}/MutationAPIS/GetHibanamaWitnessInfo`,
+      "POST",
+      applicationId,
+      (res) => {
+        console.log("res", res)
+        setHibanama(res?.ResponseData);
+      },
+      (err) => {
+        console.error(err?.Message);
+        errorToast(err?.Message);
+      }
+    );
+  };
+  const getDenarTable = () => {
+    sendRequest(
+      `${URLS.BaseURL}/MutationAPIS/GetGenericNondForGiver`,
+      "POST",
+      applicationId,
+      (res) => {
+        if (res?.Code === "1") {
+          setDenarData(res.ResponseData);
+        } else {
+          setDenarData([]);
+        }
+      },
+      (err) => errorToast(err?.Message)
+    );
+  };
+
+  const getGhenarTable = () => {
+    sendRequest(
+      `${URLS.BaseURL}/MutationAPIS/GetGenericNondTakerInfo`,
+      "POST",
+      applicationId,
+      (res) => {
+        if (res?.Code === "1") {
+          setGhenarData(res.ResponseData);
+        } else {
+          setGhenarData([]);
+        }
+      },
+      (err) => errorToast(err?.Message)
+    );
+  };
+
+  useEffect(() => {
+    let completed = false;
+
+    if (applicationData?.mutation_type_code === "23") {
+      completed =
+        denarData.length > 0 &&
+        ghenarData.length > 0 &&
+        hibanamaData.length > 0;
+    } else {
+      completed =
+        denarData.length > 0 &&
+        ghenarData.length > 0;
+    }
+
+    sessionStorage.setItem("allowPoa", completed ? "yes" : "no");
+    setDisableShowNextBtn(!completed);
+
+  }, [
+    denarData,
+    ghenarData,
+    hibanamaData,
+    applicationData?.mutation_type_code
+  ]);
+  useEffect(() => {
+    if (activeStep === 2) {
+      getTables();
+    }
+  }, [activeStep]);
+
   const steps = ["देणार", "घेणार"];
+
   return (
     <>
       <Grid item md={12}>
         {applicationData?.mutation_type_code == "07" && <BojaKamiKarne />}
         {applicationData?.mutation_type_code == "23" && <Hibanama />}
-        {/* {applicationData?.mutation_type_code == "23" && <HibaNama />} */}
         {applicationData?.mutation_type_code == "18" && <TabaPavti />}
         {applicationData?.mutation_type_code == "24" && <DeedmedConveyence />}
       </Grid>
@@ -231,9 +317,11 @@ const NewGenericMutation = ({ applicationData }) => {
                         )}
                         {activeStep === 2 && (
                           <>
-                            <DenarGhenarTables
+                            <HibanamaTables
                               applicationData={applicationData}
                               obj={obj}
+                              denarData={denarData}
+                              ghenarData={ghenarData}
                             />
                           </>
                         )}

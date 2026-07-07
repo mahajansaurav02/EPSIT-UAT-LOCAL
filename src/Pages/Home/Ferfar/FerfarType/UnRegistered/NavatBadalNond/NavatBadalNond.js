@@ -402,11 +402,11 @@ const NavatBadalNond = ({ applicationData }) => {
 
   const handleDelete = (id) => {
     sendRequest(
-      `${URLS?.BaseURL}/ApplicationAPIS/DeleteNavatBadalData`,
+      `${URLS?.BaseURL}/MutationAPIS/DeleteNavatBadalInfo`,
       "POST",
       {
         applicationid: applicationId,
-        navatBadalId: id,
+        nameChangeId: id,
       },
       (res) => {
         if (res?.Code == "1") {
@@ -957,7 +957,7 @@ const NavatBadalNond = ({ applicationData }) => {
                         <TableCell>
                           <IconButton
                             color="error"
-                            onClick={() => handleDelete(val?.navatBadalId)}
+                            onClick={() => handleDelete(val?.name_change_id)}
                           >
                             <DeleteForeverOutlinedIcon />
                           </IconButton>
