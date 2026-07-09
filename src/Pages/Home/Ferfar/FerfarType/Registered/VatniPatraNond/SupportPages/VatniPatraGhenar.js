@@ -505,6 +505,25 @@ const VatniPatraGhenar = ({ applicationData }) => {
     }
   }, [responseData]);
 
+  const handleSave = () => {
+    const mergedData = {
+      usertype: userTypeLabel,
+      usertype_code: userType,
+      applicationid: applicationId,
+      userDetails: { ...userNoMhProp },
+      dharak: {
+        ...userDharak,
+      },
+      address: {
+        addressType: isIndian, // "india" or "foreign"
+        ...(isIndian == "india"
+          ? { indiaAddress }
+          : { foreignAddress: foraighnAddress }),
+      },
+    };
+    console.log(JSON.stringify(mergedData, null, 2));
+  }
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
@@ -839,14 +858,14 @@ const VatniPatraGhenar = ({ applicationData }) => {
                 variant="outlined"
                 startIcon={<RotateRightRoundedIcon />}
                 sx={{ mr: 2 }}
-                // onClick={handleReset}
+              // onClick={handleReset}
               >
                 रीसेट करा
               </Button>
               <Button
                 variant="contained"
                 endIcon={<SaveRoundedIcon />}
-                // onClick={handleSave}
+                onClick={handleSave}
               >
                 जतन करा
               </Button>
@@ -883,7 +902,7 @@ const VatniPatraGhenar = ({ applicationData }) => {
                 <TableCell>
                   <Button
                     variant="outlined"
-                    // onClick={() => showAddress(val)}
+                  // onClick={() => showAddress(val)}
                   >
                     पत्ता पहा
                   </Button>
@@ -898,7 +917,7 @@ const VatniPatraGhenar = ({ applicationData }) => {
                 <TableCell>
                   <IconButton
                     color="error"
-                    // onClick={() => handleDelete(val?.mutation_dtl_id)}
+                  // onClick={() => handleDelete(val?.mutation_dtl_id)}
                   >
                     <DeleteForeverOutlinedIcon />
                   </IconButton>

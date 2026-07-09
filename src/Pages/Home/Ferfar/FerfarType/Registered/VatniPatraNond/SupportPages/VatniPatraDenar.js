@@ -337,7 +337,6 @@ const VatniPatraDenar = ({ setActiveStep, applicationData }) => {
     );
   };
 
-  //i want to create a handleSave and just want to console save data in json format
   const handleSave = () => {
     const mergedData = {
       applicationid: applicationId,
@@ -1074,7 +1073,7 @@ const VatniPatraDenar = ({ setActiveStep, applicationData }) => {
                 variant="contained"
                 endIcon={<ArrowForwardRoundedIcon />}
                 onClick={() => setActiveStep(1)}
-                disabled={responseData.length == 0}
+              // disabled={responseData.length == 0}
               >
                 वाटणीपत्र घेणाऱ्याची माहिती भरा
               </Button>
