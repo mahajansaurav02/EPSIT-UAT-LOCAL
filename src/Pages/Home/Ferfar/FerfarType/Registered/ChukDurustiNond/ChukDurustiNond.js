@@ -656,8 +656,8 @@ const ChukDurustiNond = ({ applicationData }) => {
                   {/* <TableCell>नावात बदल कारण </TableCell>
                   <TableCell>नावात बदल देणाऱ्याचे प्रकार </TableCell>
                   <TableCell>नावात बदल झालेले नाव</TableCell>
-                  <TableCell>नावात बदल देणाऱ्याचा पत्ता</TableCell> */}
                   {/* <TableCell>उर्फ नाव</TableCell> */}
+                  <TableCell>नावात बदल देणाऱ्याचा पत्ता</TableCell>
                   <TableCell>कृती करा</TableCell>
                 </TableRow>
               </TableHead>

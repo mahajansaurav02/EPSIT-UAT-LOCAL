@@ -115,9 +115,6 @@ const VatniPatraDenar = ({ setActiveStep, applicationData }) => {
     address: "",
     mobile: "",
     email: "",
-    emailOTP: "yes",
-    signatureName: "",
-    signatureSrc: "",
   });
 
   //-------------------------------check validations------------------
@@ -161,16 +158,16 @@ const VatniPatraDenar = ({ setActiveStep, applicationData }) => {
           const selectedDate = new Date(date);
           return selectedDate > thresholdDateOfDOB
             ? schema.required(
-                "जन्म तारीख १ मे २०२४ नंतरची असेल तर आईचे नाव टाकणे गरजेचे आहे"
-              )
+              "जन्म तारीख १ मे २०२४ नंतरची असेल तर आईचे नाव टाकणे गरजेचे आहे"
+            )
             : schema.notRequired();
         }),
         motherNameEng: yup.string().when("dob", (date, schema) => {
           const selectedDate = new Date(date);
           return selectedDate > thresholdDateOfDOB
             ? schema.required(
-                "जन्म तारीख १ मे २०२४ नंतरची असेल तर आईचे नाव इंग्रजीत टाकणे गरजेचे आहे"
-              )
+              "जन्म तारीख १ मे २०२४ नंतरची असेल तर आईचे नाव इंग्रजीत टाकणे गरजेचे आहे"
+            )
             : schema.notRequired();
         }),
       })
@@ -339,6 +336,38 @@ const VatniPatraDenar = ({ setActiveStep, applicationData }) => {
       }
     );
   };
+
+  //i want to create a handleSave and just want to console save data in json format
+  const handleSave = () => {
+    const mergedData = {
+      applicationid: applicationId,
+      nabhu: naBhu,
+      lrPropertyUID: lrPropertyUID,
+      milkat: milkat,
+      namud: namud,
+      subPropNo: subPropNo,
+      userDetails: {
+        suffix: suffix,
+        suffixEng: suffixEng,
+        firstName: userDetails?.firstName,
+        middleName: userDetails?.middleName,
+        lastName: userDetails?.lastName,
+        firstNameEng: userDetails?.firstNameEng,
+        middleNameEng: userDetails?.middleNameEng,
+        lastNameEng: userDetails?.lastNameEng,
+      },
+      actualArea: actualArea,
+      availableArea: availableArea,
+      mutationArea: mutationArea,
+      address: {
+        addressType: isIndian, // "india" or "foreign"
+        ...(isIndian == "india"
+          ? { indiaAddress }
+          : { foreignAddress: foraighnAddress }),
+      },
+    };
+    console.log(JSON.stringify(mergedData, null, 2));
+  }
 
   useEffect(() => {
     getSuffix();
@@ -1028,14 +1057,14 @@ const VatniPatraDenar = ({ setActiveStep, applicationData }) => {
                 variant="outlined"
                 startIcon={<RotateRightRoundedIcon />}
                 sx={{ mr: 2 }}
-                // onClick={handleReset}
+              // onClick={handleReset}
               >
                 रीसेट करा
               </Button>
               <Button
                 variant="contained"
                 endIcon={<SaveRoundedIcon />}
-                // onClick={handleSave}
+                onClick={handleSave}
                 disabled={isMutationUndergoing}
                 sx={{ mr: 2 }}
               >
@@ -1091,7 +1120,7 @@ const VatniPatraDenar = ({ setActiveStep, applicationData }) => {
                 <TableCell>
                   <Button
                     variant="outlined"
-                    // onClick={() => showAddress(val)}
+                  // onClick={() => showAddress(val)}
                   >
                     पत्ता पहा
                   </Button>
@@ -1103,7 +1132,7 @@ const VatniPatraDenar = ({ setActiveStep, applicationData }) => {
                 <TableCell>
                   <IconButton
                     color="error"
-                    // onClick={() => handleDelete(val?.mutation_dtl_id)}
+                  // onClick={() => handleDelete(val?.mutation_dtl_id)}
                   >
                     <DeleteForeverOutlinedIcon />
                   </IconButton>
@@ -1158,7 +1187,7 @@ const VatniPatraDenar = ({ setActiveStep, applicationData }) => {
                 <TableCell>
                   <Button
                     variant="outlined"
-                    // onClick={() => showAddress(val)}
+                  // onClick={() => showAddress(val)}
                   >
                     पत्ता पहा
                   </Button>

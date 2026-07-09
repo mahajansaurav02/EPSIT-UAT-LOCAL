@@ -446,7 +446,6 @@ const Hibanama = () => {
                 <TableBody>
                   {Array.isArray(responseData) &&
                     responseData.map((val, i) => {
-                      console.log("val", val);
                       return (
                         <TableRow key={i}>
                           <TableCell>{i + 1}</TableCell>

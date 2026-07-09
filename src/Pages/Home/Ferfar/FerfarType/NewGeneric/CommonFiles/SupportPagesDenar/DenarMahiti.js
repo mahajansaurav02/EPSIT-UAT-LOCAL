@@ -25,6 +25,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import SaveRoundedIcon from "@mui/icons-material/SaveRounded";
+import ArrowForwardRoundedIcon from "@mui/icons-material/ArrowForwardRounded";
 import { useEffect, useState } from "react";
 import { errorToast, successToast, Toast } from "../../../../../../../ui/Toast";
 import URLS from "../../../../../../../URLs/url";
@@ -35,7 +36,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import AddAdditionalDenarDetails from "./AddAdditionalDenarDetails";
 import ShowFilledDenarDetails from "./ShowFilledDenarDetails";
 
-const DenarMahiti = ({ applicationData, obj }) => {
+const DenarMahiti = ({ applicationData, obj, setActiveStep }) => {
   const { sendRequest } = AxiosInstance();
   const applicationId = sessionStorage.getItem("applicationId");
 
@@ -46,6 +47,8 @@ const DenarMahiti = ({ applicationData, obj }) => {
   const [denarData, setDenarData] = useState([]);
 
   const [selectedDenarForEdit, setSelectedDenarForEdit] = useState({});
+
+  console.log("userDataArr->>", userDataArr, denarData);
 
   //--------------------------------Show Details-----------------------------
   const [openEditAdditionalDataDialog, setOpenEditAdditionalDataDialog] =
@@ -68,6 +71,12 @@ const DenarMahiti = ({ applicationData, obj }) => {
   const showDetailsFilledFields = (val) => {
     setOpenShowFilledDetailsDialog(true);
   };
+
+  const existingMutationSet = new Set(
+    denarData.map(
+      (item) => `${item.mutation_srno}-${item.owner_number}`
+    ));
+
 
   const getUserDetails = (nabhuNo, subPropNo) => {
     setUserLoading(true);
@@ -134,7 +143,7 @@ const DenarMahiti = ({ applicationData, obj }) => {
         (res) => {
           if (res?.Code == "1") {
             successToast(res?.Message);
-            setUserDataArr([]);
+            // setUserDataArr([]);
             getGenericDenarTableData();
           } else {
             errorToast(res?.Message);
@@ -289,11 +298,15 @@ const DenarMahiti = ({ applicationData, obj }) => {
                     {userDataArr.map((row) => {
                       const uniqueKey = `${row.mutation_srno}-${row.owner_number}`;
                       const isChecked = selectedRows.includes(uniqueKey);
+
+                      const alreadyAdded = existingMutationSet.has(uniqueKey);
+
                       return (
                         <TableRow key={uniqueKey}>
                           <TableCell padding="checkbox">
                             <Checkbox
-                              checked={isChecked}
+                              checked={alreadyAdded || isChecked}
+                              disabled={alreadyAdded}
                               onChange={() =>
                                 handleSelectRow(
                                   row.mutation_srno,
@@ -302,7 +315,25 @@ const DenarMahiti = ({ applicationData, obj }) => {
                               }
                             />
                           </TableCell>
-                          <TableCell>{row.owner_name}</TableCell>
+                          <TableCell>
+                            {row.owner_name}
+                            {alreadyAdded && (
+                              <Box
+                                component="span"
+                                sx={{
+                                  ml: 1,
+                                  px: 1,
+                                  py: 0.3,
+                                  borderRadius: 1,
+                                  bgcolor: "success.main",
+                                  color: "white",
+                                  fontSize: 12,
+                                }}
+                              >
+                                देणार माहिती तक्ता मध्ये आधीच समाविष्ट आहे
+                              </Box>
+                            )}
+                          </TableCell>
                           <TableCell>{row.mutation_srno}</TableCell>
                           <TableCell>{row.owner_number}</TableCell>
                           <TableCell>{row.entry_date}</TableCell>
@@ -432,7 +463,15 @@ const DenarMahiti = ({ applicationData, obj }) => {
           </TableContainer>
         </Grid>
       </Grid>
-      {/* </Paper> */}
+      {denarData.length > 0 && (
+        <Grid item textAlign="center" marginRight={2} marginTop={1}>
+          <Button
+            endIcon={<ArrowForwardRoundedIcon />}
+            onClick={() => setActiveStep(1)}
+          >
+            घेणाऱ्याची माहिती भरा
+          </Button>
+        </Grid>)}
     </>
   );
 };
