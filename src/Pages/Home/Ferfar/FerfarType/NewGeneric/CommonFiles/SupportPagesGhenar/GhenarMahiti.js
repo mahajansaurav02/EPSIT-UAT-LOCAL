@@ -181,11 +181,11 @@ const GhenarMahiti = ({ applicationData, setActiveStep }) => {
     dob: "",
     motherName: "",
     motherNameEng: "",
-    landBuyArea: "NA",
+    landBuyArea: "",
   });
   const [companyDharak, setCompanyDharak] = useState({
     holderType: {},
-    landBuyArea: "NA",
+    landBuyArea: "",
   });
   const [isIndian, setIsIndian] = useState("india");
   const [indiaAddress, setIndiaAdress] = useState({
@@ -1282,6 +1282,37 @@ const GhenarMahiti = ({ applicationData, setActiveStep }) => {
       }
     }
   };
+
+  // const handleTest = async () => {
+  //   const mergedData = {
+  //     usertype: userTypeLabel,
+  //     usertype_code: userType,
+  //     applicationid: applicationId,
+  //     photo: {
+  //       ...photo,
+  //     },
+  //     isMHProperty: {
+  //       hasProperty: isMHProperty,
+  //       propType: "0",
+  //       userDetails: { ...userNoMhProp },
+  //     },
+  //     dharak: {
+  //       userdharak: {
+  //         ...userDharak,
+  //       },
+  //     },
+  //     address: {
+  //       addressType: isIndian,
+
+  //       foreignAddress: {
+  //         ...foraighnAddress,
+  //       },
+  //     },
+  //   };
+  //   console.log("payload", JSON.stringify(mergedData, null, 2));
+
+  // }
+
   const handleDelete = (id) => {
     sendRequest(
       `${URLS?.BaseURL}/MutationAPIS/DeleteGenericNondForTaker`,
@@ -1429,11 +1460,11 @@ const GhenarMahiti = ({ applicationData, setActiveStep }) => {
       dob: "",
       motherName: "",
       motherNameEng: "",
-      landBuyArea: "NA",
+      landBuyArea: "",
     });
     setCompanyDharak({
       holderType: {},
-      landBuyArea: "NA",
+      landBuyArea: "",
     });
     setIsIndian("india");
     setIndiaAdress({
@@ -1781,6 +1812,7 @@ const GhenarMahiti = ({ applicationData, setActiveStep }) => {
                 variant="contained"
                 endIcon={<SaveRoundedIcon />}
                 onClick={handleSave}
+              // onClick={handleTest}
               >
                 जतन करा
               </Button>

@@ -48,16 +48,16 @@ const UserDharak = ({ userDharak, setUserDharak, setIsValid, isReset }) => {
           const selectedDate = new Date(date);
           return selectedDate > thresholdDateOfDOB
             ? schema.required(
-                "जन्म तारीख १ मे २०२४ नंतरची असेल तर आईचे नाव टाकणे गरजेचे आहे",
-              )
+              "जन्म तारीख १ मे २०२४ नंतरची असेल तर आईचे नाव टाकणे गरजेचे आहे",
+            )
             : schema.notRequired();
         }),
         motherNameEng: yup.string().when("dob", (date, schema) => {
           const selectedDate = new Date(date);
           return selectedDate > thresholdDateOfDOB
             ? schema.required(
-                "जन्म तारीख १ मे २०२४ नंतरची असेल तर आईचे नाव इंग्रजीत टाकणे गरजेचे आहे",
-              )
+              "जन्म तारीख १ मे २०२४ नंतरची असेल तर आईचे नाव इंग्रजीत टाकणे गरजेचे आहे",
+            )
             : schema.notRequired();
         }),
       }),
@@ -324,7 +324,14 @@ const UserDharak = ({ userDharak, setUserDharak, setIsValid, isReset }) => {
             <b>हिबा नुसार क्षेत्र </b>
             <span>*</span>
           </InputLabel>
-          <TextField fullWidth className="textfield" size="small" />
+          <TextField
+            fullWidth
+            className="textfield"
+            size="small"
+            name="landBuyArea"
+            value={userDharak.landBuyArea}
+            onChange={handleUserDharak}
+          />
         </Grid>
 
         <Grid item md={2}>
