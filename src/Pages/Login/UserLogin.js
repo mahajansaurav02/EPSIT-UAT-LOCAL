@@ -40,6 +40,7 @@ const UserLogin = ({ loginLangage }) => {
   const [otp, setOtp] = useState("");
   const [showOtpField, setShowOtpField] = useState(false);
   const [disableSendOtpBtn, setDisableSendOtpBtn] = useState(false);
+  const [disableLoginBtn, setDisableLoginBtn] = useState(false);
 
   const [timer, setTimer] = useState(0);
 
@@ -73,6 +74,7 @@ const UserLogin = ({ loginLangage }) => {
     const result = await trigger("mobile");
     if (result) {
       setDisableSendOtpBtn(true);
+      setDisableLoginBtn(true)
       sendRequest(
         `${URLS?.BaseURL}/LoginAPIS/RequestForOTP`,
         "POST",
@@ -84,20 +86,24 @@ const UserLogin = ({ loginLangage }) => {
           if (res?.Code == "1") {
             successToast(res?.Message);
             setDisableSendOtpBtn(false);
+            setDisableLoginBtn(false);
             setShowOtpField(true);
             setTimer(30);
           } else {
             errorToast(res?.Message);
             setDisableSendOtpBtn(false);
+            setDisableLoginBtn(false)
           }
         },
         (err) => {
           setDisableSendOtpBtn(false);
+          setDisableLoginBtn(false);
           errorToast(err?.Message);
         }
       );
     } else {
       setDisableSendOtpBtn(false);
+      setDisableLoginBtn(false);
       errorToast("Please Add Mobile No");
     }
   };
@@ -443,8 +449,8 @@ const UserLogin = ({ loginLangage }) => {
                                     ? loginLangage?.marathi[18]
                                     : loginLangage?.english[18]
                                   : lang === "mar"
-                                  ? loginLangage?.marathi[11]
-                                  : loginLangage?.english[11]}
+                                    ? loginLangage?.marathi[11]
+                                    : loginLangage?.english[11]}
                               </Button>
                             </InputAdornment>
                             // <InputAdornment position="end">
@@ -639,8 +645,15 @@ const UserLogin = ({ loginLangage }) => {
                 variant="contained"
                 fullWidth
                 onClick={verifyUser}
-                disabled={otp?.length < 6}
+                disabled={otp?.length < 6 || disableLoginBtn}
               >
+                {disableLoginBtn && (
+                  <CircularProgress
+                    size={16}
+                    color="inherit"
+                    sx={{ mr: 1 }}
+                  />
+                )}
                 {lang === "mar"
                   ? loginLangage?.marathi[12]
                   : loginLangage?.english[12]}

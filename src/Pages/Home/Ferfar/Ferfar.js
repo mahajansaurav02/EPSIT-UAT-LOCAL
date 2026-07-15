@@ -255,7 +255,10 @@ const Ferfar = () => {
               <ChukDurustiNond applicationData={applicationData} />
             )}
             {applicationData.mutation_type_code == "08" && (
-              <VatniPatraNond applicationData={applicationData} />
+              <VatniPatraNond
+                applicationData={applicationData}
+                setDisableShowNextBtn={setDisableShowNextBtn}
+              />
             )}
             {applicationData?.mutation_type_code == "24" && (
               <NewGenericMutation applicationData={applicationData}

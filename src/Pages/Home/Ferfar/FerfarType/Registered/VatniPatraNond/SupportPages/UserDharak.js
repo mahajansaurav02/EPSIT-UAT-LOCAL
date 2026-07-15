@@ -49,16 +49,16 @@ const UserDharak = ({ userDharak, setUserDharak, setIsValid, isReset }) => {
           const selectedDate = new Date(date);
           return selectedDate > thresholdDateOfDOB
             ? schema.required(
-                "जन्म तारीख १ मे २०२४ नंतरची असेल तर आईचे नाव टाकणे गरजेचे आहे"
-              )
+              "जन्म तारीख १ मे २०२४ नंतरची असेल तर आईचे नाव टाकणे गरजेचे आहे"
+            )
             : schema.notRequired();
         }),
         motherNameEng: yup.string().when("dob", (date, schema) => {
           const selectedDate = new Date(date);
           return selectedDate > thresholdDateOfDOB
             ? schema.required(
-                "जन्म तारीख १ मे २०२४ नंतरची असेल तर आईचे नाव इंग्रजीत टाकणे गरजेचे आहे"
-              )
+              "जन्म तारीख १ मे २०२४ नंतरची असेल तर आईचे नाव इंग्रजीत टाकणे गरजेचे आहे"
+            )
             : schema.notRequired();
         }),
       })
@@ -331,12 +331,12 @@ const UserDharak = ({ userDharak, setUserDharak, setIsValid, isReset }) => {
             )}
           />
         </Grid>
-        <Grid item md={2}>
+        {/* <Grid item md={2}>
           <InputLabel className="inputlabel">
             <b>वाटणी क्षेत्र (चौ.मी.)</b>
           </InputLabel>
           <TextField fullWidth className="textfield" size="small" />
-        </Grid>
+        </Grid> */}
         <Grid item md={2}>
           <Controller
             name="dob"

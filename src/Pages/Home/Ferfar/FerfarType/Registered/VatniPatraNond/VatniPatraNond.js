@@ -4,9 +4,8 @@ import VatniPatraDenar from "./SupportPages/VatniPatraDenar";
 import VatniPatraGhenar from "./SupportPages/VatniPatraGhenar";
 
 const steps = ["वाटणीपत्र देणार", "वाटणीपत्र घेणार"];
-const VatniPatraNond = ({ applicationData }) => {
+const VatniPatraNond = ({ applicationData, setDisableShowNextBtn }) => {
   const [activeStep, setActiveStep] = useState(0);
-
   const handleStep = (step) => () => {
     setActiveStep(step);
   };
@@ -25,14 +24,19 @@ const VatniPatraNond = ({ applicationData }) => {
           </Stepper>
           <div style={{ marginTop: 10 }}>
             <React.Fragment>
-              {activeStep == 0 && (
+              {activeStep === 0 && (
                 <VatniPatraDenar
                   setActiveStep={setActiveStep}
                   applicationData={applicationData}
+                  setDisableShowNextBtn={setDisableShowNextBtn}
                 />
               )}
-              {activeStep == 1 && (
-                <VatniPatraGhenar applicationData={applicationData} />
+              {activeStep === 1 && (
+                <VatniPatraGhenar
+                  applicationData={applicationData}
+                  setActiveStep={setActiveStep}
+                  setDisableShowNextBtn={setDisableShowNextBtn}
+                />
               )}
             </React.Fragment>
           </div>

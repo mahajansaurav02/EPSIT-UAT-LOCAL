@@ -296,36 +296,6 @@ const GhenarMahiti = ({ applicationData, setActiveStep }) => {
     }
   };
   const handleSave = async () => {
-    const mergedData = {
-      usertype: userTypeLabel,
-      usertype_code: userType,
-      applicationid: applicationId,
-      photo: {
-        ...photo,
-      },
-      isMHProperty: {
-        hasProperty: isMHProperty,
-        propType: "0",
-        userDetails: { ...userNoMhProp },
-      },
-      dharak: {
-        userdharak: {
-          ...userDharak,
-        },
-      },
-      address: {
-        addressType: isIndian,
-        indiaAddress: {
-          ...indiaAddress,
-        },
-
-        foreignAddress: {
-          ...foraighnAddress,
-        },
-      },
-    };
-    console.log("payload", JSON.stringify(mergedData, null, 2));
-
     if (userType == 1 && isMHProperty == "no" && isIndian == "india") {
       const isUserNoMhProperty = await isValid.triggerUserNoMhProperty();
       const isUserIndAdd = await isValid.triggerUserIndAdd();

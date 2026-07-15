@@ -21,7 +21,6 @@ import {
   TableHead,
   TableRow,
   TextField,
-  Typography,
 } from "@mui/material";
 import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
 import SaveRoundedIcon from "@mui/icons-material/SaveRounded";
@@ -38,13 +37,12 @@ import {
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { errorToast, successToast, Toast } from "../../../../../../../ui/Toast";
+import { errorToast, successToast, Toast, warningToast } from "../../../../../../../ui/Toast";
 import AxiosInstance from "../../../../../../../Instance/AxiosInstance";
 import TransliterationTextField from "../../../../../../../ui/TranslationTextfield/EngToMarTextfield";
 import URLS from "../../../../../../../URLs/url";
 import NotesPaper from "../../../../../../../ui/NotesPaper/NotesPaper";
-import { bakshsishpatraDenarNotesArr } from "../../../../../../../NotesArray/NotesArray";
-import Swal from "sweetalert2";
+import { vatanipatraDenarNotesArr } from "../../../../../../../NotesArray/NotesArray";
 import ShowAddress from "../../SupportPages/ShowAddress";
 import CloseIcon from "@mui/icons-material/Close";
 import {
@@ -52,7 +50,7 @@ import {
   filterOnlyMarathiAndEnglishLettersWithSpaces,
 } from "../../../../../../../Validations/utils";
 
-const VatniPatraDenar = ({ setActiveStep, applicationData }) => {
+const VatniPatraDenar = ({ setActiveStep, applicationData, setDisableShowNextBtn }) => {
   const { sendRequest } = AxiosInstance();
   const applicationId = sessionStorage.getItem("applicationId");
   const today = new Date().toISOString().split("T")[0];
@@ -108,8 +106,6 @@ const VatniPatraDenar = ({ setActiveStep, applicationData }) => {
     state: "",
     addressProofName: "",
     addressProofSrc: "",
-    signatureName: "",
-    signatureSrc: "",
   });
   const [foraighnAddress, setForaighnAddress] = useState({
     address: "",
@@ -232,6 +228,11 @@ const VatniPatraDenar = ({ setActiveStep, applicationData }) => {
       firstName: "",
       middleName: "",
       lastName: "",
+      firstNameEng: "",
+      middleNameEng: "",
+      lastNameEng: "",
+      motherName: "",
+      motherNameEng: "",
     });
     const code = e?.target?.value;
     const obj = userDataArr.find((o) => o?.owner_name == code);
@@ -313,15 +314,6 @@ const VatniPatraDenar = ({ setActiveStep, applicationData }) => {
     const value = e?.target?.value;
     setMutationArea(value);
   };
-  const handleIsMoreUser = (e) => {
-    setIsMoreUsers(e?.target?.value);
-    if (e?.target?.value == "yes") {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      setTimeout(() => {
-        setIsMoreUsers("no");
-      }, 1000);
-    }
-  };
 
   const getSuffix = () => {
     sendRequest(
@@ -337,44 +329,238 @@ const VatniPatraDenar = ({ setActiveStep, applicationData }) => {
     );
   };
 
-  const handleSave = () => {
-    const mergedData = {
+  const handleSave = async () => {
+    const isFormValid = await trigger();
+
+    let isAddressValid = false;
+
+    if (isIndian === "india") {
+      isAddressValid = await isValid.triggerUserIndAdd();
+    } else {
+      isAddressValid = await isValid.triggerUserForeignAdd();
+    }
+
+    if (!isFormValid || !isAddressValid) {
+      warningToast("Please Check All Fields !!");
+      return;
+    }
+    const payload = {
       applicationid: applicationId,
-      nabhu: naBhu,
-      lrPropertyUID: lrPropertyUID,
-      milkat: milkat,
-      namud: namud,
-      subPropNo: subPropNo,
+      village_code: applicationData?.village_code,
+      ctsNo: naBhu,
+      mutationSrNo: applicationData?.mutation_type_code,
+      ownerNo: "",
       userDetails: {
-        suffix: suffix,
-        suffixEng: suffixEng,
+        suffix,
+        suffixcode,
+        suffixEng,
+        suffixCodeEng,
         firstName: userDetails?.firstName,
         middleName: userDetails?.middleName,
         lastName: userDetails?.lastName,
         firstNameEng: userDetails?.firstNameEng,
         middleNameEng: userDetails?.middleNameEng,
         lastNameEng: userDetails?.lastNameEng,
+        aliceName: userDetails?.aliceName,
+        dob: userDetails?.dob,
+        motherName: userDetails?.motherName,
+        motherNameEng: userDetails?.motherNameEng,
+        nabhu: naBhu,
+        lrPropertyUID,
+        milkat,
+        namud,
+        subPropNo,
       },
-      actualArea: actualArea,
-      availableArea: availableArea,
-      mutationArea: mutationArea,
+      areaForMutation: {
+        actualArea,
+        availableArea,
+        mutationArea,
+        isFullAreaGiven: radio === "yes",
+      },
       address: {
-        addressType: isIndian, // "india" or "foreign"
-        ...(isIndian == "india"
-          ? { indiaAddress }
-          : { foreignAddress: foraighnAddress }),
+        addressType: isIndian,
+        ...(isIndian === "india"
+          ? {
+            indiaAddress,
+          }
+          : {
+            foreignAddress: foraighnAddress,
+          }),
       },
     };
-    console.log(JSON.stringify(mergedData, null, 2));
+
+    sendRequest(
+      `${URLS?.BaseURL}/MutationAPIS/CreateVataniPatraForGiver`,
+      "POST",
+      payload,
+      (res) => {
+        if (res?.Code == "1") {
+          successToast(res?.Message);
+          handleReset();
+          getDenarTableData();
+        } else {
+          errorToast(res?.Message);
+        }
+      },
+      (err) => {
+        errorToast(err?.Message);
+      }
+    );
+  };
+
+  const getDenarTableData = () => {
+    sendRequest(
+      `${URLS?.BaseURL}/MutationAPIS/GetVataniPatraGiverInfo`,
+      "POST",
+      applicationId,
+      (res) => {
+        if (res?.Code == "1") {
+          successToast(res?.Message);
+          setResponseData(res?.ResponseData);
+        } else {
+          setResponseData([])
+        }
+      },
+      (err) => {
+        errorToast(err?.Message);
+      }
+    );
+  }
+
+  const getGhenarTableData = () => {
+    sendRequest(
+      `${URLS?.BaseURL}/MutationAPIS/GetVataniPatraNondTakerInfo`,
+      "POST",
+      applicationId,
+      (res) => {
+        if (res?.Code == "1") {
+          successToast(res?.Message);
+          setGhenarData(res?.ResponseData);
+        } else {
+          setGhenarData([])
+        }
+      },
+      (err) => {
+        errorToast(err?.Message);
+      }
+    );
+  }
+
+  const handleDelete = (id) => {
+    sendRequest(
+      `${URLS?.BaseURL}/MutationAPIS/DeleteVataniPatraNondForGiver`,
+      "POST",
+      {
+        applicationId,
+        MutationId: id
+      },
+      (res) => {
+        if (res?.Code == "1") {
+          successToast(res?.Message);
+          getDenarTableData();
+        } else {
+          errorToast(res?.Message);
+        }
+      },
+      (err) => {
+        errorToast(err?.Message);
+      }
+    );
+  }
+
+  const handleDeleteGhenar = (id) => {
+    sendRequest(
+      `${URLS?.BaseURL}/MutationAPIS/DeleteVataniPatraNondForTaker`,
+      "POST",
+      {
+        applicationId,
+        mutationId: id
+      },
+      (res) => {
+        if (res?.Code == "1") {
+          successToast(res?.Message);
+          getGhenarTableData()
+        } else {
+          errorToast(res?.Message);
+        }
+      },
+      (err) => {
+        errorToast(err?.Message);
+      }
+    );
+  }
+
+  const handleReset = () => {
+    reset()
+    setNaBhu("");
+    setLrPropertyUID("");
+    setMilkat("land");
+    setNamud("");
+    setSubPropNo("");
+    setActualArea("");
+    setIsIndian("india");
+    setAvailableArea("");
+    setSuffix("");
+    setSuffixEng("");
+    setMutationArea("");
+    setUserDetails({
+      firstName: "",
+      middleName: "",
+      lastName: "",
+      firstNameEng: "",
+      middleNameEng: "",
+      lastNameEng: "",
+      aliceName: "",
+      dob: "",
+      motherName: "",
+      motherNameEng: "",
+    });
+    setIndiaAdress({
+      plotNo: "",
+      building: "",
+      mainRoad: "",
+      impSymbol: "",
+      area: "",
+      mobile: "",
+      mobileOTP: "",
+      pincode: "",
+      postOfficeName: "",
+      city: "",
+      taluka: "",
+      district: "",
+      state: "",
+    });
+    setForaighnAddress({
+      address: "",
+      mobile: "",
+      email: "",
+      emailOTP: "",
+    });
+    setIsMoreUsers("no");
+    setIsReset(!isReset);
   }
 
   useEffect(() => {
     getSuffix();
+    getDenarTableData();
+    getGhenarTableData()
   }, []);
+
+  useEffect(() => {
+    const completed = responseData.length > 0 && ghenarData.length > 0;
+
+    sessionStorage.setItem(
+      "allowPoa",
+      completed ? "yes" : "no"
+    );
+
+    setDisableShowNextBtn(!completed);
+  }, [responseData, ghenarData]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
+
   return (
     <>
       <Toast />
@@ -402,7 +588,7 @@ const VatniPatraDenar = ({ setActiveStep, applicationData }) => {
       <Grid item md={12}>
         <NotesPaper
           heading="वाटणीपत्र देणाराची माहिती भरण्यासाठी आवश्यक सूचना"
-          arr={bakshsishpatraDenarNotesArr}
+          arr={vatanipatraDenarNotesArr}
         />
       </Grid>
 
@@ -799,21 +985,6 @@ const VatniPatraDenar = ({ setActiveStep, applicationData }) => {
                           kaashi &gt;&gt; काशी)
                         </b>
                       </InputLabel>
-                      {/* <TextField
-                        fullWidth
-                        className="textfield"
-                        placeholder="आईचे नाव"
-                        name="motherName"
-                        value={userDetails?.motherName}
-                        error={errors.motherName}
-                        {...field}
-                        onBlur={() => handleBlur("motherName")}
-                        onChange={(e) => {
-                          field.onChange(e);
-                          handleUserDetails(e);
-                        }}
-                        size="small"
-                      /> */}
                       <TransliterationTextField
                         value={userDetails?.motherName}
                         name="motherName"
@@ -1010,53 +1181,13 @@ const VatniPatraDenar = ({ setActiveStep, applicationData }) => {
             />
           </Grid>
 
-          {/* {responseData.length > 0 && (
-            <Grid item md={12}>
-              <Grid
-                container
-                alignItems="center"
-                spacing={4}
-                justifyContent="flex-end"
-              >
-                <Grid
-                  item
-                  style={{ display: "inline-flex", alignItems: "center" }}
-                >
-                  <Typography variant="h5" fontSize="14px" fontWeight={600}>
-                    आणखी वाटणीपत्र देणार आहे का?
-                  </Typography>
-                </Grid>
-
-                <Grid item>
-                  <RadioGroup
-                    row
-                    onChange={handleIsMoreUser}
-                    value={isMoreUsers}
-                    defaultValue="no"
-                  >
-                    <FormControlLabel
-                      value="yes"
-                      control={<Radio />}
-                      label="होय"
-                    />
-                    <FormControlLabel
-                      value="no"
-                      control={<Radio />}
-                      label="नाही"
-                    />
-                  </RadioGroup>
-                </Grid>
-              </Grid>
-            </Grid>
-          )} */}
-
           <Grid container justifyContent="end" px={2} mt={2}>
             <Grid item>
               <Button
                 variant="outlined"
                 startIcon={<RotateRightRoundedIcon />}
                 sx={{ mr: 2 }}
-              // onClick={handleReset}
+                onClick={handleReset}
               >
                 रीसेट करा
               </Button>
@@ -1073,7 +1204,7 @@ const VatniPatraDenar = ({ setActiveStep, applicationData }) => {
                 variant="contained"
                 endIcon={<ArrowForwardRoundedIcon />}
                 onClick={() => setActiveStep(1)}
-              // disabled={responseData.length == 0}
+                disabled={responseData.length == 0}
               >
                 वाटणीपत्र घेणाऱ्याची माहिती भरा
               </Button>
@@ -1107,101 +1238,158 @@ const VatniPatraDenar = ({ setActiveStep, applicationData }) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              <TableRow>
-                <TableCell>1</TableCell>
-                <TableCell>-</TableCell>
-                <TableCell>-</TableCell>
-                <TableCell>-</TableCell>
-                <TableCell>-</TableCell>
-                <TableCell>-</TableCell>
-                <TableCell>-</TableCell>
-                <TableCell>-</TableCell>
-                <TableCell>
-                  <Button
-                    variant="outlined"
-                  // onClick={() => showAddress(val)}
-                  >
-                    पत्ता पहा
-                  </Button>
-                </TableCell>
-                <TableCell>-</TableCell>
-                <TableCell>-</TableCell>
-                <TableCell>-</TableCell>
-                <TableCell>-</TableCell>
-                <TableCell>
-                  <IconButton
-                    color="error"
-                  // onClick={() => handleDelete(val?.mutation_dtl_id)}
-                  >
-                    <DeleteForeverOutlinedIcon />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
+              {Array.isArray(responseData) &&
+                responseData.map((val, i) => {
+                  return (
+                    <TableRow>
+                      <TableCell>{i + 1}</TableCell>
+                      <TableCell>{applicationData?.district_name_in_marathi} /{" "}
+                        {applicationData?.taluka_name} /{" "}
+                        {applicationData?.village_name}</TableCell>
+                      <TableCell>{val?.userDetails?.lrPropertyUID}</TableCell>
+                      <TableCell>{val?.userDetails?.nabhu}</TableCell>
+                      <TableCell>{val?.userDetails?.subPropNo}</TableCell>
+                      <TableCell> {val?.userDetails?.milkat == "land"
+                        ? "भूखंड / जमीन (प्लॉट)"
+                        : "अपार्टमेंट"}</TableCell>
+                      <TableCell>{val?.userDetails?.namud}</TableCell>
+                      <TableCell>{val?.fullNameInMarathi}</TableCell>
+                      <TableCell>{val?.userDetails?.aliceName}</TableCell>
+                      <TableCell>
+                        <Button
+                          variant="outlined"
+                          onClick={() => showAddress(val)}
+                        >
+                          पत्ता पहा
+                        </Button>
+                      </TableCell>
+                      <TableCell>{val?.areaForMutation?.actualArea}</TableCell>
+                      <TableCell>{val?.areaForMutation?.availableArea}</TableCell>
+                      <TableCell>{val?.areaForMutation?.mutationArea}</TableCell>
+                      <TableCell>
+                        <IconButton
+                          color="error"
+                          onClick={() => handleDelete(val?.mutation_dtl_id)}
+                        >
+                          <DeleteForeverOutlinedIcon />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
             </TableBody>
           </Table>
         </TableContainer>
       </Grid>
 
-      <Grid item md={12} mt={3}>
-        <TableContainer component={Paper} elevation={5}>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-              paddingRight: 20,
-            }}
-          >
-            <h3 style={{ marginLeft: 20 }}>वाटणीपत्र घेणार माहिती तक्ता</h3>
-            <Button
-              onClick={() => setActiveStep(1)}
-              endIcon={<ArrowForwardRoundedIcon />}
+      {ghenarData?.length > 0 && (
+        <Grid item md={12} mt={3}>
+          <TableContainer component={Paper} elevation={5}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+                paddingRight: 20,
+              }}
             >
-              आणखी वाटणीपत्र घेणाऱ्याची माहिती भरा
-            </Button>
-          </div>
-          <Table>
-            <TableHead style={{ backgroundColor: "#F4F4F4" }}>
-              <TableRow>
-                <TableCell>अ. क्र.</TableCell>
-                <TableCell>जिल्हा / तालुका / न. भू. कार्यालय / गांव</TableCell>
-                <TableCell>वाटणीपत्र घेणाराचा प्रकार</TableCell>
-                <TableCell>वाटणीपत्र घेणाराचे नाव</TableCell>
-                <TableCell>वाटणीपत्र घेणाराचा पत्ता</TableCell>
-                <TableCell>उर्फ नाव</TableCell>
-                <TableCell>धारक प्रकार</TableCell>
-                <TableCell>स्त्री /पुरुष</TableCell>
-                <TableCell>अ.पा.क/ ए.कू.मॅ.</TableCell>
-                <TableCell>जन्म दिनांक</TableCell>
-                <TableCell>अ.पा.क</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              <TableRow>
-                <TableCell>1</TableCell>
-                <TableCell>-</TableCell>
-                <TableCell>-</TableCell>
-                <TableCell>-</TableCell>
-                <TableCell>
-                  <Button
-                    variant="outlined"
-                  // onClick={() => showAddress(val)}
-                  >
-                    पत्ता पहा
-                  </Button>
-                </TableCell>
-                <TableCell>-</TableCell>
-                <TableCell>-</TableCell>
-                <TableCell>-</TableCell>
-                <TableCell>-</TableCell>
-                <TableCell>-</TableCell>
-                <TableCell>-</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Grid>
+              <h3 style={{ marginLeft: 20 }}>वाटणीपत्र घेणार माहिती तक्ता</h3>
+              <Button
+                onClick={() => setActiveStep(1)}
+                endIcon={<ArrowForwardRoundedIcon />}
+              >
+                आणखी वाटणीपत्र घेणाऱ्याची माहिती भरा
+              </Button>
+            </div>
+            <Table>
+              <TableHead style={{ backgroundColor: "#F4F4F4" }}>
+                <TableRow>
+                  <TableCell>अ. क्र.</TableCell>
+                  <TableCell>जिल्हा / तालुका / न. भू. कार्यालय / गांव</TableCell>
+                  <TableCell>वाटणीपत्र घेणाराचा प्रकार</TableCell>
+                  <TableCell>वाटणीपत्र घेणाराचे नाव</TableCell>
+                  <TableCell>उर्फ नाव</TableCell>
+                  <TableCell>धारक प्रकार</TableCell>
+                  <TableCell>स्त्री /पुरुष</TableCell>
+                  <TableCell>अ.पा.क/ ए.कू.मॅ.</TableCell>
+                  <TableCell>जन्म दिनांक</TableCell>
+                  <TableCell>अ.पा.क</TableCell>
+                  <TableCell>वाटणीपत्र घेणाराचा पत्ता</TableCell>
+                  <TableCell>कृती करा</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {Array.isArray(ghenarData) &&
+                  ghenarData.map((val, i) => {
+                    return (
+                      <TableRow key={i}>
+                        <TableCell>{i + 1}</TableCell>
+                        <TableCell>
+                          {applicationData?.district_name_in_marathi} /{" "}
+                          {applicationData?.taluka_name} /{" "}
+                          {applicationData?.village_name}
+                        </TableCell>
+                        <TableCell>{val?.userType}</TableCell>
+                        <TableCell>{val?.fullNameInMarathi}</TableCell>
+                        <TableCell>
+                          {val?.userType == "व्यक्ती"
+                            ? val?.dharak?.userdharak?.aliceName
+                            : "-"}
+                        </TableCell>
+                        <TableCell>
+                          {val?.userType == "व्यक्ती"
+                            ? val?.dharak?.userdharak?.holderType
+                              ?.owner_status_description
+                            : val?.dharak?.companydharak?.holderType
+                              ?.owner_status_description}
+                        </TableCell>
+
+                        <TableCell>
+                          {val?.userType == "व्यक्ती"
+                            ? val?.dharak?.userdharak?.gender?.gender_description
+                            : "-"}
+                        </TableCell>
+                        <TableCell>
+                          {val?.userType == "व्यक्ती"
+                            ? val?.dharak?.userdharak?.aapakDropdown
+                              ?.apk_description
+                            : "-"}
+                        </TableCell>
+                        <TableCell>
+                          {val?.userType == "व्यक्ती"
+                            ? val?.dharak?.userdharak?.dob
+                            : "-"}
+                        </TableCell>
+                        <TableCell>
+                          {val?.userType == "व्यक्ती"
+                            ? val?.dharak?.userdharak?.aapak
+                            : "-"}
+                        </TableCell>
+                        <TableCell>
+                          <Button
+                            variant="outlined"
+                            onClick={() => showAddress(val)}
+                          >
+                            पत्ता पहा
+                          </Button>
+                        </TableCell>
+                        <TableCell>
+                          <IconButton
+                            color="error"
+                            onClick={() => handleDeleteGhenar(val?.mutation_dtl_id)}
+                          >
+                            <DeleteForeverOutlinedIcon />
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Grid>
+      )}
     </>
   );
 };

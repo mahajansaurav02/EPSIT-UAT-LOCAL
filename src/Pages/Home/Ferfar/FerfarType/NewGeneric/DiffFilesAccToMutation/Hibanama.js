@@ -33,7 +33,7 @@ import * as yup from "yup";
 import URLS from "../../../../../../URLs/url";
 import { filterOnlyMarathiAndEnglishLettersWithSpaces } from "../../../../../../Validations/utils";
 import TransliterationTextField from "../../../../../../ui/TranslationTextfield/EngToMarTextfield";
-import { errorToast, successToast, Toast } from "../../../../../../ui/Toast";
+import { errorToast, successToast, Toast, warningToast } from "../../../../../../ui/Toast";
 
 const Hibanama = () => {
   const { sendRequest } = AxiosInstance();
@@ -157,114 +157,72 @@ const Hibanama = () => {
   };
 
   const handleSave = async () => {
-    if (isIndian == "india") {
-      const payload = {
-        applicationid: applicationId,
-        permissionNo: hibanamaDetails?.permissionNo,
-        permissionDate: hibanamaDetails?.permissionDate,
-        witnessDetails:
-        {
-          suffix: userNoMhProp?.suffix,
-          suffixEng: userNoMhProp?.suffixEng,
-          suffixcode: userNoMhProp?.suffixcode,
-          suffixCodeEng: userNoMhProp?.suffixCodeEng,
-          firstName: userNoMhProp?.firstName,
-          middleName: userNoMhProp?.middleName,
-          lastName: userNoMhProp?.lastName,
-          firstNameEng: userNoMhProp?.firstNameEng,
-          middleNameEng: userNoMhProp?.middleNameEng,
-          lastNameEng: userNoMhProp?.lastNameEng,
-          aliceName: aliceName,
-        },
-        address: {
-          addressType: isIndian,
-          ...(isIndian === "india"
-            ? {
-              indiaAddress: indiaAddress,
-            }
-            : {
-              foreignAddress: foraighnAddress,
-            }),
-        },
-      }
+    const isUserNoMhProperty = await isValid.triggerUserNoMhProperty();
 
-      sendRequest(
-        `${URLS?.BaseURL}/MutationAPIS/SaveHibanamaWitnessInfo`,
-        "POST",
-        payload,
-        (res) => {
-          if (res?.Code == "1") {
-            console.log("res", res)
-            successToast(res?.Message);
-            handleReset();
-            getWitnessData();
-          } else {
-            console.error(res?.Message);
-            errorToast(res?.Message);
-          }
-        },
-        (err) => {
-          errorToast(err?.Message);
-          console.error(err?.Message);
-        }
-      );
+    let isAddressValid = false;
 
-      console.log("payload", JSON.stringify(payload, null, 2));
+    if (isIndian === "india") {
+      isAddressValid = await isValid.triggerUserIndAdd();
     } else {
-      const payload = {
-        applicationid: applicationId,
-        permissionNo: hibanamaDetails?.permissionNo,
-        permissionDate: hibanamaDetails?.permissionDate,
-        witnessDetails:
-        {
-          suffix: userNoMhProp?.suffix,
-          suffixEng: userNoMhProp?.suffixEng,
-          suffixcode: userNoMhProp?.suffixcode,
-          suffixCodeEng: userNoMhProp?.suffixCodeEng,
-          firstName: userNoMhProp?.firstName,
-          middleName: userNoMhProp?.middleName,
-          lastName: userNoMhProp?.lastName,
-          firstNameEng: userNoMhProp?.firstNameEng,
-          middleNameEng: userNoMhProp?.middleNameEng,
-          lastNameEng: userNoMhProp?.lastNameEng,
-          aliceName: aliceName,
-        },
-        address: {
-          addressType: isIndian,
-          ...(isIndian === "india"
-            ? {
-              indiaAddress: indiaAddress,
-            }
-            : {
-              foreignAddress: foraighnAddress,
-            }),
-        },
-      }
-      console.log("payload", JSON.stringify(payload, null, 2));
-
-      sendRequest(
-        `${URLS?.BaseURL}/MutationAPIS/SaveHibanamaWitnessInfo`,
-        "POST",
-        payload,
-        (res) => {
-          if (res?.Code == "1") {
-            console.log("res", res)
-            successToast(res?.Message);
-            handleReset();
-            getWitnessData();
-          } else {
-            console.error(res?.Message);
-            errorToast(res?.Message);
-          }
-        },
-        (err) => {
-          errorToast(err?.Message);
-          console.error(err?.Message);
-        }
-      );
-
+      isAddressValid = await isValid.triggerUserForeignAdd();
     }
-  };
+
+    if (!isUserNoMhProperty || !isAddressValid) {
+      warningToast("Please Check All Fields !!");
+      return;
+    }
+
+    const payload = {
+      applicationid: applicationId,
+      permissionNo: hibanamaDetails?.permissionNo,
+      permissionDate: hibanamaDetails?.permissionDate,
+
+      witnessDetails: {
+        suffix: userNoMhProp?.suffix,
+        suffixEng: userNoMhProp?.suffixEng,
+        suffixcode: userNoMhProp?.suffixcode,
+        suffixCodeEng: userNoMhProp?.suffixCodeEng,
+        firstName: userNoMhProp?.firstName,
+        middleName: userNoMhProp?.middleName,
+        lastName: userNoMhProp?.lastName,
+        firstNameEng: userNoMhProp?.firstNameEng,
+        middleNameEng: userNoMhProp?.middleNameEng,
+        lastNameEng: userNoMhProp?.lastNameEng,
+        aliceName,
+      },
+
+      address: {
+        addressType: isIndian,
+        ...(isIndian === "india"
+          ? {
+            indiaAddress,
+          }
+          : {
+            foreignAddress: foraighnAddress,
+          }),
+      },
+    };
+
+    console.log("payload", JSON.stringify(payload, null, 2));
+
+    sendRequest(
+      `${URLS?.BaseURL}/MutationAPIS/SaveHibanamaWitnessInfo`,
+      "POST",
+      payload,
+      (res) => {
+        if (res?.Code === "1") {
+          successToast(res?.Message);
+          handleReset();
+          getWitnessData();
+        } else {
+          errorToast(res?.Message);
+        }
+      },
+      (err) => {
+        errorToast(err?.Message);
+      }
+    );
+  };;
 
   const handleDelete = (id) => {
     sendRequest(
@@ -449,10 +407,10 @@ const Hibanama = () => {
                       return (
                         <TableRow key={i}>
                           <TableCell>{i + 1}</TableCell>
-                          <TableCell>{val?.permissionNo}</TableCell>
-                          <TableCell>{val?.permissionDate}</TableCell>
+                          <TableCell>{val?.permissionNo || "-"}</TableCell>
+                          <TableCell>{val?.permissionDate || "-"}</TableCell>
                           <TableCell>{val?.witnessDetails?.suffix + " " + val?.witnessDetails?.firstName + " " + val?.witnessDetails?.middleName + " " + val?.witnessDetails?.lastName}</TableCell>
-                          <TableCell>{val?.witnessDetails?.aliceName}</TableCell>
+                          <TableCell>{val?.witnessDetails?.aliceName || "-"}</TableCell>
                           <TableCell>{val?.address?.addressType == "FOREIGN" ? val?.address?.foreignAddress?.address
                             : val?.address?.indiaAddress}</TableCell>
                           <TableCell>

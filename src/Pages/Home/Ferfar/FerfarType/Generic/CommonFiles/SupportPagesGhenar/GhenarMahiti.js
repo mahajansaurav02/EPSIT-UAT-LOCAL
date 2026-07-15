@@ -1838,9 +1838,9 @@ const GhenarMahiti = ({ applicationData }) => {
                       <TableCell>
                         {val?.userType == "व्यक्ती"
                           ? val?.dharak?.userdharak?.holderType
-                              ?.owner_status_description
+                            ?.owner_status_description
                           : val?.dharak?.companydharak?.holderType
-                              ?.owner_status_description}
+                            ?.owner_status_description}
                       </TableCell>
 
                       <TableCell>
@@ -1851,7 +1851,7 @@ const GhenarMahiti = ({ applicationData }) => {
                       <TableCell>
                         {val?.userType == "व्यक्ती"
                           ? val?.dharak?.userdharak?.aapakDropdown
-                              ?.apk_description
+                            ?.apk_description
                           : "-"}
                       </TableCell>
                       <TableCell>
