@@ -326,7 +326,7 @@ const VatniPatraGhenar = ({ setActiveStep, applicationData, setDisableShowNextBt
       giver: giver,
     };
 
-    console.log(JSON.stringify(payload, null, 2));
+    // console.log(JSON.stringify(payload, null, 2));
 
     sendRequest(
       `${URLS?.BaseURL}/MutationAPIS/CreateVataniPatraNondForTaker`,

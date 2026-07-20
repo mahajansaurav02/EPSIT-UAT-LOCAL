@@ -331,12 +331,17 @@ const UserDharak = ({ userDharak, setUserDharak, setIsValid, isReset }) => {
             )}
           />
         </Grid>
-        {/* <Grid item md={2}>
+        <Grid item md={2}>
           <InputLabel className="inputlabel">
             <b>वाटणी क्षेत्र (चौ.मी.)</b>
           </InputLabel>
-          <TextField fullWidth className="textfield" size="small" />
-        </Grid> */}
+          <TextField fullWidth className="textfield"
+            size="small"
+            name="landBuyArea"
+            value={userDharak.landBuyArea}
+            onChange={handleUserDharak}
+          />
+        </Grid>
         <Grid item md={2}>
           <Controller
             name="dob"
