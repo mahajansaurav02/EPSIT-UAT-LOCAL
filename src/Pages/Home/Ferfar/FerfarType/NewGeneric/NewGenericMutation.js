@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   Box,
   FormControlLabel,
@@ -49,6 +49,17 @@ const NewGenericMutation = ({ applicationData, setDisableShowNextBtn }) => {
     setActiveStep(step);
   };
 
+  const ghenarRef = useRef(null);
+  useEffect(() => {
+    if (activeStep === 1) {
+      requestAnimationFrame(() => {
+        ghenarRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      });
+    }
+  }, [activeStep]);
   const {
     control,
     trigger,
@@ -69,7 +80,10 @@ const NewGenericMutation = ({ applicationData, setDisableShowNextBtn }) => {
   const handleNaBhuNo = (e) => {
     const code = e?.target?.value;
     setNaBhu(e?.target?.value);
-    const obj = applicationData?.nabhDTL.find((o) => o?.naBhu == code);
+    // const obj = applicationData?.nabhDTL.find((o) => o?.naBhu == code);
+    const obj = applicationData?.nabhDTL?.find(
+      (o) => o?.naBhu === code
+    );
     setObj(obj);
     setLrPropertyUID(obj?.lrPropertyUID);
     setMilkat(obj?.milkat);
@@ -92,7 +106,8 @@ const NewGenericMutation = ({ applicationData, setDisableShowNextBtn }) => {
       applicationId,
       (res) => {
         console.log("res", res)
-        setHibanama(res?.ResponseData);
+        // setHibanama(res?.ResponseData);
+        setHibanama(Array.isArray(res?.ResponseData) ? res.ResponseData : []);
       },
       (err) => {
         console.error(err?.Message);
@@ -107,7 +122,8 @@ const NewGenericMutation = ({ applicationData, setDisableShowNextBtn }) => {
       applicationId,
       (res) => {
         if (res?.Code === "1") {
-          setDenarData(res.ResponseData);
+          // setDenarData(res.ResponseData);
+          setDenarData(Array.isArray(res?.ResponseData) ? res.ResponseData : []);
         } else {
           setDenarData([]);
         }
@@ -123,7 +139,8 @@ const NewGenericMutation = ({ applicationData, setDisableShowNextBtn }) => {
       applicationId,
       (res) => {
         if (res?.Code === "1") {
-          setGhenarData(res.ResponseData);
+          // setGhenarData(res.ResponseData);
+          setGhenarData(Array.isArray(res?.ResponseData) ? res.ResponseData : []);
         } else {
           setGhenarData([]);
         }
@@ -280,7 +297,7 @@ const NewGenericMutation = ({ applicationData, setDisableShowNextBtn }) => {
               </Grid>
             </Grid>
 
-            {!naBhu == "" && (
+            {naBhu !== "" && (
               <Paper elevation={5} sx={{ p: 2, mt: 2 }} className="papermain">
                 <Grid item md={12}>
                   <Box sx={{ width: "100%" }}>
@@ -308,18 +325,17 @@ const NewGenericMutation = ({ applicationData, setDisableShowNextBtn }) => {
                           </>
                         )}
                         {activeStep === 1 && (
-                          <>
+                          <div ref={ghenarRef}>
                             <Ghenar
                               applicationData={applicationData}
                               setActiveStep={setActiveStep}
                             />
-                          </>
+                          </div>
                         )}
                         {activeStep === 2 && (
                           <>
                             <HibanamaTables
                               applicationData={applicationData}
-                              obj={obj}
                               denarData={denarData}
                               ghenarData={ghenarData}
                             />

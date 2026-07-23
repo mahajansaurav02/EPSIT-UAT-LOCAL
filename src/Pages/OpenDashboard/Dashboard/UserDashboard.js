@@ -11,6 +11,13 @@ import {
   Select,
   TextField,
   Tooltip,
+  // TableCell,
+  // TableContainer,
+  // Typography,
+  // TableHead,
+  // TableRow,
+  // Table,
+  // TableBody
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -306,6 +313,80 @@ const UserDashboard = () => {
     colors: colors,
   };
 
+  // const rows = [
+  //   {
+  //     sr: 1,
+  //     division: "पुणे",
+  //     epsit: 16129,
+  //     epcis: 10016,
+  //     pending: 380,
+  //     approved: 422,
+  //     total: 12036,
+  //   },
+  //   {
+  //     sr: 2,
+  //     division: "नागपूर",
+  //     epsit: 13876,
+  //     epcis: 8587,
+  //     pending: 265,
+  //     approved: 312,
+  //     total: 10350,
+  //   },
+  //   {
+  //     sr: 3,
+  //     division: "नाशिक",
+  //     epsit: 6771,
+  //     epcis: 4454,
+  //     pending: 55,
+  //     approved: 235,
+  //     total: 5278,
+  //   },
+  //   {
+  //     sr: 4,
+  //     division: "छ. संभाजीनगर",
+  //     epsit: 3125,
+  //     epcis: 2051,
+  //     pending: 42,
+  //     approved: 103,
+  //     total: 2354,
+  //   },
+  //   {
+  //     sr: 5,
+  //     division: "कोकण",
+  //     epsit: 3494,
+  //     epcis: 2430,
+  //     pending: 28,
+  //     approved: 65,
+  //     total: 2667,
+  //   },
+  //   {
+  //     sr: 6,
+  //     division: "अमरावती",
+  //     epsit: 6157,
+  //     epcis: 3887,
+  //     pending: 226,
+  //     approved: 179,
+  //     total: 4701,
+  //   },
+  // ];
+
+  // const totals = rows.reduce(
+  //   (acc, row) => ({
+  //     epsit: acc.epsit + row.epsit,
+  //     epcis: acc.epcis + row.epcis,
+  //     pending: acc.pending + row.pending,
+  //     approved: acc.approved + row.approved,
+  //     total: acc.total + row.total,
+  //   }),
+  //   {
+  //     epsit: 0,
+  //     epcis: 0,
+  //     pending: 0,
+  //     approved: 0,
+  //     total: 0,
+  //   }
+  // );
+
   //---------------------Chart------------------------------
 
   const getRegion = async () => {
@@ -332,7 +413,140 @@ const UserDashboard = () => {
       <AppBar position="fixed" color="default">
         <Header showSignInBtn={true} />
       </AppBar>
-      <Container>
+
+      {/* <Paper
+        elevation={4}
+        sx={{
+          borderRadius: 3,
+          overflow: "hidden",
+        }}
+      >
+        <Typography
+          sx={{
+            bgcolor: "#1976d2",
+            color: "#fff",
+            py: 1.5,
+            textAlign: "center",
+            fontWeight: "bold",
+            fontSize: 20,
+          }}
+        >
+          विभागनिहाय अर्ज स्थिती
+        </Typography>
+
+        <TableContainer>
+          <Table size="small">
+
+            <TableHead>
+
+              <TableRow
+                sx={{
+                  backgroundColor: "#1565c0",
+                }}
+              >
+                {[
+                  "अ.क्र.",
+                  "विभाग",
+                  "EPSIT",
+                  "EPCIS",
+                  "Pending",
+                  "Approved",
+                  "Total",
+                ].map((head) => (
+                  <TableCell
+                    key={head}
+                    align="center"
+                    sx={{
+                      color: "#fff",
+                      fontWeight: "bold",
+                      fontSize: 15,
+                      border: "1px solid #ddd",
+                    }}
+                  >
+                    {head}
+                  </TableCell>
+                ))}
+              </TableRow>
+
+            </TableHead>
+
+            <TableBody>
+
+              {rows.map((row, index) => (
+
+                <TableRow
+                  key={row.sr}
+                  sx={{
+                    backgroundColor:
+                      index % 2 === 0 ? "#fafafa" : "#ffffff",
+                    "&:hover": {
+                      backgroundColor: "#E3F2FD",
+                    },
+                  }}
+                >
+                  <TableCell align="center">{row.sr}</TableCell>
+
+                  <TableCell>{row.division}</TableCell>
+
+                  <TableCell align="center">{row.epsit}</TableCell>
+
+                  <TableCell align="center">{row.epcis}</TableCell>
+
+                  <TableCell align="center">{row.pending}</TableCell>
+
+                  <TableCell align="center">{row.approved}</TableCell>
+
+                  <TableCell align="center">{row.total}</TableCell>
+
+                </TableRow>
+
+              ))}
+
+              <TableRow
+                sx={{
+                  backgroundColor: "#0D47A1",
+                }}
+              >
+                <TableCell
+                  colSpan={2}
+                  sx={{
+                    color: "#fff",
+                    fontWeight: "bold",
+                    textAlign: "center",
+                  }}
+                >
+                  TOTAL
+                </TableCell>
+
+                <TableCell align="center" sx={{ color: "#fff", fontWeight: "bold" }}>
+                  {totals.epsit}
+                </TableCell>
+
+                <TableCell align="center" sx={{ color: "#fff", fontWeight: "bold" }}>
+                  {totals.epcis}
+                </TableCell>
+
+                <TableCell align="center" sx={{ color: "#fff", fontWeight: "bold" }}>
+                  {totals.pending}
+                </TableCell>
+
+                <TableCell align="center" sx={{ color: "#fff", fontWeight: "bold" }}>
+                  {totals.approved}
+                </TableCell>
+
+                <TableCell align="center" sx={{ color: "#fff", fontWeight: "bold" }}>
+                  {totals.total}
+                </TableCell>
+
+              </TableRow>
+
+            </TableBody>
+
+          </Table>
+        </TableContainer>
+      </Paper> */}
+
+      <Container sx={{ mt: 5 }}>
         <Grid container spacing={2}>
           <Grid item md={12}>
             <Grid container spacing={2}>

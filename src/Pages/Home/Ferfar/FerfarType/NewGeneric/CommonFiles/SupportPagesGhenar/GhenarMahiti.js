@@ -23,6 +23,7 @@ import {
 } from "@mui/material";
 import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
 import CloseIcon from "@mui/icons-material/Close";
+import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 import UserNoMHProperty from "./User/NoMHProperty/UserNoMHProperty";
 import UserMHPropertyType712 from "./User/MHProperty/UserMHPropertyType712";
 import UserMHPropertyTypePropertyCard from "./User/MHProperty/UserMHPropertyTypePropertyCard";
@@ -1800,6 +1801,14 @@ const GhenarMahiti = ({ applicationData, setActiveStep }) => {
 
           <Grid container justifyContent="end" px={2} mt={2}>
             <Grid item>
+              <Button
+                variant="contained"
+                startIcon={<ArrowBackRoundedIcon />}
+                sx={{ mr: 2 }}
+                onClick={() => setActiveStep(0)}
+              >
+                आणखी देणार माहिती भरा
+              </Button>
               <Button
                 variant="outlined"
                 startIcon={<RotateRightRoundedIcon />}
