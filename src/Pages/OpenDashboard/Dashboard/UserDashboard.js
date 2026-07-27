@@ -11,15 +11,16 @@ import {
   Select,
   TextField,
   Tooltip,
-  // TableCell,
-  // TableContainer,
-  // Typography,
-  // TableHead,
-  // TableRow,
-  // Table,
-  // TableBody
+  TableCell,
+  TableContainer,
+  Typography,
+  TableHead,
+  TableRow,
+  Table,
+  TableBody,
+  Box
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -51,8 +52,22 @@ const UserDashboard = () => {
   const [mutationCountData, setMutationCountData] = useState([]);
 
   const [division, setDivision] = useState([]);
+  const [newDivisionData, setNewDivisionData] = useState([]);
   const [district, setDistrict] = useState([]);
+  const [newDistrictData, setNewDistrictData] = useState([]);
   const [taluka, setTaluka] = useState([]);
+  const [officeData, setOfficeData] = useState([]);
+  const [newDashboardData, setNewDashboardData] = useState([]);
+
+  const [expandedDivision, setExpandedDivision] = useState(null);
+  const [expandedDistrict, setExpandedDistrict] = useState(null);
+  const [expandedOffice, setExpandedOffice] = useState(null);
+
+  const [loadingDivision, setLoadingDivision] = useState(false);
+  const [loadingDistrict, setLoadingDistrict] = useState(false);
+  const [loadingOffice, setLoadingOffice] = useState(false);
+  const [loadingMutation, setLoadingMutation] = useState(false);
+
 
   const handleUserDetails = (e) => {
     const { name, value } = e?.target;
@@ -313,81 +328,7 @@ const UserDashboard = () => {
     colors: colors,
   };
 
-  // const rows = [
-  //   {
-  //     sr: 1,
-  //     division: "पुणे",
-  //     epsit: 16129,
-  //     epcis: 10016,
-  //     pending: 380,
-  //     approved: 422,
-  //     total: 12036,
-  //   },
-  //   {
-  //     sr: 2,
-  //     division: "नागपूर",
-  //     epsit: 13876,
-  //     epcis: 8587,
-  //     pending: 265,
-  //     approved: 312,
-  //     total: 10350,
-  //   },
-  //   {
-  //     sr: 3,
-  //     division: "नाशिक",
-  //     epsit: 6771,
-  //     epcis: 4454,
-  //     pending: 55,
-  //     approved: 235,
-  //     total: 5278,
-  //   },
-  //   {
-  //     sr: 4,
-  //     division: "छ. संभाजीनगर",
-  //     epsit: 3125,
-  //     epcis: 2051,
-  //     pending: 42,
-  //     approved: 103,
-  //     total: 2354,
-  //   },
-  //   {
-  //     sr: 5,
-  //     division: "कोकण",
-  //     epsit: 3494,
-  //     epcis: 2430,
-  //     pending: 28,
-  //     approved: 65,
-  //     total: 2667,
-  //   },
-  //   {
-  //     sr: 6,
-  //     division: "अमरावती",
-  //     epsit: 6157,
-  //     epcis: 3887,
-  //     pending: 226,
-  //     approved: 179,
-  //     total: 4701,
-  //   },
-  // ];
 
-  // const totals = rows.reduce(
-  //   (acc, row) => ({
-  //     epsit: acc.epsit + row.epsit,
-  //     epcis: acc.epcis + row.epcis,
-  //     pending: acc.pending + row.pending,
-  //     approved: acc.approved + row.approved,
-  //     total: acc.total + row.total,
-  //   }),
-  //   {
-  //     epsit: 0,
-  //     epcis: 0,
-  //     pending: 0,
-  //     approved: 0,
-  //     total: 0,
-  //   }
-  // );
-
-  //---------------------Chart------------------------------
 
   const getRegion = async () => {
     sendRequest(
@@ -403,10 +344,124 @@ const UserDashboard = () => {
     );
   };
 
+  const handleGetDivision = () => {
+    setLoadingDivision(true);
+
+    sendRequest(
+      `${URLS.BaseURL}/EPCISAPIS/GetDashboardDataForDivision`,
+      'POST',
+      null,
+      (res) => {
+        setNewDivisionData(res.ResponseData || []);
+        setLoadingDivision(false);
+      },
+      (err) => {
+        setLoadingDivision(false);
+        errorToast(err.Message);
+      }
+    );
+  };
+
+  const handleDivisionClick = (division) => {
+    const regionCode = division.regionCode;
+
+    // collapse if already open
+    if (expandedDivision === regionCode) {
+      setExpandedDivision(null);
+      setNewDistrictData([]);
+      setExpandedDistrict(null);
+      setOfficeData([]);
+      return;
+    }
+
+    setLoadingDistrict(true);
+
+    sendRequest(
+      `${URLS.BaseURL}/EPCISAPIS/GetDashboardDataForDistrict`,
+      'POST',
+      regionCode,
+      (res) => {
+        setNewDistrictData(res.ResponseData || []);
+        setExpandedDivision(regionCode);
+
+        // reset office section
+        setExpandedDistrict(null);
+        setOfficeData([]);
+
+        setLoadingDistrict(false);
+      },
+      (err) => {
+        setLoadingDistrict(false);
+        errorToast(err.Message);
+      }
+    );
+  };
+
+  const handleDistrictClick = (regionCode, district) => {
+    const districtCode = district.districtCode;
+
+    // collapse office if same district clicked
+    if (expandedDistrict === districtCode) {
+      setExpandedDistrict(null);
+      setOfficeData([]);
+      return;
+    }
+
+    setLoadingOffice(true);
+
+    sendRequest(
+      `${URLS.BaseURL}/EPCISAPIS/GetDashboardDataForOffice`,
+      'POST',
+      {
+        regionCode,
+        districtCode,
+      },
+      (res) => {
+        setOfficeData(res.ResponseData || []);
+        setExpandedDistrict(districtCode);
+        setLoadingOffice(false);
+      },
+      (err) => {
+        setLoadingOffice(false);
+        errorToast(err.Message);
+      }
+    );
+  };
+
+  const getDashboardData = (regionCode, districtCode, officeCode) => {
+    setLoadingMutation(true)
+    const payload = {
+      region_code: String(regionCode),
+      district_code: String(districtCode),
+      office_code: String(officeCode),
+    };
+    sendRequest(
+      `${URLS.BaseURL}/EPCISAPIS/GetCountOfMutationsForNewDashboard`,
+      "POST",
+      payload,
+      (res) => {
+        console.log(res, "res")
+        setNewDashboardData(res.ResponseData);
+        setLoadingMutation(false)
+      },
+      (err) => {
+        errorToast(err.Message)
+        setLoadingMutation(false)
+      });
+  };
+
+  console.log({
+    newDistrictData,
+    newDivisionData,
+    officeData
+  })
+
   useEffect(() => {
     getRegion();
+    // handleGetDivision()
     search();
   }, []);
+
   return (
     <>
       <Toast />
@@ -414,137 +469,306 @@ const UserDashboard = () => {
         <Header showSignInBtn={true} />
       </AppBar>
 
-      {/* <Paper
-        elevation={4}
-        sx={{
-          borderRadius: 3,
-          overflow: "hidden",
-        }}
-      >
-        <Typography
+      {/* <Button content="outlined" onClick={handleGetDivision} >
+        Get Data
+      </Button> */}
+
+      {/* <TableContainer component={Paper} sx={{ width: "100%" }}>
+        <Table stickyHeader
           sx={{
-            bgcolor: "#1976d2",
-            color: "#fff",
-            py: 1.5,
-            textAlign: "center",
-            fontWeight: "bold",
-            fontSize: 20,
-          }}
-        >
-          विभागनिहाय अर्ज स्थिती
-        </Typography>
-
-        <TableContainer>
-          <Table size="small">
-
-            <TableHead>
-
-              <TableRow
-                sx={{
-                  backgroundColor: "#1565c0",
-                }}
-              >
-                {[
-                  "अ.क्र.",
-                  "विभाग",
-                  "EPSIT",
-                  "EPCIS",
-                  "Pending",
-                  "Approved",
-                  "Total",
-                ].map((head) => (
-                  <TableCell
-                    key={head}
-                    align="center"
+            "& .MuiTableCell-root": {
+              borderBottom: "1px solid #e5e7eb",
+              fontSize: "14px",
+            },
+          }}>
+          <TableHead sx={{
+            "& .MuiTableCell-root": {
+              background: "#1565C0",
+              color: "#fff",
+              fontWeight: 700,
+              fontSize: "15px",
+              textAlign: "center",
+              whiteSpace: "nowrap",
+            },
+          }}>
+            <TableRow>
+              <TableCell width={80}>Sr No</TableCell>
+              <TableCell>विभाग</TableCell>
+              <TableCell>EPSIT मध्ये प्राप्त एकूण अर्ज</TableCell>
+              <TableCell>ePCIS मध्ये inward एकूण अर्ज</TableCell>
+              <TableCell>एकूण निकाली अर्ज</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {loadingDivision ? (
+              <TableRow>
+                <TableCell colSpan={5} sx={{ p: 0 }}>
+                  <Box
                     sx={{
-                      color: "#fff",
-                      fontWeight: "bold",
-                      fontSize: 15,
-                      border: "1px solid #ddd",
+                      height: 250,
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
                     }}
                   >
-                    {head}
-                  </TableCell>
-                ))}
+                    <CircularProgress size="2rem" />
+                  </Box>
+                </TableCell>
               </TableRow>
+            ) : (
+              newDivisionData.map((division, index) => (
+                <React.Fragment key={division.regionCode}>
+                  <TableRow
+                    hover
+                    sx={{
+                      cursor: "pointer",
+                      bgcolor: "#E3F2FD",
+                      fontWeight: 700,
 
-            </TableHead>
+                      "& td": {
+                        fontWeight: 700,
+                        fontSize: "15px",
+                      },
 
-            <TableBody>
+                      "&:hover": {
+                        bgcolor: "#BBDEFB",
+                      },
+                    }}
+                    onClick={() => handleDivisionClick(division)}
+                  >
+                    <TableCell>{index + 1}</TableCell>
 
-              {rows.map((row, index) => (
+                    <TableCell>
+                      {division.regionNameInMarathi}
+                    </TableCell>
 
-                <TableRow
-                  key={row.sr}
-                  sx={{
-                    backgroundColor:
-                      index % 2 === 0 ? "#fafafa" : "#ffffff",
-                    "&:hover": {
-                      backgroundColor: "#E3F2FD",
-                    },
-                  }}
-                >
-                  <TableCell align="center">{row.sr}</TableCell>
+                    <TableCell>{division.createdApplicationCount}</TableCell>
+                    <TableCell>{division.generatedInwardNoCount}</TableCell>
+                    <TableCell>{division.totalApplicationCount}</TableCell>
+                  </TableRow>
 
-                  <TableCell>{row.division}</TableCell>
+                  {expandedDivision === division.regionCode && loadingDistrict && (
+                    <TableRow >
+                      <TableCell colSpan={5} sx={{ p: 0 }}>
+                        <Box
+                          sx={{
+                            height: 250,
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <CircularProgress size="2rem" />
+                        </Box>
+                      </TableCell>
+                    </TableRow>
+                  )}
 
-                  <TableCell align="center">{row.epsit}</TableCell>
+                  {expandedDivision === division.regionCode &&
+                    !loadingDistrict &&
+                    newDistrictData.map((district, dIndex) => (
+                      <React.Fragment key={district.districtCode}>
+                        <TableRow
+                          hover
+                          sx={{
+                            cursor: "pointer",
+                            bgcolor: "#F5F9FF",
 
-                  <TableCell align="center">{row.epcis}</TableCell>
+                            "& td": {
+                              fontWeight: 600,
+                            },
 
-                  <TableCell align="center">{row.pending}</TableCell>
+                            "&:hover": {
+                              bgcolor: "#E3F2FD",
+                            },
+                          }}
+                          onClick={() =>
+                            handleDistrictClick(division.regionCode, district)
+                          }
+                        >
+                          <TableCell>{`${index + 1}.${dIndex + 1}`}</TableCell>
+                          <TableCell sx={{
+                            pl: 6,
+                            borderLeft: "5px solid #42A5F5",
+                          }}>
+                            {district.districtNameInMarathi}
+                          </TableCell>
+                          <TableCell>{district.createdApplicationCount}</TableCell>
+                          <TableCell>{district.generatedInwardNoCount}</TableCell>
+                          <TableCell>{district.totalApplicationCount}</TableCell>
+                        </TableRow>
 
-                  <TableCell align="center">{row.approved}</TableCell>
+                        {expandedDistrict === district.districtCode && loadingOffice && (
+                          <TableRow>
+                            <TableCell colSpan={5} sx={{ p: 0 }}>
+                              <Box
+                                sx={{
+                                  height: 250,
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  alignItems: "center",
+                                }}
+                              >
+                                <CircularProgress size="2rem" />
+                              </Box>
+                            </TableCell>
+                          </TableRow>
+                        )}
 
-                  <TableCell align="center">{row.total}</TableCell>
+                        {expandedDistrict === district.districtCode &&
+                          !loadingOffice &&
+                          officeData.map((office, oIndex) => (
+                            <React.Fragment key={office.officeCode}>
+                              <TableRow
+                                sx={{
+                                  cursor: "pointer",
+                                  bgcolor: "#FFFDF3",
 
-                </TableRow>
+                                  "&:hover": {
+                                    bgcolor: "#FFF3CD",
+                                  },
+                                }}
+                                onClick={() => {
+                                  if (expandedOffice === office.officeCode) {
+                                    setExpandedOffice(null);
+                                    setNewDashboardData([]);
+                                  } else {
+                                    setExpandedOffice(office.officeCode);
+                                    getDashboardData(
+                                      division.regionCode,
+                                      district.districtCode,
+                                      office.officeCode
+                                    );
+                                  }
+                                }}
+                              >
+                                <TableCell>{`${index + 1}.${dIndex + 1}.${oIndex + 1}`}</TableCell>
+                                <TableCell sx={{
+                                  pl: 10,
+                                  borderLeft: "5px solid orange",
+                                }}>
+                                  {office.officeNameInMarathi}
+                                </TableCell>
+                                <TableCell>{office.createdApplicationCount}</TableCell>
+                                <TableCell>{office.generatedInwardNoCount}</TableCell>
+                                <TableCell>{office.totalApplicationCount}</TableCell>
+                              </TableRow>
 
-              ))}
+                              {expandedOffice === office.officeCode && (
+                                <TableRow>
+                                  <TableCell colSpan={5} sx={{ p: 2, bgcolor: "#f8fafc" }}>
+                                    {loadingMutation ? (
+                                      <Box
+                                        sx={{
+                                          height: 120,
+                                          display: "flex",
+                                          justifyContent: "center",
+                                          alignItems: "center",
+                                        }}
+                                      >
+                                        <CircularProgress size="2rem" />
+                                      </Box>
+                                    ) : newDashboardData.length > 0 ? (
+                                      <Table size="small">
+                                        <TableHead>
+                                          <TableRow
+                                          // sx={{
+                                          //   bgcolor: "#1976d2",
+                                          //   "& th": {
+                                          //     color: "#fff",
+                                          //     fontWeight: 700,
+                                          //     textAlign: "center",
+                                          //   },
+                                          // }}
+                                          >
+                                            <TableCell></TableCell>
+                                            <TableCell width={150}>फेरफार नाव</TableCell>
+                                            <TableCell align="center">Created</TableCell>
+                                            <TableCell align="center">Inward</TableCell>
+                                            <TableCell align="center">Rejected</TableCell>
+                                            <TableCell align="center">Error</TableCell>
+                                          </TableRow>
+                                        </TableHead>
 
-              <TableRow
-                sx={{
-                  backgroundColor: "#0D47A1",
-                }}
-              >
-                <TableCell
-                  colSpan={2}
-                  sx={{
-                    color: "#fff",
-                    fontWeight: "bold",
-                    textAlign: "center",
-                  }}
-                >
-                  TOTAL
-                </TableCell>
+                                        <TableBody>
+                                          {newDashboardData.map((mutation, index) => {
+                                            const created =
+                                              mutation.Statuses.find(
+                                                (s) => s.ApplicationStatusCode === 0
+                                              )?.CountOfMutation || 0;
 
-                <TableCell align="center" sx={{ color: "#fff", fontWeight: "bold" }}>
-                  {totals.epsit}
-                </TableCell>
+                                            const inward =
+                                              mutation.Statuses.find(
+                                                (s) => s.ApplicationStatusCode === 10
+                                              )?.CountOfMutation || 0;
 
-                <TableCell align="center" sx={{ color: "#fff", fontWeight: "bold" }}>
-                  {totals.epcis}
-                </TableCell>
+                                            const rejected =
+                                              mutation.Statuses.find(
+                                                (s) => s.ApplicationStatusCode === 12
+                                              )?.CountOfMutation || 0;
 
-                <TableCell align="center" sx={{ color: "#fff", fontWeight: "bold" }}>
-                  {totals.pending}
-                </TableCell>
+                                            const error =
+                                              mutation.Statuses.find(
+                                                (s) => s.ApplicationStatusCode === 15
+                                              )?.CountOfMutation || 0;
 
-                <TableCell align="center" sx={{ color: "#fff", fontWeight: "bold" }}>
-                  {totals.approved}
-                </TableCell>
+                                            return (
+                                              <TableRow
+                                                key={mutation.MutationName}
+                                                hover
+                                                sx={{
+                                                  "&:nth-of-type(even)": {
+                                                    bgcolor: "#fafafa",
+                                                  },
+                                                }}
+                                              >
+                                                <TableCell align="center"></TableCell>
 
-                <TableCell align="center" sx={{ color: "#fff", fontWeight: "bold" }}>
-                  {totals.total}
-                </TableCell>
+                                                <TableCell sx={{
+                                                  fontWeight: 500,
+                                                  pl: 2,
+                                                }}>{mutation.MutationName}</TableCell>
 
-              </TableRow>
+                                                <TableCell align="center">{created}</TableCell>
 
-            </TableBody>
+                                                <TableCell align="center">{inward}</TableCell>
 
-          </Table>
-        </TableContainer>
-      </Paper> */}
+                                                <TableCell align="center">{rejected}</TableCell>
+
+                                                <TableCell align="center">{error}</TableCell>
+                                              </TableRow>
+                                            );
+                                          })}
+                                        </TableBody>
+                                      </Table>
+                                    ) : (
+                                      <>
+                                        <Box
+                                          sx={{
+                                            height: 70,
+                                            display: "flex",
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                          }}
+                                        >
+                                          No Mutation Found
+                                        </Box>
+                                      </>
+                                    )}
+                                  </TableCell>
+                                </TableRow>
+                              )}
+                            </React.Fragment>
+                          ))}
+
+                      </React.Fragment>
+                    ))}
+                </React.Fragment>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer> */}
 
       <Container sx={{ mt: 5 }}>
         <Grid container spacing={2}>
