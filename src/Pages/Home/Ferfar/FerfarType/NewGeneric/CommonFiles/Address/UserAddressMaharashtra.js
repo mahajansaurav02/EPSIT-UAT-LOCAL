@@ -358,7 +358,7 @@ const UserAddressMaharashtra = ({
                       name="plotNo"
                       value={indiaAddress?.plotNo}
                       placeholder="कृष्णकुंज"
-                      error={errors.plotNo}
+                      error={Boolean(errors.plotNo)}
                       {...field}
                       // onChange={(e) => {
                       //   field.onChange(e);

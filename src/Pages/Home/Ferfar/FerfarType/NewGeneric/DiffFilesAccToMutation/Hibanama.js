@@ -1,5 +1,8 @@
 import {
   Button,
+  Dialog,
+  DialogContent,
+  DialogTitle,
   Grid,
   IconButton,
   InputLabel,
@@ -15,6 +18,7 @@ import {
 import { useEffect, useState } from "react";
 import AxiosInstance from "../../../../../../Instance/AxiosInstance";
 import UserAddress from "../CommonFiles/Address/UserAddress";
+import CloseIcon from "@mui/icons-material/Close";
 import SaveRoundedIcon from "@mui/icons-material/SaveRounded";
 import RotateRightRoundedIcon from "@mui/icons-material/RotateRightRounded";
 import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
@@ -34,6 +38,7 @@ import URLS from "../../../../../../URLs/url";
 import { filterOnlyMarathiAndEnglishLettersWithSpaces } from "../../../../../../Validations/utils";
 import TransliterationTextField from "../../../../../../ui/TranslationTextfield/EngToMarTextfield";
 import { errorToast, successToast, Toast, warningToast } from "../../../../../../ui/Toast";
+import ShowAddress from "../../Generic/CommonFiles/SupportPagesGhenar/ShowAddress";
 
 const Hibanama = () => {
   const { sendRequest } = AxiosInstance();
@@ -120,6 +125,7 @@ const Hibanama = () => {
       permissionDate: "",
     });
     setIsIndian("india");
+    setAliceName("");
     setIndiaAdress({
       plotNo: "",
       building: "",
@@ -151,9 +157,19 @@ const Hibanama = () => {
     reset();
     setIsReset(!isReset);
   };
+  const [open, setOpen] = useState(false);
+  const [addVal, setAddVal] = useState({});
+
   const handleHibanamaDetails = (e) => {
     const { name, value } = e?.target;
     setHibanamaDetails({ ...hibanamaDetails, [name]: value });
+  };
+  const handleDialogClose = () => {
+    setOpen(false);
+  };
+  const showAddress = (val) => {
+    setOpen(true);
+    setAddVal(val?.address || {});
   };
 
   const handleSave = async () => {
@@ -203,7 +219,7 @@ const Hibanama = () => {
       },
     };
 
-    console.log("payload", JSON.stringify(payload, null, 2));
+    // console.log("payload", JSON.stringify(payload, null, 2));
 
     sendRequest(
       `${URLS?.BaseURL}/MutationAPIS/SaveHibanamaWitnessInfo`,
@@ -254,8 +270,9 @@ const Hibanama = () => {
       "POST",
       applicationId,
       (res) => {
-        console.log("res", res)
-        setResponseData(res?.ResponseData);
+        // console.log("res", res)
+        // setResponseData(res?.ResponseData);
+        setResponseData(Array.isArray(res?.ResponseData) ? res.ResponseData : []);
         successToast(res?.Message);
       },
       (err) => {
@@ -272,6 +289,26 @@ const Hibanama = () => {
   return (
     <>
       <Toast />
+
+      <Dialog onClose={handleDialogClose} open={open} maxWidth="md">
+        <DialogTitle sx={{ m: 0, p: 3 }}>
+          <IconButton
+            aria-label="close"
+            onClick={() => setOpen(false)}
+            sx={{
+              position: "absolute",
+              right: 4,
+              top: 4,
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          <ShowAddress address={addVal} />
+        </DialogContent>
+      </Dialog>
+
       <Paper elevation={5} sx={{ p: 2, mt: 2 }} className="papermain">
         <Grid container spacing={1}>
           <Grid item md={12}>
@@ -397,7 +434,7 @@ const Hibanama = () => {
                     <TableCell>Waqf Board's Permission Date</TableCell>
                     <TableCell>साक्षीदाराचे नाव</TableCell>
                     <TableCell>उर्फ नाव</TableCell>
-                    <TableCell>साक्षीदाराचेजिल्हा / तालुका / न. भू. कार्यालय / गांव</TableCell>
+                    <TableCell>साक्षीदाराचा पत्ता</TableCell>
                     <TableCell>कृती करा</TableCell>
                   </TableRow>
                 </TableHead>
@@ -411,8 +448,14 @@ const Hibanama = () => {
                           <TableCell>{val?.permissionDate || "-"}</TableCell>
                           <TableCell>{val?.witnessDetails?.suffix + " " + val?.witnessDetails?.firstName + " " + val?.witnessDetails?.middleName + " " + val?.witnessDetails?.lastName}</TableCell>
                           <TableCell>{val?.witnessDetails?.aliceName || "-"}</TableCell>
-                          <TableCell>{val?.address?.addressType == "FOREIGN" ? val?.address?.foreignAddress?.address
-                            : val?.address?.indiaAddress}</TableCell>
+                          <TableCell>
+                            <Button
+                              variant="outlined"
+                              onClick={() => showAddress(val)}
+                            >
+                              पत्ता पहा
+                            </Button>
+                          </TableCell>
                           <TableCell>
                             <IconButton
                               color="error"

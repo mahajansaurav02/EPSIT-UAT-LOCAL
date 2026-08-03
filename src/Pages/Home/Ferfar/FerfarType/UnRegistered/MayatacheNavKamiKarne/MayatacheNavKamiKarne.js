@@ -165,16 +165,16 @@ const MayatacheNavKamiKarne = ({ applicationData }) => {
           const selectedDate = new Date(date);
           return selectedDate > thresholdDateOfDOB
             ? schema.required(
-                "जन्म तारीख १ मे २०२४ नंतरची असेल तर आईचे नाव टाकणे गरजेचे आहे"
-              )
+              "जन्म तारीख १ मे २०२४ नंतरची असेल तर आईचे नाव टाकणे गरजेचे आहे"
+            )
             : schema.notRequired();
         }),
         motherNameEng: yup.string().when("dob", (date, schema) => {
           const selectedDate = new Date(date);
           return selectedDate > thresholdDateOfDOB
             ? schema.required(
-                "जन्म तारीख १ मे २०२४ नंतरची असेल तर आईचे नाव इंग्रजीत टाकणे गरजेचे आहे"
-              )
+              "जन्म तारीख १ मे २०२४ नंतरची असेल तर आईचे नाव इंग्रजीत टाकणे गरजेचे आहे"
+            )
             : schema.notRequired();
         }),
         dateOfDeath: yup.string().required("मयताची दिनांक निवडा"),
@@ -244,57 +244,98 @@ const MayatacheNavKamiKarne = ({ applicationData }) => {
     });
     const code = e?.target?.value;
     const obj = userDataArr.find((o) => o?.owner_name == code);
+    // const obj = userDataArr.find(
+    //   (o) => `${o?.mutation_srno}${o?.owner_number}` == code
+    // );
     setUserName(code);
+    // setUserName(obj?.owner_name);
     setUserNameObj(obj);
-    setIsMutationUndergoing(false);
     sendRequest(
-      `${URLS?.BaseURL}/EPCISAPIS/validateMultipleMutationApplications`,
+      `${URLS?.BaseURL}/EPCISAPIS/getOwnerDetails`,
       "POST",
       {
-        district_code: applicationData?.district_code,
-        office_code: applicationData?.taluka_code,
         village_code: applicationData?.village_code,
         cts_no: obj?.cts_number,
-        mutation_srno: obj?.mutation_srno,
+        mut_sr_no: obj?.mutation_srno,
         owner_no: obj?.owner_number,
-        subprop_no: subPropNo,
+        // subprop_no: subPropNo,
       },
       (res) => {
-        if (res?.Code == "1") {
-          setIsMutationUndergoing(true);
-          errorToast(res?.Message);
-        } else {
-          setIsMutationUndergoing(false);
-          sendRequest(
-            `${URLS?.BaseURL}/EPCISAPIS/getOwnerDetails`,
-            "POST",
-            {
-              village_code: applicationData?.village_code,
-              cts_no: obj?.cts_number,
-              mut_sr_no: obj?.mutation_srno,
-              owner_no: obj?.owner_number,
-            },
-            (res) => {
-              const arr = JSON.parse(res?.ResponseData);
-              setSelectedUserArr(arr);
-              setUserDetails({
-                ...userDetails,
-                firstName: arr[0]?.first_name,
-                middleName: arr[0]?.middle_name,
-                lastName: arr[0]?.last_name,
-              });
-            },
-            (err) => {
-              console.error(err);
-            }
-          );
-        }
+        const arr = JSON.parse(res?.ResponseData);
+        setSelectedUserArr(arr);
+        setUserDetails({
+          ...userDetails,
+          firstName: arr[0]?.first_name,
+          middleName: arr[0]?.middle_name,
+          lastName: arr[0]?.last_name,
+        });
       },
       (err) => {
         console.error(err);
       }
     );
   };
+
+  // const handleUserName = (e) => {
+  //   setUserDetails({
+  //     ...userDetails,
+  //     firstName: "",
+  //     middleName: "",
+  //     lastName: "",
+  //   });
+  //   const code = e?.target?.value;
+  //   const obj = userDataArr.find((o) => o?.owner_name == code);
+  //   setUserName(code);
+  //   setUserNameObj(obj);
+  //   setIsMutationUndergoing(false);
+  //   sendRequest(
+  //     `${URLS?.BaseURL}/EPCISAPIS/validateMultipleMutationApplications`,
+  //     "POST",
+  //     {
+  //       district_code: applicationData?.district_code,
+  //       office_code: applicationData?.taluka_code,
+  //       village_code: applicationData?.village_code,
+  //       cts_no: obj?.cts_number,
+  //       mutation_srno: obj?.mutation_srno,
+  //       owner_no: obj?.owner_number,
+  //       subprop_no: subPropNo,
+  //     },
+  //     (res) => {
+  //       if (res?.Code == "1") {
+  //         setIsMutationUndergoing(true);
+  //         errorToast(res?.Message);
+  //       } else {
+  //         setIsMutationUndergoing(false);
+  //         sendRequest(
+  //           `${URLS?.BaseURL}/EPCISAPIS/getOwnerDetails`,
+  //           "POST",
+  //           {
+  //             village_code: applicationData?.village_code,
+  //             cts_no: obj?.cts_number,
+  //             mut_sr_no: obj?.mutation_srno,
+  //             owner_no: obj?.owner_number,
+  //           },
+  //           (res) => {
+  //             const arr = JSON.parse(res?.ResponseData);
+  //             setSelectedUserArr(arr);
+  //             setUserDetails({
+  //               ...userDetails,
+  //               firstName: arr[0]?.first_name,
+  //               middleName: arr[0]?.middle_name,
+  //               lastName: arr[0]?.last_name,
+  //             });
+  //           },
+  //           (err) => {
+  //             console.error(err);
+  //           }
+  //         );
+  //       }
+  //     },
+  //     (err) => {
+  //       console.error(err);
+  //     }
+  //   );
+  // };
   const handleSuffix = (e) => {
     const value = e?.target?.value;
     const obj = suffixArr.find((o) => o?.name_title == value);

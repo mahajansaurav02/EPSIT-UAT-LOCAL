@@ -28,7 +28,7 @@ import AddIcon from "@mui/icons-material/Add";
 import SecuredHeader from "../../ui/SecuredHeader";
 import AxiosInstance from "../../Instance/AxiosInstance";
 import URLS from "../../URLs/url";
-import { errorToast, successToast } from "../../ui/Toast";
+import { errorToast, successToast, Toast } from "../../ui/Toast";
 import Swal from "sweetalert2";
 import TrutiPatra from "../../ui/NicDoc/TrutiPatra";
 import NoticeNine from "../../ui/NicDoc/NoticeNine";
@@ -186,6 +186,7 @@ const HomeApplication = () => {
   }, []);
   return (
     <>
+      <Toast />
       {/*------------------------------------truti patra dialog--------------------- */}
       <Dialog
         onClose={handleTrutiPatraDialogClose}

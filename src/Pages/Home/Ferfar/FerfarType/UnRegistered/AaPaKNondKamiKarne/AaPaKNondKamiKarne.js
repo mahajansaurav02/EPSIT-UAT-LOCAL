@@ -152,54 +152,96 @@ const AaPaKNondKamiKarne = ({ applicationData }) => {
       }
     );
   };
+
   const handleUserName = (e) => {
+    setSelectedUserArr({
+      ...selectedUserArr,
+      firstName: "",
+      middleName: "",
+      lastName: "",
+    });
     const code = e?.target?.value;
     const obj = userDataArr.find((o) => o?.owner_name == code);
+    // const obj = userDataArr.find(
+    //   (o) => `${o?.mutation_srno}${o?.owner_number}` == code
+    // );
     setUserName(code);
+    // setUserName(obj?.owner_name);
     setUserNameObj(obj);
-    setIsMutationUndergoing(false);
     sendRequest(
-      `${URLS?.BaseURL}/EPCISAPIS/validateMultipleMutationApplications`,
+      `${URLS?.BaseURL}/EPCISAPIS/getOwnerDetails`,
       "POST",
       {
-        district_code: applicationData?.district_code,
-        office_code: applicationData?.taluka_code,
         village_code: applicationData?.village_code,
         cts_no: obj?.cts_number,
-        mutation_srno: obj?.mutation_srno,
+        mut_sr_no: obj?.mutation_srno,
         owner_no: obj?.owner_number,
-        subprop_no: subPropNo,
+        // subprop_no: subPropNo,
       },
       (res) => {
-        if (res?.Code == "1") {
-          setIsMutationUndergoing(true);
-          errorToast(res?.Message);
-        } else {
-          setIsMutationUndergoing(false);
-          sendRequest(
-            `${URLS?.BaseURL}/EPCISAPIS/getOwnerDetails`,
-            "POST",
-            {
-              village_code: applicationData?.village_code,
-              cts_no: obj?.cts_number,
-              mut_sr_no: obj?.mutation_srno,
-              owner_no: obj?.owner_number,
-            },
-            (res) => {
-              const arr = JSON.parse(res?.ResponseData);
-              setSelectedUserArr(arr);
-            },
-            (err) => {
-              console.error(err);
-            }
-          );
-        }
+        const arr = JSON.parse(res?.ResponseData);
+        setSelectedUserArr(arr);
+        // setSelectedUserArr({
+        //   ...selectedUserArr,
+        //   firstName: arr[0]?.first_name,
+        //   middleName: arr[0]?.middle_name,
+        //   lastName: arr[0]?.last_name,
+        // });
       },
       (err) => {
         console.error(err);
       }
     );
   };
+
+  // const handleUserName = (e) => {
+  //   const code = e?.target?.value;
+  //   const obj = userDataArr.find((o) => o?.owner_name == code);
+  //   setUserName(code);
+  //   setUserNameObj(obj);
+  //   setIsMutationUndergoing(false);
+  //   sendRequest(
+  //     `${URLS?.BaseURL}/EPCISAPIS/validateMultipleMutationApplications`,
+  //     "POST",
+  //     {
+  //       district_code: applicationData?.district_code,
+  //       office_code: applicationData?.taluka_code,
+  //       village_code: applicationData?.village_code,
+  //       cts_no: obj?.cts_number,
+  //       mutation_srno: obj?.mutation_srno,
+  //       owner_no: obj?.owner_number,
+  //       subprop_no: subPropNo,
+  //     },
+  //     (res) => {
+  //       if (res?.Code == "1") {
+  //         setIsMutationUndergoing(true);
+  //         errorToast(res?.Message);
+  //       } else {
+  //         setIsMutationUndergoing(false);
+  //         sendRequest(
+  //           `${URLS?.BaseURL}/EPCISAPIS/getOwnerDetails`,
+  //           "POST",
+  //           {
+  //             village_code: applicationData?.village_code,
+  //             cts_no: obj?.cts_number,
+  //             mut_sr_no: obj?.mutation_srno,
+  //             owner_no: obj?.owner_number,
+  //           },
+  //           (res) => {
+  //             const arr = JSON.parse(res?.ResponseData);
+  //             setSelectedUserArr(arr);
+  //           },
+  //           (err) => {
+  //             console.error(err);
+  //           }
+  //         );
+  //       }
+  //     },
+  //     (err) => {
+  //       console.error(err);
+  //     }
+  //   );
+  // };
   return (
     <>
       <Toast />
@@ -226,7 +268,7 @@ const AaPaKNondKamiKarne = ({ applicationData }) => {
       <Grid item md={12} xs={12}>
         <NotesPaper
           heading="अ. पा. क. नोंद कमी करण्यासाठी भरण्यासाठी आवश्यक सूचना"
-          // arr={mryutupatraDenarNotesArrUnRegistered}
+        // arr={mryutupatraDenarNotesArrUnRegistered}
         />
       </Grid>
       <Grid item md={12}>
@@ -393,9 +435,9 @@ const AaPaKNondKamiKarne = ({ applicationData }) => {
                   variant="outlined"
                   startIcon={<RotateRightRoundedIcon />}
                   sx={{ mr: 2 }}
-                  // onClick={() => {
-                  //   handleReset();
-                  // }}
+                // onClick={() => {
+                //   handleReset();
+                // }}
                 >
                   रीसेट करा
                 </Button>

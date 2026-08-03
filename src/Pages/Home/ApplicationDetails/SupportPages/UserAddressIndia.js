@@ -132,26 +132,26 @@ const UserAddressIndia = ({
             setShowPostDropdown(false);
           }
         })
-    .catch((err) => {
-  console.error(err);
-  sendRequest(
-    `${URLS?.BaseURL}/EPCISAPIS/GetPincode`,
-    "POST",
-    input,
-    (res) => {
-      if (res?.Code == "1") {
-        successToast(res?.Message);
-        setPostOffice(res?.ResponseData);
-        setShowPostDropdown(true);
-      } else {
-        errorToast(res?.Message);
-      }
-    },
-    (err) => {
-      errorToast(err?.data?.message);
-    }
-  );
-});
+        .catch((err) => {
+          console.error(err);
+          sendRequest(
+            `${URLS?.BaseURL}/EPCISAPIS/GetPincode`,
+            "POST",
+            input,
+            (res) => {
+              if (res?.Code == "1") {
+                successToast(res?.Message);
+                setPostOffice(res?.ResponseData);
+                setShowPostDropdown(true);
+              } else {
+                errorToast(res?.Message);
+              }
+            },
+            (err) => {
+              errorToast(err?.data?.message);
+            }
+          );
+        });
     } else {
       setPostOffice([]);
       setSelectedPost({});
@@ -603,7 +603,8 @@ const UserAddressIndia = ({
                 name="area"
                 size="small"
                 disabled
-                error={addressProofError}
+                error={Boolean(addressProofError)}
+                helperText={addressProofError}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">

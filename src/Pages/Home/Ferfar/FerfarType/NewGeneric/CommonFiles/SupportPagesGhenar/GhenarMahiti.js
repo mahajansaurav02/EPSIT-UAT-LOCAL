@@ -1508,17 +1508,16 @@ const GhenarMahiti = ({ applicationData, setActiveStep }) => {
       (res) => {
         if (res?.Code == "1") {
           successToast(res?.Message);
-          setResponseData(res?.ResponseData);
+          // setResponseData(res?.ResponseData);
+          setResponseData(Array.isArray(res?.ResponseData) ? res.ResponseData : []);
         } else {
-          if (res?.ResponseData.length == 0) {
-            setResponseData([]);
-          } else if (res?.ResponseData != "") {
-            errorToast(res?.Message);
-          }
+          setResponseData([]);
+          if (res?.Message) errorToast(res?.Message);
         }
       },
       (err) => {
         errorToast(err?.Message);
+        setResponseData([]);
       }
     );
   };

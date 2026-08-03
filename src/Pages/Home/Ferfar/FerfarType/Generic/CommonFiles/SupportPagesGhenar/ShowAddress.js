@@ -1,13 +1,25 @@
 import { Grid, InputLabel, Paper, TextField } from "@mui/material";
 
 const ShowAddress = ({ address }) => {
+  console.log(">>> ShowAddress received:", address);
+  const displayValue = (value) => {
+    if (value === null || value === undefined) return "";
+    if (typeof value === "object") {
+      console.warn("Object found in ShowAddress:", value);
+      return JSON.stringify(value);
+    }
+    return value;
+  };
+
+  const isIndia = address?.addressType?.toUpperCase() === "INDIA";
+
   return (
     <Paper elevation={5} sx={{ p: 2, pt: 1 }}>
       <Grid item md={12}>
         <h4 className="heading">पत्ता</h4>
       </Grid>
       <Grid item md={12}>
-        {address?.addressType == "INDIA" ? (
+        {isIndia ? (
           <Grid container spacing={2}>
             <Grid item md={3}>
               <InputLabel className="inputlabel">
@@ -16,7 +28,7 @@ const ShowAddress = ({ address }) => {
               <TextField
                 className="textfieldDisabled"
                 fullWidth
-                value={address?.indiaAddress?.plotNo}
+                value={displayValue(address?.indiaAddress?.plotNo)}
                 size="small"
                 disabled
               />
@@ -28,7 +40,7 @@ const ShowAddress = ({ address }) => {
               <TextField
                 className="textfieldDisabled"
                 fullWidth
-                value={address?.indiaAddress?.building}
+                value={displayValue(address?.indiaAddress?.building)}
                 size="small"
                 disabled
               />
@@ -40,7 +52,7 @@ const ShowAddress = ({ address }) => {
               <TextField
                 className="textfieldDisabled"
                 fullWidth
-                value={address?.indiaAddress?.mainRoad}
+                value={displayValue(address?.indiaAddress?.mainRoad)}
                 size="small"
                 disabled
               />
@@ -52,7 +64,7 @@ const ShowAddress = ({ address }) => {
               <TextField
                 className="textfieldDisabled"
                 fullWidth
-                value={address?.indiaAddress?.impSymbol}
+                value={displayValue(address?.indiaAddress?.impSymbol)}
                 size="small"
                 disabled
               />
@@ -64,7 +76,7 @@ const ShowAddress = ({ address }) => {
               <TextField
                 className="textfieldDisabled"
                 fullWidth
-                value={address?.indiaAddress?.area}
+                value={displayValue(address?.indiaAddress?.area)}
                 size="small"
                 disabled
               />
@@ -76,7 +88,7 @@ const ShowAddress = ({ address }) => {
               <TextField
                 className="textfieldDisabled"
                 fullWidth
-                value={address?.indiaAddress?.pincode}
+                value={displayValue(address?.indiaAddress?.pincode)}
                 size="small"
                 disabled
               />
@@ -88,7 +100,7 @@ const ShowAddress = ({ address }) => {
               <TextField
                 className="textfieldDisabled"
                 fullWidth
-                value={address?.indiaAddress?.postOfficeName}
+                value={displayValue(address?.indiaAddress?.postOfficeName)}
                 size="small"
                 disabled
               />
@@ -100,7 +112,7 @@ const ShowAddress = ({ address }) => {
               <TextField
                 className="textfieldDisabled"
                 fullWidth
-                value={address?.indiaAddress?.taluka}
+                value={displayValue(address?.indiaAddress?.taluka)}
                 size="small"
                 disabled
               />
@@ -112,7 +124,7 @@ const ShowAddress = ({ address }) => {
               <TextField
                 className="textfieldDisabled"
                 fullWidth
-                value={address?.indiaAddress?.district}
+                value={displayValue(address?.indiaAddress?.district)}
                 size="small"
                 disabled
               />
@@ -124,7 +136,7 @@ const ShowAddress = ({ address }) => {
               <TextField
                 className="textfieldDisabled"
                 fullWidth
-                value={address?.indiaAddress?.state}
+                value={displayValue(address?.indiaAddress?.state)}
                 size="small"
                 disabled
               />
@@ -136,7 +148,7 @@ const ShowAddress = ({ address }) => {
               <TextField
                 className="textfieldDisabled"
                 fullWidth
-                value={address?.indiaAddress?.mobile}
+                value={displayValue(address?.indiaAddress?.mobile)}
                 size="small"
                 disabled
               />
@@ -153,7 +165,7 @@ const ShowAddress = ({ address }) => {
                 fullWidth
                 multiline
                 rows={3}
-                value={address?.foreignAddress?.address}
+                value={displayValue(address?.foreignAddress?.address)}
                 size="small"
                 disabled
               />
@@ -165,7 +177,7 @@ const ShowAddress = ({ address }) => {
               <TextField
                 className="textfieldDisabled"
                 fullWidth
-                value={address?.foreignAddress?.mobile}
+                value={displayValue(address?.foreignAddress?.mobile)}
                 size="small"
                 disabled
               />
@@ -177,7 +189,7 @@ const ShowAddress = ({ address }) => {
               <TextField
                 className="textfieldDisabled"
                 fullWidth
-                value={address?.foreignAddress?.email}
+                value={displayValue(address?.foreignAddress?.email)}
                 size="small"
                 disabled
               />

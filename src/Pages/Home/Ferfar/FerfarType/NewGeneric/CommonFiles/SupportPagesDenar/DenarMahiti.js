@@ -48,7 +48,7 @@ const DenarMahiti = ({ applicationData, obj, setActiveStep }) => {
 
   const [selectedDenarForEdit, setSelectedDenarForEdit] = useState({});
 
-  console.log("userDataArr->>", userDataArr, denarData);
+  // console.log("userDataArr->>", userDataArr, denarData);
 
   //--------------------------------Show Details-----------------------------
   const [openEditAdditionalDataDialog, setOpenEditAdditionalDataDialog] =
@@ -116,7 +116,7 @@ const DenarMahiti = ({ applicationData, obj, setActiveStep }) => {
     const selectedData = userDataArr.filter((row) =>
       selectedRows.includes(`${row.mutation_srno}-${row.owner_number}`)
     );
-    console.log("selectedData", selectedData);
+    // console.log("selectedData", selectedData);
     const nabhuData = {
       naBhu: obj?.naBhu,
       lrPropertyUID: obj?.lrPropertyUID,
@@ -131,7 +131,7 @@ const DenarMahiti = ({ applicationData, obj, setActiveStep }) => {
       ...nabhuData,
       applicationId,
     }));
-    console.log("payload", JSON.stringify(mergedData, null, 2));
+    // console.log("payload", JSON.stringify(mergedData, null, 2));
 
     if (selectedData.length === 0) {
       errorToast("कृपया निवडलेल्या न.भू.क्र. पैकी नाव/नावे निवडा");
@@ -185,18 +185,17 @@ const DenarMahiti = ({ applicationData, obj, setActiveStep }) => {
       applicationId,
       (res) => {
         if (res?.Code == "1") {
-          setDenarData(res?.ResponseData);
+          // setDenarData(res?.ResponseData);
+          setDenarData(Array.isArray(res?.ResponseData) ? res.ResponseData : []);
           successToast(res?.Message);
         } else {
-          if (res?.ResponseData.length == 0) {
-            setDenarData([]);
-          } else {
-            errorToast(res?.Message);
-          }
+          setDenarData([]);
+          if (res?.Message) errorToast(res?.Message);
         }
       },
       (err) => {
         errorToast(err?.Message);
+        setDenarData([]);
       }
     );
   };
