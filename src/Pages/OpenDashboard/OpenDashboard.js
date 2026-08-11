@@ -10,7 +10,8 @@ import {
 import { useState } from "react";
 import Header from "../../ui/Header";
 import SearchByApplicationIdUser from "./SearchByApplicationIdUser";
-import UserDashboard from "./Dashboard/UserDashboard";
+import Dashboard from "./Dashboard/UserDashboard";
+import UserDetailedDashboard from "./Dashboard/UserDetailedDashboard";
 
 const OpenDashboard = () => {
   //------------------------------Tabs Test------------------------
@@ -54,13 +55,17 @@ const OpenDashboard = () => {
           centered
         >
           <Tab label="Dashboard" sx={{ fontWeight: 600 }} />
+          <Tab label="Detailed Dashboard" sx={{ fontWeight: 600 }} />
           <Tab label="Search By Application Id" sx={{ fontWeight: 600 }} />
         </Tabs>
 
         <CustomTabPanel value={tabValue} index={0}>
-          <UserDashboard />
+          <Dashboard />
         </CustomTabPanel>
         <CustomTabPanel value={tabValue} index={1}>
+          <UserDetailedDashboard />
+        </CustomTabPanel>
+        <CustomTabPanel value={tabValue} index={2}>
           <SearchByApplicationIdUser />
         </CustomTabPanel>
       </Box>
