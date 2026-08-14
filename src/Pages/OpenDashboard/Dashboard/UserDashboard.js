@@ -54,8 +54,8 @@ const Dashboard = () => {
         const response =
           res?.ResponseData?.ePCISgetDashboardMetricsResponse || [];
 
-        console.log(`${type} Response:`, res);
-        console.log(`${type} Data:`, res?.ResponseData?.ePCISgetDashboardMetricsResponse);
+        // console.log(`${type} Response:`, res);
+        // console.log(`${type} Data:`, res?.ResponseData?.ePCISgetDashboardMetricsResponse);
 
         dataSetter(response);
 
@@ -67,7 +67,11 @@ const Dashboard = () => {
       },
       (err) => {
         loadingSetter(false);
-        errorToast(err.Message);
+        errorToast(
+          err?.Message ||
+          err?.message ||
+          "Something went wrong while loading dashboard data"
+        );
       }
     );
   };
@@ -88,7 +92,6 @@ const Dashboard = () => {
       setExpandedDivision(null);
       setExpandedDistrict(null);
       setExpandedOffice(null);
-
       setDistrictData([]);
       setOfficeData([]);
       setNewDashboardData([]);
@@ -96,23 +99,20 @@ const Dashboard = () => {
       return;
     }
 
+    setExpandedDivision(divisionCode);
+
+    setExpandedDistrict(null);
+    setExpandedOffice(null);
+    setDistrictData([]);
+    setOfficeData([]);
+    setNewDashboardData([]);
+
     loadHierarchy({
       type: "DISTRICTS",
       code: divisionCode,
-
       loadingSetter: setLoadingDistrict,
-
       dataSetter: setDistrictData,
 
-      onSuccess: () => {
-        setExpandedDivision(divisionCode);
-
-        setExpandedDistrict(null);
-        setExpandedOffice(null);
-
-        setOfficeData([]);
-        setNewDashboardData([]);
-      },
     });
   };
 
@@ -129,20 +129,17 @@ const Dashboard = () => {
       return;
     }
 
+    setExpandedDistrict(districtCode);
+
+    setExpandedOffice(null);
+    setNewDashboardData([]);
+    setOfficeData([]);
+
     loadHierarchy({
       type: "OFFICES",
       code: districtCode,
-
       loadingSetter: setLoadingOffice,
-
       dataSetter: setOfficeData,
-
-      onSuccess: () => {
-        setExpandedDistrict(districtCode);
-
-        setExpandedOffice(null);
-        setNewDashboardData([]);
-      },
     });
   };
 
@@ -174,7 +171,7 @@ const Dashboard = () => {
       "POST",
       payload,
       (res) => {
-        console.log(res, "res")
+        // console.log(res, "res")
         setNewDashboardData(res.ResponseData);
         setLoadingMutation(false)
       },
@@ -204,6 +201,24 @@ const Dashboard = () => {
       }
     );
   }, [divisionData]);
+
+  const TableLoader = ({ height = 100 }) => (
+    <TableRow>
+      <TableCell colSpan={7} sx={{ p: 0 }}>
+        <Box
+          sx={{
+            height,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            bgcolor: "#FAFAFA",
+          }}
+        >
+          <CircularProgress size={35} />
+        </Box>
+      </TableCell>
+    </TableRow>
+  );
 
   useEffect(() => {
     handleGetDivision();
@@ -302,24 +317,9 @@ const Dashboard = () => {
                     <TableCell align="center">{division.disposed_inward}</TableCell>
                   </TableRow>
 
-                  {expandedDivision === division.divisioncode &&
-                    loadingDistrict && (
-                      <TableRow>
-                        <TableCell colSpan={5} sx={{ p: 0 }}>
-
-                          <Box
-                            sx={{
-                              height: 250,
-                              display: "flex",
-                              justifyContent: "center",
-                              alignItems: "center",
-                            }}
-                          >
-                            <CircularProgress size="2rem" />
-                          </Box>
-                        </TableCell>
-                      </TableRow>
-                    )}
+                  {expandedDivision === division.divisioncode && loadingDistrict && (
+                    <TableLoader height={100} />
+                  )}
 
                   {expandedDivision === division.divisioncode &&
                     !loadingDistrict &&
@@ -374,23 +374,9 @@ const Dashboard = () => {
                           </TableCell>
                         </TableRow>
 
-                        {expandedDistrict === district.districtcode &&
-                          loadingOffice && (
-                            <TableRow>
-                              <TableCell colSpan={5} sx={{ p: 0 }}>
-                                <Box
-                                  sx={{
-                                    height: 250,
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                  }}
-                                >
-                                  <CircularProgress size="2rem" />
-                                </Box>
-                              </TableCell>
-                            </TableRow>
-                          )}
+                        {expandedDistrict === district.districtcode && loadingOffice && (
+                          <TableLoader height={100} />
+                        )}
 
                         {expandedDistrict === district.districtcode &&
                           !loadingOffice &&
